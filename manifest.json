@@ -1,0 +1,21 @@
+{
+  "name": "Infinite Coin HQ - WebSocket Command Center",
+  "short_name": "INFINITE HQ",
+  "description": "Live price, real-time transactions, P2E games, staking & NFTs on Solana.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000208",
+  "theme_color": "#00F0FF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "72x72 96x96 128x128 192x192 256x256 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "crypto", "entertainment"]
+}
