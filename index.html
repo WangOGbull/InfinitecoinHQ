@@ -38,10 +38,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Infinite Coin HQ">
 
+<!-- Preload Critical Images -->
+<link rel="preload" as="image" href="images/logo.png">
+<link rel="preload" as="image" href="images/image23.png">
+<link rel="preload" as="image" href="images/infinity-glow.jpg">
+
 <title>Infinite Coin HQ — WebSocket Command Center</title>
 <link rel="icon" href="images/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — DARK / LIGHT MODE
+   ═══════════════════════════════════════════ */
 :root[data-theme="dark"] {
   --bg:#000;--bg-sec:#000208;--text:#8ECAE6;--text-bright:#fff;
   --glass:rgba(8,12,28,0.7);--glass-border:rgba(0,240,255,0.06);
@@ -50,6 +59,7 @@
   --wsb-bg:rgba(0,0,0,0.9);--overlay:linear-gradient(180deg,rgba(0,0,0,0.93) 0%,rgba(0,0,0,0.88) 50%,rgba(0,0,0,0.93) 100%);
   --hero-grad:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.4) 50%,rgba(0,0,0,0.7) 100%);
   --vid-shadow:0 0 30px rgba(0,240,255,0.08);--input-bg:rgba(0,240,255,0.02);
+  --skeleton-base:rgba(0,240,255,0.04);--skeleton-highlight:rgba(0,240,255,0.1);
 }
 :root[data-theme="light"] {
   --bg:#f0f4f8;--bg-sec:#e2e8f0;--text:#2d3748;--text-bright:#1a202c;
@@ -59,7 +69,9 @@
   --wsb-bg:rgba(255,255,255,0.95);--overlay:linear-gradient(180deg,rgba(240,244,248,0.85) 0%,rgba(240,244,248,0.8) 50%,rgba(240,244,248,0.85) 100%);
   --hero-grad:linear-gradient(180deg,rgba(240,244,248,0.8) 0%,rgba(240,244,248,0.5) 50%,rgba(240,244,248,0.8) 100%);
   --vid-shadow:0 0 20px rgba(0,0,0,0.1);--input-bg:rgba(0,0,0,0.04);
+  --skeleton-base:rgba(0,0,0,0.04);--skeleton-highlight:rgba(0,0,0,0.08);
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;touch-action:manipulation;transition:background .3s,color .3s;background-color:#000}
@@ -67,27 +79,205 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.25);border-radius:2px}
 
+/* ═══════════════════════════════════════════
+   SKELETON LOADING
+   ═══════════════════════════════════════════ */
+@keyframes skeleton-pulse{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+.skeleton{
+  background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-highlight) 50%,var(--skeleton-base) 75%);
+  background-size:200% 100%;
+  animation:skeleton-pulse 1.5s ease-in-out infinite;
+}
+img[data-lazy]{
+  background:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-highlight) 50%,var(--skeleton-base) 75%);
+  background-size:200% 100%;
+  animation:skeleton-pulse 1.5s ease-in-out infinite;
+}
+img.loaded{
+  animation:none;
+  background:none;
+}
+.img-fallback{
+  width:100%;
+  height:100%;
+  min-height:140px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,rgba(0,240,255,0.08),rgba(188,19,254,0.08));
+  border:1px dashed rgba(0,240,255,0.15);
+  border-radius:8px;
+  color:var(--muted);
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  text-align:center;
+  padding:20px;
+}
+
+/* ═══════════════════════════════════════════
+   VIDEO BACKGROUND
+   ═══════════════════════════════════════════ */
 #bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:filter .3s;background:#000210}
 [data-theme="light"] #bgVideo{filter:brightness(0.4) saturate(0.7)}
 #videoOverlay{position:fixed;inset:0;z-index:-1;background:var(--hero-grad);pointer-events:none}
 #videoFallback{position:fixed;inset:0;z-index:-3;background:url('images/infinity-glow.jpg') center/cover no-repeat #000210}
 
+/* ═══════════════════════════════════════════
+   NEON TEXT
+   ═══════════════════════════════════════════ */
 .neon-blue{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--neon);text-shadow:0 0 5px var(--neon),0 0 10px var(--neon),0 0 20px rgba(0,240,255,0.4),0 2px 4px rgba(0,0,0,0.8)}
 .neon-purple{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--neon-p);text-shadow:0 0 5px var(--neon-p),0 0 10px var(--neon-p),0 0 20px rgba(188,19,254,0.4),0 2px 4px rgba(0,0,0,0.8)}
 .neon-mixed{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;background:linear-gradient(90deg,var(--neon),var(--neon-p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 8px rgba(0,240,255,0.3))}
 
+/* ═══════════════════════════════════════════
+   GLASS CARDS (base)
+   ═══════════════════════════════════════════ */
 .glass{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:all .3s ease}
 .glass:hover{border-color:rgba(0,240,255,0.15);box-shadow:0 0 30px rgba(0,240,255,0.06)}
 .glass-p{background:var(--glass);border:1px solid var(--glass-p-border);border-radius:10px;backdrop-filter:blur(20px);transition:all .3s ease}
 .glass-p:hover{border-color:rgba(188,19,254,0.15);box-shadow:0 0 30px rgba(188,19,254,0.06)}
 
+/* ═══════════════════════════════════════════
+   SECTION-SPECIFIC CARD STYLES
+   ═══════════════════════════════════════════ */
+
+/* ARCADE / GAME */
+.arcade-card{
+  background:linear-gradient(180deg,rgba(0,20,40,0.9),rgba(0,10,20,0.95));
+  border:2px solid #00F0FF;
+  border-image:repeating-linear-gradient(0deg,#00F0FF 0,#00F0FF 3px,transparent 3px,transparent 6px) 2;
+  border-radius:4px;
+  box-shadow:inset 0 0 30px rgba(0,240,255,0.05),0 0 20px rgba(0,240,255,0.1);
+  position:relative;
+  overflow:hidden;
+}
+.arcade-card::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.03) 2px,rgba(0,240,255,0.03) 4px);
+  pointer-events:none;z-index:1;
+}
+.arcade-card .ac-title{font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;text-transform:uppercase;letter-spacing:.04em;line-height:1.6}
+.arcade-card .ac-body{padding:20px;position:relative;z-index:2}
+
+/* DEFI / FINANCIAL */
+.defi-card{
+  background:linear-gradient(135deg,rgba(0,30,10,0.85),rgba(0,20,5,0.9));
+  border:1px solid rgba(57,255,20,0.15);
+  border-radius:6px;
+  box-shadow:0 0 20px rgba(57,255,20,0.05),inset 0 1px 0 rgba(57,255,20,0.05);
+  font-family:'Space Mono',monospace;
+  position:relative;
+  overflow:hidden;
+}
+.defi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#39FF14,transparent);
+  opacity:.4;
+}
+.defi-card .df-title{font-family:'Orbitron',sans-serif;font-size:13px;color:#39FF14;letter-spacing:.06em}
+.defi-card .df-stat{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:#fff}
+.defi-card .df-label{font-family:'Space Mono',monospace;font-size:9px;color:rgba(57,255,20,0.6);text-transform:uppercase;letter-spacing:.1em}
+
+/* NFT / GALLERY */
+.nft-card{
+  background:linear-gradient(135deg,rgba(20,0,40,0.8),rgba(10,0,20,0.9));
+  border:1px solid rgba(188,19,254,0.2);
+  border-radius:12px;
+  perspective:1000px;
+  overflow:hidden;
+  position:relative;
+  transition:all .4s ease;
+}
+.nft-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(188,19,254,0.15)}
+.nft-card .nft-img-wrap{position:relative;overflow:hidden;border-radius:8px;margin-bottom:14px}
+.nft-card .nft-img-wrap img{transition:transform .6s ease;width:100%;display:block}
+.nft-card:hover .nft-img-wrap img{transform:scale(1.08)}
+.nft-card .nft-rarity{
+  position:absolute;top:8px;right:8px;
+  background:rgba(188,19,254,0.9);color:#fff;
+  font-family:'Orbitron',sans-serif;font-size:8px;
+  padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;
+}
+.nft-card .nft-title{font-family:'Orbitron',sans-serif;font-size:14px;color:#fff;margin-bottom:6px}
+
+/* MEME / VIRAL */
+.meme-card{
+  background:linear-gradient(180deg,rgba(40,0,20,0.8),rgba(20,0,10,0.9));
+  border:1px solid rgba(255,68,102,0.15);
+  border-radius:14px;
+  position:relative;
+  overflow:hidden;
+  transition:all .3s ease;
+}
+.meme-card:hover{border-color:rgba(255,68,102,0.3);box-shadow:0 0 30px rgba(255,68,102,0.1);transform:translateY(-3px)}
+.meme-card .meme-flame{
+  position:absolute;top:10px;right:10px;font-size:20px;
+  animation:flame-bob 1.5s ease-in-out infinite;z-index:3;
+}
+@keyframes flame-bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.1)}}
+.meme-card .meme-likes{
+  font-family:'Space Mono',monospace;font-size:10px;color:#ff4466;
+  display:flex;align-items:center;gap:4px;
+}
+.meme-card .meme-likes::before{content:'\2764\FE0F';font-size:12px;animation:heart-pulse 1.2s ease-in-out infinite}
+@keyframes heart-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* SOCIAL / FEEDS */
+.social-feed-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  overflow:hidden;
+  min-height:480px;
+  display:flex;
+  flex-direction:column;
+}
+.social-feed-card .sf-header{
+  padding:14px 16px;
+  border-bottom:1px solid rgba(0,240,255,0.06);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.social-feed-card .sf-body{
+  flex:1;
+  position:relative;
+  min-height:400px;
+}
+.social-feed-card .sf-fallback{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:12px;padding:40px 20px;
+  text-align:center;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
 .btn-b{background:linear-gradient(135deg,#00F0FF,#0077ff);color:#000;font-family:'Orbitron';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;padding:13px 28px;border-radius:8px;border:none;box-shadow:0 0 25px rgba(0,240,255,0.25),inset 0 1px 0 rgba(255,255,255,0.2);transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-b:hover{box-shadow:0 0 45px rgba(0,240,255,0.45);transform:translateY(-2px)}
 .btn-p{background:linear-gradient(135deg,#BC13FE,#5500aa);color:#fff;font-family:'Orbitron';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;padding:13px 28px;border-radius:8px;border:none;box-shadow:0 0 25px rgba(188,19,254,0.25),inset 0 1px 0 rgba(255,255,255,0.1);transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-p:hover{box-shadow:0 0 45px rgba(188,19,254,0.45);transform:translateY(-2px)}
 .btn-g2{color:var(--neon);font-family:'Orbitron';font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 22px;border-radius:8px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.03);transition:all .25s;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-g2:hover{background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.4);box-shadow:0 0 15px rgba(0,240,255,0.1)}
+.btn-wallet-icon{
+  width:40px;height:40px;border-radius:8px;
+  background:linear-gradient(135deg,#00F0FF,#0077ff);
+  border:none;color:#000;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 0 15px rgba(0,240,255,0.25);
+  transition:all .25s;
+}
+.btn-wallet-icon:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(0,240,255,0.4)}
 
+/* ═══════════════════════════════════════════
+   BADGES & DOTS
+   ═══════════════════════════════════════════ */
 .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.12);color:var(--neon);font-family:'Inter';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:5px 12px;border-radius:6px}
 .dot-g{width:7px;height:7px;border-radius:50%;background:#39FF14;box-shadow:0 0 6px #39FF14;animation:pulse 2s ease-in-out infinite}
 .dot-b{width:7px;height:7px;border-radius:50%;background:#00F0FF;box-shadow:0 0 6px #00F0FF;animation:pulse 2s ease-in-out infinite}
@@ -95,6 +285,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .dot-r{width:7px;height:7px;border-radius:50%;background:#ff4466;box-shadow:0 0 6px #ff4466}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:var(--nav-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,240,255,0.05);transition:all .3s}
 .nav-scrolled{background:rgba(0,0,0,0.95)!important;border-bottom-color:rgba(0,240,255,0.1)!important}
 [data-theme="light"] .nav-scrolled{background:rgba(255,255,255,0.97)!important;border-bottom-color:rgba(0,240,255,0.2)!important}
@@ -107,10 +300,48 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .nl a:hover{color:var(--neon)}
 .nmb{display:none;flex-direction:column;gap:4px;padding:8px;background:none;border:none;cursor:pointer}
 .nmb span{display:block;width:20px;height:2px;background:var(--neon);border-radius:1px;transition:.3s}
-.mobm{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:var(--nav-bg);z-index:999;padding:40px 24px;flex-direction:column;gap:24px;backdrop-filter:blur(20px)}
-.mobm a{font-family:'Orbitron';font-size:16px;color:var(--text);text-transform:uppercase;letter-spacing:.06em;text-decoration:none;padding:12px 0;border-bottom:1px solid rgba(0,240,255,0.06)}
-.mobm a:active{color:var(--neon)}
 
+/* ═══════════════════════════════════════════
+   UTILITY DRAWER (3-dot menu replacement)
+   ═══════════════════════════════════════════ */
+.ud-overlay{position:fixed;inset:0;z-index:4999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .3s}
+.ud-overlay.active{display:block;opacity:1}
+.ud-drawer{position:fixed;top:0;right:0;bottom:0;width:340px;background:rgba(6,10,24,0.98);border-left:1px solid rgba(0,240,255,0.08);z-index:5000;transform:translateX(100%);transition:transform .35s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column}
+.ud-drawer.active{transform:translateX(0)}
+.ud-header{padding:20px 24px;border-bottom:1px solid rgba(0,240,255,0.06);display:flex;align-items:center;justify-content:space-between}
+.ud-header h3{font-family:'Orbitron';font-size:13px;color:#fff;text-transform:uppercase;letter-spacing:.06em}
+.ud-close{width:32px;height:32px;border-radius:50%;background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.15);color:#ff4466;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ud-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px}
+.ud-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text);border:none;background:none;width:100%;font-family:'Inter';font-size:13px;text-align:left}
+.ud-item:hover{background:rgba(0,240,255,0.04)}
+.ud-item:active{background:rgba(0,240,255,0.08)}
+.ud-item svg{width:20px;height:20px;color:var(--neon);flex-shrink:0}
+.ud-item span{flex:1}
+.ud-item .ud-tag{font-family:'Space Mono';font-size:9px;color:var(--muted);background:rgba(0,240,255,0.04);padding:2px 6px;border-radius:4px}
+.ud-divider{height:1px;background:rgba(0,240,255,0.06);margin:8px 0}
+.ud-footer{padding:16px 20px;border-top:1px solid rgba(0,240,255,0.06);font-family:'Space Mono';font-size:9px;color:var(--muted);text-align:center}
+
+/* ═══════════════════════════════════════════
+   WALLET CONNECT MODAL
+   ═══════════════════════════════════════════ */
+.wm-overlay{position:fixed;inset:0;z-index:5002;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
+.wm-overlay.active{display:flex;opacity:1}
+.wm-box{background:rgba(8,12,28,0.98);border:1px solid rgba(0,240,255,0.12);border-radius:16px;max-width:420px;width:100%;position:relative;overflow:hidden;transform:scale(0.95);transition:transform .3s}
+.wm-overlay.active .wm-box{transform:scale(1)}
+.wm-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.15);color:#ff4466;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.wm-body{padding:32px 28px}
+.wm-body h2{font-family:'Orbitron';font-size:18px;color:#fff;text-align:center;margin-bottom:6px}
+.wm-body>p{text-align:center;font-size:13px;color:var(--muted);margin-bottom:24px}
+.wm-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);margin-bottom:10px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
+.wm-option:hover{border-color:rgba(0,240,255,0.2);background:rgba(0,240,255,0.05);transform:translateX(4px)}
+.wm-option img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+.wm-option .wm-info{flex:1}
+.wm-option .wm-name{font-family:'Orbitron';font-size:12px;font-weight:700}
+.wm-option .wm-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
 .hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .hero-inner{position:relative;z-index:10;text-align:center;max-width:860px;padding:100px 24px 60px;width:100%}
 .hero h1{font-size:clamp(28px,6.5vw,72px);line-height:1.08;margin-bottom:16px}
@@ -129,6 +360,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .hp-loading{font-family:'Space Mono';font-size:10px;color:var(--muted);margin-top:12px;letter-spacing:.05em}
 .hp-error{color:#ff4466!important}
 
+/* ═══════════════════════════════════════════
+   SECTION UTILITIES
+   ═══════════════════════════════════════════ */
 .cw{max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
 .sp{padding:clamp(60px,10vh,140px) 0}
 .sh{text-align:center;margin-bottom:44px;position:relative;z-index:2}
@@ -140,6 +374,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .sec .bg-overlay{position:absolute;inset:0;z-index:0;background:var(--overlay)}
 .sec .sec-inner{position:relative;z-index:2}
 
+/* ═══════════════════════════════════════════
+   DEX TRADING HQ
+   ═══════════════════════════════════════════ */
 .dex-grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
 .dex-frame{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);min-height:480px;background:rgba(8,12,28,0.5)}
 .dex-frame iframe{width:100%;height:480px;border:none;display:block}
@@ -154,6 +391,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .sm-item .nv{font-family:'Orbitron';font-size:16px;font-weight:700;color:var(--text-bright)}
 .sm-item .nl{font-family:'Rajdhani';font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
 
+/* Transactions */
 .tx-box{padding:16px}
 .tx-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .tx-ws-note{font-family:'Space Mono';font-size:9px;color:var(--muted);margin-bottom:10px;padding:6px 8px;background:rgba(57,255,20,0.03);border:1px solid rgba(57,255,20,0.08);border-radius:6px}
@@ -166,6 +404,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .tx-tag.buy{color:#39FF14;background:rgba(57,255,20,0.1)}
 .tx-tag.sell{color:#ff4466;background:rgba(255,68,102,0.1)}
 
+/* News */
 .news-box{padding:16px}
 .news-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .news-list{display:flex;flex-direction:column;gap:7px}
@@ -178,6 +417,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .news-item p{font-size:11px;color:var(--text);line-height:1.45}
 .news-item .ntime{font-size:9px;color:var(--muted);margin-top:3px;font-family:'Space Mono'}
 
+/* Marquee */
 .tstrip{overflow:hidden;padding:12px 0;border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);margin-top:16px}
 .ttrack{display:flex;gap:40px;animation:marq 35s linear infinite;white-space:nowrap}
 .ti{font-family:'Space Mono';font-size:11px}
@@ -185,49 +425,74 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .tsell{color:#ff4466}
 @keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
+/* ═══════════════════════════════════════════
+   FLOW BANNER
+   ═══════════════════════════════════════════ */
 .flow{background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);padding:36px 0;backdrop-filter:blur(10px);position:relative;z-index:2}
 .flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:8px}
 .flow-item svg{width:32px;height:32px;color:var(--neon);opacity:.8}
 .flow-item span{font-family:'Orbitron';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text)}
 
-.game-card{cursor:pointer;transition:all .3s;overflow:hidden;border-radius:10px;border:1px solid rgba(0,240,255,0.08)}
-.game-card:hover{border-color:rgba(0,240,255,0.2);box-shadow:0 0 30px rgba(0,240,255,0.1);transform:translateY(-3px)}
-.game-card img{width:100%;height:200px;object-fit:cover;display:block}
-.game-card .gc-body{padding:20px;text-align:center}
-.game-card .gc-body h3{font-family:'Orbitron';font-size:15px;color:var(--text-bright);margin-bottom:6px}
-.game-card .gc-body p{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:12px}
+/* ═══════════════════════════════════════════
+   GAMES — ARCADE STYLE
+   ═══════════════════════════════════════════ */
+.game-hero{cursor:pointer;transition:all .3s;overflow:hidden;border-radius:4px;border:2px solid #00F0FF;border-image:repeating-linear-gradient(0deg,#00F0FF 0,#00F0FF 3px,transparent 3px,transparent 6px) 2;box-shadow:inset 0 0 30px rgba(0,240,255,0.05),0 0 20px rgba(0,240,255,0.1);position:relative}
+.game-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.03) 2px,rgba(0,240,255,0.03) 4px);pointer-events:none;z-index:1}
+.game-hero:hover{box-shadow:inset 0 0 40px rgba(0,240,255,0.1),0 0 30px rgba(0,240,255,0.15);transform:translateY(-3px)}
+.game-hero img{width:100%;height:200px;object-fit:cover;display:block;position:relative;z-index:0}
+.game-hero .gh-body{padding:20px;text-align:center;position:relative;z-index:2}
+.game-hero .gh-body h3{font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6}
+.game-hero .gh-body p{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:12px}
 
-.pump-card{display:block;text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid rgba(188,19,254,0.1);transition:all .3s}
-.pump-card:hover{border-color:rgba(188,19,254,0.25);box-shadow:0 0 30px rgba(188,19,254,0.1)}
-.pump-card img{width:100%;height:220px;object-fit:cover;display:block}
-.pump-body{padding:24px;text-align:center;background:rgba(8,12,28,0.6)}
-.pump-body h3{font-family:'Orbitron';font-size:18px;color:var(--text-bright);margin-bottom:8px}
+/* ═══════════════════════════════════════════
+   PUMP.FUN — DEFI/TERMINAL STYLE
+   ═══════════════════════════════════════════ */
+.pump-terminal{display:block;text-decoration:none;border-radius:6px;overflow:hidden;border:1px solid rgba(57,255,20,0.15);box-shadow:0 0 20px rgba(57,255,20,0.05);transition:all .3s;position:relative;background:linear-gradient(135deg,rgba(0,30,10,0.85),rgba(0,20,5,0.9))}
+.pump-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#39FF14,transparent);opacity:.4}
+.pump-terminal:hover{border-color:rgba(57,255,20,0.3);box-shadow:0 0 30px rgba(57,255,20,0.1);transform:translateY(-3px)}
+.pump-terminal img{width:100%;height:220px;object-fit:cover;display:block}
+.pump-body{padding:24px;text-align:center;position:relative;z-index:2}
+.pump-body h3{font-family:'Orbitron';font-size:18px;color:#39FF14;margin-bottom:8px;text-shadow:0 0 10px rgba(57,255,20,0.3)}
 .pump-body p{font-size:13px;color:var(--text);margin-bottom:16px}
 
+/* ═══════════════════════════════════════════
+   MEMES — VIRAL STYLE
+   ═══════════════════════════════════════════ */
 .meme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.meme-item{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.06);transition:all .3s;cursor:pointer}
-.meme-item:hover{border-color:rgba(0,240,255,0.2);box-shadow:0 0 25px rgba(0,240,255,0.1);transform:translateY(-3px)}
+.meme-item{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,68,102,0.12);transition:all .3s;cursor:pointer;background:linear-gradient(180deg,rgba(40,0,20,0.8),rgba(20,0,10,0.9))}
+.meme-item:hover{border-color:rgba(255,68,102,0.3);box-shadow:0 0 30px rgba(255,68,102,0.1);transform:translateY(-3px)}
 .meme-item img{width:100%;height:200px;object-fit:cover;display:block}
-.meme-item .mo{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
+.meme-item .mo{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;z-index:2}
 .meme-item .mo h4{font-family:'Orbitron';font-size:11px;color:#fff;margin-bottom:3px}
-.meme-item .mo .likes{font-family:'Space Mono';font-size:10px;color:var(--neon)}
+.meme-item .mo .likes{font-family:'Space Mono';font-size:10px;color:#ff4466;display:flex;align-items:center;gap:4px}
+.meme-item .mo .likes::before{content:'\2764\FE0F';font-size:12px;animation:heart-pulse 1.2s ease-in-out infinite}
+.meme-item .meme-flame{position:absolute;top:10px;right:10px;font-size:20px;animation:flame-bob 1.5s ease-in-out infinite;z-index:3}
+@keyframes flame-bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.1)}}
 .meme-feat{grid-column:span 2;grid-row:span 2}
 .meme-feat img{height:100%;min-height:420px}
 
+/* ═══════════════════════════════════════════
+   VIDEO SECTION
+   ═══════════════════════════════════════════ */
 .vid-box{border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);background:rgba(8,12,28,0.5);box-shadow:var(--vid-shadow);position:relative}
 .vid-box video{width:100%;display:block;border:none;max-height:540px}
 .vid-ctrl{position:absolute;bottom:8px;right:8px;display:flex;gap:6px;z-index:5}
 .vid-ctrl button{width:28px;height:28px;border-radius:6px;background:rgba(0,0,0,0.6);border:1px solid rgba(0,240,255,0.12);color:var(--neon);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
 .vid-ctrl button:hover{background:rgba(0,240,255,0.12)}
 
+/* ═══════════════════════════════════════════
+   COUNTDOWN TIMER
+   ═══════════════════════════════════════════ */
 .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:500px;margin:28px auto 0}
 .cd-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:18px 12px;text-align:center;backdrop-filter:blur(10px)}
 .cd-item .cd-num{font-family:'Orbitron';font-size:clamp(22px,3vw,36px);font-weight:800;color:var(--neon);line-height:1;text-shadow:0 0 10px rgba(0,240,255,0.3)}
 .cd-item .cd-label{font-family:'Rajdhani';font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
-.cd-sep{font-family:'Orbitron';font-size:28px;color:var(--neon-p);display:flex;align-items:center;justify-content:center}
 
-.modal-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);opacity:0;transition:opacity .3s}
+/* ═══════════════════════════════════════════
+   MODALS
+   ═══════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(15px);opacity:0;transition:opacity .3s}
 .modal-overlay.active{display:flex;opacity:1}
 .modal-box{background:rgba(8,12,28,0.95);border:1px solid rgba(0,240,255,0.12);border-radius:12px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;position:relative;transform:translateY(20px);transition:transform .3s}
 .modal-overlay.active .modal-box{transform:translateY(0)}
@@ -247,6 +512,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .meme-overlay.active img{transform:scale(1)}
 .meme-overlay .mm-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,68,102,0.1);border:1px solid rgba(255,68,102,0.2);color:#ff4466;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
+/* ═══════════════════════════════════════════
+   CARDS / STATS / CTA
+   ═══════════════════════════════════════════ */
 .c3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .card-inner{padding:24px}
 .card-inner img{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;opacity:.6}
@@ -260,16 +528,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .cta-box h3{font-family:'Orbitron';font-size:clamp(18px,2.2vw,28px);font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:linear-gradient(90deg,#00F0FF,#BC13FE);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .cta-box p{font-family:'Rajdhani';font-size:14px;color:var(--text);margin-top:8px;margin-bottom:20px;opacity:.8}
 
+/* ═══════════════════════════════════════════
+   COMMUNITY
+   ═══════════════════════════════════════════ */
 .cg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .ccard{padding:22px;text-align:center;text-decoration:none;display:block;transition:.3s}
 .ccard svg{width:26px;height:26px;margin-bottom:10px}
 .ccard h4{font-family:'Orbitron';font-size:12px;font-weight:700;color:var(--text-bright);margin-bottom:4px}
 .ccard p{font-size:11px;color:var(--text);line-height:1.45;opacity:.8}
 
+/* ═══════════════════════════════════════════
+   SOCIAL EMBEDS
+   ═══════════════════════════════════════════ */
 .embed-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
-.embed-box{border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);min-height:480px;background:rgba(8,12,28,0.4)}
-.embed-box iframe,.embed-box blockquote{width:100%;height:480px;border:none;display:block}
 
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
 .footer{background:rgba(0,0,0,0.8);position:relative;border-top:1px solid rgba(0,240,255,0.05);backdrop-filter:blur(10px)}
 .fg{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;padding:48px 0}
 .fb img{width:32px;height:32px;border-radius:50%;margin-bottom:10px}
@@ -281,6 +556,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .fc a:hover{color:var(--neon)}
 .fbt{padding:18px 0;border-top:1px solid rgba(0,240,255,0.05);display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);flex-wrap:wrap;gap:10px}
 
+/* ═══════════════════════════════════════════
+   CHATBOT
+   ═══════════════════════════════════════════ */
 .chw{position:fixed;bottom:20px;right:20px;z-index:2000}
 .cht{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#0077ff);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(0,240,255,0.35);transition:.3s;color:#000;border:none;cursor:pointer;flex-shrink:0}
 .cht:active{box-shadow:0 0 40px rgba(0,240,255,0.5);transform:scale(0.95)}
@@ -303,26 +581,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .ci input::placeholder{color:var(--muted);font-size:11px}
 .ci button{width:34px;height:34px;border-radius:8px;background:#00F0FF;color:#000;display:flex;align-items:center;justify-content:center;font-size:14px;border:none;cursor:pointer;flex-shrink:0}
 
+/* ═══════════════════════════════════════════
+   WEBSOCKET STATUS BAR
+   ═══════════════════════════════════════════ */
 .wsb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--wsb-bg);border-top:1px solid rgba(0,240,255,0.08);z-index:999;display:flex;align-items:center;justify-content:center;gap:16px;font-family:'Space Mono';font-size:9px;text-transform:uppercase;letter-spacing:.08em;backdrop-filter:blur(10px);transition:background .3s}
 .wsb .wsd{width:5px;height:5px;border-radius:50%;background:#39FF14;box-shadow:0 0 4px #39FF14}
 .wsb .wsd.off{background:#ff4466;box-shadow:0 0 4px #ff4466}
 .wsb .wsl{color:var(--muted)}
 .wsb .wsv{color:var(--neon)}
 
-.theme-btn{position:fixed;bottom:60px;right:20px;z-index:2001;width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--neon);font-size:18px;box-shadow:0 0 15px rgba(0,240,255,0.1)}
+/* ═══════════════════════════════════════════
+   THEME TOGGLE (moved to menu, but keep style)
+   ═══════════════════════════════════════════ */
+.theme-btn{position:fixed;bottom:60px;right:20px;z-index:2001;width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--neon);font-size:18px;box-shadow:0 0 15px rgba(0,240,255,0.1)}
 .theme-btn:hover{transform:scale(1.1);box-shadow:0 0 25px rgba(0,240,255,0.2)}
 
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════ */
 .toast-wrap{position:fixed;top:80px;right:20px;z-index:6000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .toast{pointer-events:auto;background:rgba(8,12,28,0.95);border:1px solid rgba(0,240,255,0.15);border-left:4px solid var(--neon);border-radius:8px;padding:12px 16px;max-width:320px;backdrop-filter:blur(10px);transform:translateX(120%);transition:transform .4s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 .toast.show{transform:translateX(0)}
 .toast.toast-warn{border-left-color:#ffaa00}
 .toast.toast-err{border-left-color:#ff4466}
+.toast.toast-success{border-left-color:#39FF14}
 .toast-title{font-family:'Orbitron';font-size:10px;color:var(--text-bright);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
 .toast-body{font-size:11px;color:var(--text);line-height:1.4}
 .toast-time{font-family:'Space Mono';font-size:9px;color:var(--muted);margin-top:4px}
 
+/* ═══════════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════════ */
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,0.2),transparent)}
 
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
 @media(max-width:1024px){
   .dex-grid{grid-template-columns:1fr}
   .dex-frame{min-height:400px}
@@ -333,6 +627,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   .embed-row{grid-template-columns:1fr}
 }
 @media(max-width:768px){
+  .nav{height:52px}
+  .ni{padding:0 14px}
+  .nb span{font-size:10px}
+  .nb img{width:28px;height:28px}
   .nl{display:none}
   .nmb{display:flex}
   .hero h1{font-size:clamp(24px,8vw,48px)}
@@ -348,7 +646,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   .meme-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .meme-item img{height:160px}
   .meme-feat{grid-column:span 2;grid-row:span 1}
-  .meme-feat img{min-height:160px}
+  .meme-feat img{min-height:160px;height:160px}
   .sp{padding:48px 0}
   .sh{margin-bottom:32px}
   .sh h2{font-size:clamp(18px,5vw,28px)}
@@ -358,6 +656,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   .cd-grid{grid-template-columns:repeat(4,1fr);gap:8px}
   .cd-item{padding:12px 8px}
   .theme-btn{bottom:52px;right:12px;width:38px;height:38px}
+  .ud-drawer{width:100%;left:0;transform:translateY(100%);border-left:none;border-top:1px solid rgba(0,240,255,0.1);border-radius:20px 20px 0 0;top:auto;height:85vh}
+  .ud-drawer.active{transform:translateY(0)}
+  .wm-overlay{align-items:flex-end;padding:0}
+  .wm-box{border-radius:20px 20px 0 0;max-width:100%;transform:translateY(100%)}
+  .wm-overlay.active .wm-box{transform:translateY(0)}
+  .card-inner img{height:auto;min-height:120px}
 }
 @media(max-width:480px){
   .hero-inner{padding:90px 16px 40px}
@@ -367,23 +671,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   .scard .n{font-size:20px}
   .meme-grid{grid-template-columns:1fr 1fr}
   .tx-row{font-size:9px}
+  .game-hero .gh-body h3{font-size:8px}
 }
 </style>
 <base target="_blank">
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════
+     BACKGROUND VIDEO
+     ═══════════════════════════════════════════ -->
 <video id="bgVideo" autoplay muted loop playsinline poster="images/infinity-glow.jpg" preload="auto" onerror="this.style.display='none'">
   <source src="images/bg-anime-space.mp4" type="video/mp4">
 </video>
 <div id="videoOverlay"></div>
 <div id="videoFallback"></div>
 
+<!-- ═══════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════ -->
 <nav class="nav" id="mainNav">
   <div class="ni">
     <a href="#" class="nb">
-      <img src="images/logo.png" alt="Infinite Coin HQ Logo" onerror="this.style.display='none'">
-      <span>INFINITE COIN HQ</span>
+      <img src="images/logo.png" alt="Infinite Coin HQ Logo" width="32" height="32" decoding="async" onerror="this.style.display='none'">
+      <span>INFINITE<br>COIN HQ</span>
     </a>
     <ul class="nl">
       <li><a href="#hero">Hero</a></li>
@@ -393,27 +704,114 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
       <li><a href="#pump">Pump</a></li>
       <li><a href="#social">Social</a></li>
     </ul>
-    <div style="display:flex;align-items:center;gap:12px">
-      <button type="button" class="btn-b" style="padding:9px 18px;font-size:10px" id="walletBtn" onclick="connectWallet()">
+    <div style="display:flex;align-items:center;gap:10px">
+      <!-- Desktop Wallet Button -->
+      <button type="button" class="btn-b" style="padding:9px 18px;font-size:10px" id="walletBtnDesktop" onclick="openWalletModal()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
         <span id="wt">CONNECT WALLET</span>
       </button>
-      <button type="button" class="nmb" onclick="toggleMenu()" aria-label="Menu">
+      <!-- Mobile Wallet Icon -->
+      <button type="button" class="btn-wallet-icon" id="walletBtnMobile" onclick="openWalletModal()" style="display:none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
+      </button>
+      <button type="button" class="nmb" onclick="toggleUtilityDrawer()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </nav>
 
-<div class="mobm" id="mobMenu">
-  <a href="#hero" onclick="toggleMenu()">Hero</a>
-  <a href="#trade" onclick="toggleMenu()">Trade</a>
-  <a href="#games" onclick="toggleMenu()">Games</a>
-  <a href="#memes" onclick="toggleMenu()">Memes</a>
-  <a href="#pump" onclick="toggleMenu()">Pump.fun</a>
-  <a href="#social" onclick="toggleMenu()">Social</a>
+<!-- ═══════════════════════════════════════════
+     UTILITY DRAWER (3-dot menu)
+     ═══════════════════════════════════════════ -->
+<div class="ud-overlay" id="udOverlay" onclick="toggleUtilityDrawer()"></div>
+<div class="ud-drawer" id="udDrawer">
+  <div class="ud-header">
+    <h3>MENU</h3>
+    <button class="ud-close" onclick="toggleUtilityDrawer()">&times;</button>
+  </div>
+  <div class="ud-body">
+    <button class="ud-item" onclick="shareSite();toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      <span>Share Site</span>
+    </button>
+    <button class="ud-item" onclick="toggleTheme();toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span>Dark/Light Mode</span>
+      <span class="ud-tag" id="themeTag">DARK</span>
+    </button>
+    <a class="ud-item" href="https://solana.fm/address/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" onclick="toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <span>View on Explorer</span>
+    </a>
+    <button class="ud-item" onclick="copyCA();toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span>Copy Contract Address</span>
+    </button>
+    <button class="ud-item" onclick="refreshData();toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <span>Refresh Data</span>
+    </button>
+    <button class="ud-item" onclick="toggleNotifications();toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Notification Settings</span>
+      <span class="ud-tag" id="notifTag">ON</span>
+    </button>
+    <div class="ud-divider"></div>
+    <button class="ud-item" onclick="showComingSoon('Export Session','Export wallet transaction history coming soon!');toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Export Session</span>
+    </button>
+    <button class="ud-item" onclick="showComingSoon('Help / Tutorial','Quick guide for new users coming soon!');toggleUtilityDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Help / Tutorial</span>
+    </button>
+  </div>
+  <div class="ud-footer">
+    INFINITE COIN HQ v1.0 &bull; POWERED BY SOLANA
+  </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     WALLET CONNECT MODAL
+     ═══════════════════════════════════════════ -->
+<div class="wm-overlay" id="wmOverlay" onclick="if(event.target===this)closeWalletModal()">
+  <div class="wm-box">
+    <button type="button" class="wm-close" onclick="closeWalletModal()">&times;</button>
+    <div class="wm-body">
+      <h2>CONNECT WALLET</h2>
+      <p>Choose your preferred Solana wallet</p>
+      <a class="wm-option" href="https://phantom.app/ul/v1/connect" target="_blank" rel="noopener noreferrer" onclick="closeWalletModal()">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#5340ff,#ab9aff);display:flex;align-items:center;justify-content:center;color:#fff;font-family:Orbitron;font-size:10px;font-weight:700">P</div>
+        <div class="wm-info">
+          <div class="wm-name">PHANTOM</div>
+          <div class="wm-desc">Most popular Solana wallet</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="wm-option" href="https://solflare.com/ul/v1/connect" target="_blank" rel="noopener noreferrer" onclick="closeWalletModal()">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#ff6b00,#ff9e00);display:flex;align-items:center;justify-content:center;color:#fff;font-family:Orbitron;font-size:10px;font-weight:700">S</div>
+        <div class="wm-info">
+          <div class="wm-name">SOLFLARE</div>
+          <div class="wm-desc">Secure Solana wallet</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="wm-option" href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" onclick="closeWalletModal()">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#00d4aa,#00f0ff);display:flex;align-items:center;justify-content:center;color:#000;font-family:Orbitron;font-size:10px;font-weight:700">J</div>
+        <div class="wm-info">
+          <div class="wm-name">JUPITER</div>
+          <div class="wm-desc">DEX + Wallet integration</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
 <section class="hero" id="hero">
   <div class="hero-inner">
     <h1>
@@ -447,6 +845,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     DEX TRADING HQ
+     ═══════════════════════════════════════════ -->
 <section class="sp" id="trade">
   <div class="cw">
     <div class="sh">
@@ -501,6 +902,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <div class="divider"></div>
 
+<!-- ═══════════════════════════════════════════
+     FLOW BANNER
+     ═══════════════════════════════════════════ -->
 <section class="sec" id="flow">
   <div class="bg-img" style="background-image:url('images/bubbles.jpg')"></div>
   <div class="bg-overlay"></div>
@@ -536,6 +940,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <div class="divider"></div>
 
+<!-- ═══════════════════════════════════════════
+     GAMES — ARCADE STYLE
+     ═══════════════════════════════════════════ -->
 <section class="sec" id="games">
   <div class="bg-img" style="background-image:url('images/arena.jpg')"></div>
   <div class="bg-overlay"></div>
@@ -549,9 +956,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
         </div>
 
         <div style="max-width:420px;margin:0 auto 28px" onclick="openGameModal()">
-          <div class="game-card glass">
-            <img src="images/game-controller.jpg" alt="Infinite Coin P2E Game" loading="eager" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="gc-body">
+          <div class="game-hero">
+            <img src="images/game-controller.jpg" alt="Infinite Coin P2E Game" width="420" height="200" decoding="async" loading="eager" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Game Controller')">
+            <div class="gh-body">
               <h3>INFINITE COIN GAMES</h3>
               <p>Tap to play Infinite Jumper & Infinite Runners. Earn $INF while you play.</p>
               <span class="badge"><span class="dot-g"></span> TAP TO PLAY</span>
@@ -560,20 +967,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
         </div>
 
         <div class="c3">
-          <div class="glass card-inner">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:12px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <h3>INFINITE RUNNER</h3>
-            <p>Endless runner meets blockchain rewards. Dash through infinite worlds, collect $INF.</p>
+          <div class="arcade-card">
+            <div class="ac-body">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:12px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6">INFINITE RUNNER</h3>
+              <p style="font-size:12px;color:var(--text);line-height:1.5">Endless runner meets blockchain rewards. Dash through infinite worlds, collect $INF.</p>
+            </div>
           </div>
-          <div class="glass-p card-inner">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:12px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            <h3>INFINITE JUMPER</h3>
-            <p>Jump to the moon. Platformer with $INF rewards at every level.</p>
+          <div class="arcade-card">
+            <div class="ac-body">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:12px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-bottom:10px;line-height:1.6">INFINITE JUMPER</h3>
+              <p style="font-size:12px;color:var(--text);line-height:1.5">Jump to the moon. Platformer with $INF rewards at every level.</p>
+            </div>
           </div>
-          <div class="glass card-inner">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:12px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-            <h3>INFINITE PUZZLE</h3>
-            <p>Match-3 with crypto twist. Chain combos for $INF multiplier rewards.</p>
+          <div class="arcade-card">
+            <div class="ac-body">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:12px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6">INFINITE PUZZLE</h3>
+              <p style="font-size:12px;color:var(--text);line-height:1.5">Match-3 with crypto twist. Chain combos for $INF multiplier rewards.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -581,22 +994,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- GAME MODAL -->
 <div class="modal-overlay" id="gameModal" onclick="if(event.target===this)closeGameModal()">
   <div class="modal-box">
     <button type="button" class="modal-close" onclick="closeGameModal()">&times;</button>
     <div class="modal-body">
       <h2>CHOOSE YOUR GAME</h2>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="glass card-inner" style="text-align:center;cursor:pointer" onclick="showComingSoon('Infinite Jumper','Platformer launching Q3 2026. Connect your wallet to earn $INF!')">
+        <div class="arcade-card" style="text-align:center;cursor:pointer;padding:24px" onclick="showComingSoon('Infinite Jumper','Platformer launching Q3 2026. Connect your wallet to earn $INF!')">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-          <h3 style="margin-top:12px">INFINITE JUMPER</h3>
-          <p>Jump to the moon. Earn $INF per level.</p>
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-top:12px;line-height:1.6">INFINITE JUMPER</h3>
+          <p style="font-size:12px;color:var(--text);margin-top:8px">Jump to the moon. Earn $INF per level.</p>
           <span class="badge" style="margin-top:10px">LAUNCH</span>
         </div>
-        <div class="glass-p card-inner" style="text-align:center;cursor:pointer" onclick="showComingSoon('Infinite Runners','Endless runner launching Q3 2026. Connect your wallet to earn $INF!')">
+        <div class="arcade-card" style="text-align:center;cursor:pointer;padding:24px" onclick="showComingSoon('Infinite Runners','Endless runner launching Q3 2026. Connect your wallet to earn $INF!')">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <h3 style="margin-top:12px">INFINITE RUNNERS</h3>
-          <p>Endless runner. Collect coins. Earn $INF.</p>
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-top:12px;line-height:1.6">INFINITE RUNNERS</h3>
+          <p style="font-size:12px;color:var(--text);margin-top:8px">Endless runner. Collect coins. Earn $INF.</p>
           <span class="badge" style="margin-top:10px;border-color:rgba(188,19,254,.2);color:#BC13FE;background:rgba(188,19,254,.06)">LAUNCH</span>
         </div>
       </div>
@@ -604,6 +1018,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     PUMP.FUN — DEFI/TERMINAL STYLE
+     ═══════════════════════════════════════════ -->
 <section class="sp" id="pump">
   <div class="cw">
     <div class="sh">
@@ -612,8 +1029,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
       <p>$INFINITE started on Pump.fun. Join the pump.</p>
     </div>
     <div style="max-width:560px;margin:0 auto">
-      <a href="https://join.pump.fun/HSag/kuu4214i" target="_blank" rel="noopener noreferrer" class="pump-card">
-        <img src="images/to-the-moon.jpg" alt="To The Moon" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
+      <a href="https://join.pump.fun/HSag/kuu4214i" target="_blank" rel="noopener noreferrer" class="pump-terminal">
+        <img src="images/to-the-moon.jpg" alt="To The Moon" width="560" height="220" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'To The Moon')">
         <div class="pump-body">
           <h3>JOIN THE PUMP</h3>
           <p>Click to join the Infinite Coin community on Pump.fun. Help pump $INFINITE to the moon.</p>
@@ -626,6 +1043,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <div class="divider"></div>
 
+<!-- ═══════════════════════════════════════════
+     MEMES — VIRAL STYLE
+     ═══════════════════════════════════════════ -->
 <section class="sec" id="memes">
   <div class="bg-img" style="background-image:url('images/bg-digital-landscape.png')"></div>
   <div class="bg-overlay"></div>
@@ -640,24 +1060,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
         <div class="meme-grid">
           <div class="meme-item meme-feat" onclick="openMemeModal('images/image23.png')">
-            <img src="images/image23.png" alt="Diamond Hand" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="mo"><h4>DIAMOND HANDS OK</h4><div class="likes">&#9829; 12.4K &#183; Featured</div></div>
+            <img src="images/image23.png" alt="Diamond Hand" width="400" height="420" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Diamond Hands')">
+            <div class="meme-flame">&#128293;</div>
+            <div class="mo"><h4>DIAMOND HANDS OK</h4><div class="meme-likes">12.4K &#183; Featured</div></div>
           </div>
           <div class="meme-item" onclick="openMemeModal('images/meme-dragon-rider.jpg')">
-            <img src="images/meme-dragon-rider.jpg" alt="Dragon Rider" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="mo"><h4>DRAGON RIDER</h4><div class="likes">&#9829; 8.7K</div></div>
+            <img src="images/meme-dragon-rider.jpg" alt="Dragon Rider" width="200" height="200" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Dragon Rider')">
+            <div class="meme-flame">&#128293;</div>
+            <div class="mo"><h4>DRAGON RIDER</h4><div class="meme-likes">8.7K</div></div>
           </div>
           <div class="meme-item" onclick="openMemeModal('images/meme-hodl.jpg')">
-            <img src="images/meme-hodl.jpg" alt="HODL" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="mo"><h4>HODL TO INFINITY</h4><div class="likes">&#9829; 15.2K &#183; #1</div></div>
+            <img src="images/meme-hodl.jpg" alt="HODL" width="200" height="200" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'HODL')">
+            <div class="meme-flame">&#128293;</div>
+            <div class="mo"><h4>HODL TO INFINITY</h4><div class="meme-likes">15.2K &#183; #1</div></div>
           </div>
           <div class="meme-item" onclick="openMemeModal('images/meme-we-are.jpg')">
-            <img src="images/meme-we-are.jpg" alt="We Are" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="mo"><h4>WE ARE INFINITE</h4><div class="likes">&#9829; 6.3K</div></div>
+            <img src="images/meme-we-are.jpg" alt="We Are" width="200" height="200" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'We Are Infinite')">
+            <div class="meme-flame">&#128293;</div>
+            <div class="mo"><h4>WE ARE INFINITE</h4><div class="meme-likes">6.3K</div></div>
           </div>
           <div class="meme-item" onclick="openMemeModal('images/meme-surf.jpg')">
-            <img src="images/meme-surf.jpg" alt="Ride" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <div class="mo"><h4>RIDE THE WAVE</h4><div class="likes">&#9829; 9.1K</div></div>
+            <img src="images/meme-surf.jpg" alt="Ride" width="200" height="200" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Ride The Wave')">
+            <div class="meme-flame">&#128293;</div>
+            <div class="mo"><h4>RIDE THE WAVE</h4><div class="meme-likes">9.1K</div></div>
           </div>
         </div>
 
@@ -669,11 +1094,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- MEME FULL-SCREEN MODAL -->
 <div class="meme-overlay" id="memeOverlay" onclick="if(event.target===this)closeMemeModal()">
   <button type="button" class="mm-close" onclick="closeMemeModal()">&times;</button>
   <img src="" alt="Meme" id="memeFullImg" loading="eager">
 </div>
 
+<!-- ═══════════════════════════════════════════
+     VIDEO — infinitecoin-intro.mp4
+     ═══════════════════════════════════════════ -->
 <section class="sp">
   <div class="cw">
     <div class="sh">
@@ -682,7 +1111,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
       <p>Experience the energy.</p>
     </div>
     <div class="vid-box glass">
-      <video id="introVideo" src="images/infinitecoin-intro.mp4" autoplay muted loop playsinline poster="images/infinity-glow.jpg" preload="metadata"></video>
+      <video id="introVideo" src="images/infinitecoin-intro.mp4" autoplay muted loop playsinline poster="images/infinity-glow.jpg" preload="metadata" width="100%" height="540"></video>
       <div class="vid-ctrl">
         <button onclick="toggleIntroVideo()" id="vidPlayBtn" title="Play/Pause">&#10074;&#10074;</button>
         <button onclick="toggleIntroMute()" id="vidMuteBtn" title="Mute/Unmute">&#128263;</button>
@@ -694,6 +1123,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     STAKING — DEFI DASHBOARD STYLE
+     ═══════════════════════════════════════════ -->
 <section class="sec" id="staking">
   <div class="bg-img" style="background-image:url('images/bg-moon-mission.png')"></div>
   <div class="bg-overlay"></div>
@@ -717,10 +1149,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
         </div>
 
         <div class="s4">
-          <div class="scard glass"><div class="n" style="color:var(--neon)">32%</div><div class="l">APY</div></div>
-          <div class="scard glass"><div class="n">$1.2M+</div><div class="l">Total Staked</div></div>
-          <div class="scard glass-p"><div class="n">2,840+</div><div class="l">Stakers</div></div>
-          <div class="scard glass"><div class="n" style="color:var(--neon)">$380K+</div><div class="l">Rewards Paid</div></div>
+          <div class="defi-card scard"><div class="df-stat" style="color:#39FF14">32%</div><div class="df-label">APY</div></div>
+          <div class="defi-card scard"><div class="df-stat">$1.2M+</div><div class="df-label">Total Staked</div></div>
+          <div class="defi-card scard"><div class="df-stat" style="color:#BC13FE">2,840+</div><div class="df-label">Stakers</div></div>
+          <div class="defi-card scard"><div class="df-stat" style="color:#00F0FF">$380K+</div><div class="df-label">Rewards Paid</div></div>
         </div>
         <div style="text-align:center">
           <button type="button" class="btn-p" onclick="showComingSoon('Staking Platform','Staking launches Q3 2026. Connect wallet to get early access and notifications!')">STAKE $INFINITE</button>
@@ -730,6 +1162,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     ECOSYSTEM — NFT GALLERY STYLE
+     ═══════════════════════════════════════════ -->
 <section class="sec" id="ecosystem">
   <div class="bg-img" style="background-image:url('images/bg-bubble-map.png')"></div>
   <div class="bg-overlay"></div>
@@ -741,23 +1176,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
           <h2 class="neon-mixed">THREE PILLARS. INFINITE POWER.</h2>
         </div>
         <div class="c3">
-          <div class="glass card-inner" style="position:relative">
-            <span class="badge" style="position:absolute;top:16px;right:16px;font-size:8px">32% APY</span>
-            <img src="images/tech-figure.png" alt="DeFi" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <h3>DEFI POWERHOUSE</h3>
-            <p>Staking, yield farming, liquidity &#8212; all natively integrated.</p>
+          <div class="nft-card card-inner">
+            <span class="nft-rarity">32% APY</span>
+            <div class="nft-img-wrap">
+              <img src="images/tech-figure.png" alt="DeFi" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'DeFi Powerhouse')">
+            </div>
+            <h3 class="nft-title">DEFI POWERHOUSE</h3>
+            <p style="font-size:12px;color:var(--text);line-height:1.5">Staking, yield farming, liquidity &#8212; all natively integrated.</p>
           </div>
-          <div class="glass-p card-inner" style="position:relative">
-            <span class="badge" style="position:absolute;top:16px;right:16px;border-color:rgba(188,19,254,.2);color:#BC13FE;background:rgba(188,19,254,.06);font-size:8px">GENESIS</span>
-            <img src="images/knights.png" alt="NFTs" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <h3>EXCLUSIVE NFTs</h3>
-            <p>Genesis holders unlock airdrops, beta, governance.</p>
+          <div class="nft-card card-inner">
+            <span class="nft-rarity" style="background:rgba(188,19,254,0.9)">GENESIS</span>
+            <div class="nft-img-wrap">
+              <img src="images/knights.png" alt="NFTs" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Exclusive NFTs')">
+            </div>
+            <h3 class="nft-title">EXCLUSIVE NFTs</h3>
+            <p style="font-size:12px;color:var(--text);line-height:1.5">Genesis holders unlock airdrops, beta, governance.</p>
           </div>
-          <div class="glass card-inner" style="position:relative">
-            <span class="badge" style="position:absolute;top:16px;right:16px;font-size:8px">DAO</span>
-            <img src="images/mascot.png" alt="Community" loading="lazy" onerror="this.src='images/infinity-glow.jpg'">
-            <h3>COMMUNITY DRIVEN</h3>
-            <p>Decentralized governance. Vote. Shape the future.</p>
+          <div class="nft-card card-inner">
+            <span class="nft-rarity" style="background:rgba(0,240,255,0.9);color:#000">DAO</span>
+            <div class="nft-img-wrap">
+              <img src="images/mascot.png" alt="Community" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Community Driven')">
+            </div>
+            <h3 class="nft-title">COMMUNITY DRIVEN</h3>
+            <p style="font-size:12px;color:var(--text);line-height:1.5">Decentralized governance. Vote. Shape the future.</p>
           </div>
         </div>
       </div>
@@ -765,6 +1206,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     STATS + CTA
+     ═══════════════════════════════════════════ -->
 <section class="sec">
   <div class="bg-img" style="background-image:url('images/to-the-moon.jpg');opacity:.06"></div>
   <div style="position:absolute;inset:0;background:rgba(0,0,0,.92);z-index:0"></div>
@@ -772,10 +1216,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
     <div class="sp">
       <div class="cw">
         <div class="s4">
-          <div class="scard glass"><div class="n" style="color:var(--neon)" id="statMcap">---</div><div class="l">Market Cap</div></div>
-          <div class="scard glass-p"><div class="n">18,420+</div><div class="l">Holders</div></div>
-          <div class="scard glass"><div class="n" style="color:var(--neon-p)">32%</div><div class="l">APY</div></div>
-          <div class="scard glass"><div class="n">4,200+</div><div class="l">Beta Players</div></div>
+          <div class="defi-card scard"><div class="df-stat" style="color:#00F0FF" id="statMcap">---</div><div class="df-label">Market Cap</div></div>
+          <div class="defi-card scard"><div class="df-stat">18,420+</div><div class="df-label">Holders</div></div>
+          <div class="defi-card scard"><div class="df-stat" style="color:#BC13FE">32%</div><div class="df-label">APY</div></div>
+          <div class="defi-card scard"><div class="df-stat">4,200+</div><div class="df-label">Beta Players</div></div>
         </div>
         <div class="cta-box">
           <h3>READY TO GO INFINITE?</h3>
@@ -789,6 +1233,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <div class="divider"></div>
 
+<!-- ═══════════════════════════════════════════
+     SOCIAL — LIVE FEEDS WITH EMBEDS
+     ═══════════════════════════════════════════ -->
 <section class="sp" id="social">
   <div class="cw">
     <div class="sh">
@@ -798,35 +1245,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
     </div>
 
     <div class="embed-row">
-      <div class="embed-box glass">
-        <div style="padding:16px;border-bottom:1px solid rgba(0,240,255,0.06)">
-          <div style="display:flex;align-items:center;gap:10px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            <div>
-              <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">X (Twitter) Live Feed</div>
-            </div>
+      <!-- X / Twitter Timeline -->
+      <div class="social-feed-card">
+        <div class="sf-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <div>
+            <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+            <div style="font-size:10px;color:var(--muted)">X (Twitter) Live Feed</div>
           </div>
         </div>
-        <div style="height:440px;overflow-y:auto;padding:12px" id="xFeed">
-          <div style="text-align:center;padding:40px 20px">
+        <div class="sf-body" id="xFeedContainer">
+          <div class="sf-fallback" id="xFallback">
             <div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">Loading @infinitecoinhq feed...</div>
             <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>
           </div>
         </div>
       </div>
-      <div class="embed-box glass">
-        <div style="padding:16px;border-bottom:1px solid rgba(0,240,255,0.06)">
-          <div style="display:flex;align-items:center;gap:10px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69A4.83 4.83 0 0 1 15.82 2.44V2h-3.45v16a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V8.78a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.83 1.54V6.83a4.85 4.85 0 0 1-1.07-.14z"/></svg>
-            <div>
-              <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">TikTok Live Feed</div>
-            </div>
+      <!-- TikTok -->
+      <div class="social-feed-card">
+        <div class="sf-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69A4.83 4.83 0 0 1 15.82 2.44V2h-3.45v16a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V8.78a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.83 1.54V6.83a4.85 4.85 0 0 1-1.07-.14z"/></svg>
+          <div>
+            <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+            <div style="font-size:10px;color:var(--muted)">TikTok Live Feed</div>
           </div>
         </div>
-        <div style="height:440px;overflow-y:auto;padding:12px">
-          <div style="text-align:center;padding:40px 20px">
+        <div class="sf-body">
+          <div class="sf-fallback">
             <div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">Loading @infinitecoinhq TikTok...</div>
             <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN TIKTOK</a>
           </div>
@@ -834,6 +1279,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
       </div>
     </div>
 
+    <div class="embed-row" style="margin-top:16px">
+      <!-- YouTube -->
+      <div class="social-feed-card">
+        <div class="sf-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <div>
+            <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+            <div style="font-size:10px;color:var(--muted)">YouTube Channel</div>
+          </div>
+        </div>
+        <div class="sf-body" style="padding:0">
+          <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed?listType=user_uploads&list=infinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px"></iframe>
+          <div class="sf-fallback" id="ytFallback" style="display:none;position:static;padding:40px">
+            <a href="https://youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE</a>
+          </div>
+        </div>
+      </div>
+      <!-- Instagram -->
+      <div class="social-feed-card">
+        <div class="sf-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <div>
+            <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+            <div style="font-size:10px;color:var(--muted)">Instagram Profile</div>
+          </div>
+        </div>
+        <div class="sf-body">
+          <div class="sf-fallback">
+            <div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">Follow @infinitecoinhq on Instagram</div>
+            <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">VIEW INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Community Links -->
     <div style="margin-top:36px">
       <div class="cg">
         <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
@@ -873,11 +1354,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <div class="divider"></div>
 
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
 <footer class="footer">
   <div class="cw">
     <div class="fg">
       <div class="fb">
-        <img src="images/logo.png" alt="Logo" onerror="this.style.display='none'">
+        <img src="images/logo.png" alt="Logo" width="32" height="32" decoding="async" onerror="this.style.display='none'">
         <h4>INFINITE COIN HQ</h4>
         <p>The next generation of memecoins. Built on Solana. Infinite Opportunities. Infinite Momentums.</p>
         <div class="fca">CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump</div>
@@ -911,10 +1395,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </footer>
 
+<!-- ═══════════════════════════════════════════
+     CHATBOT
+     ═══════════════════════════════════════════ -->
 <div class="chw">
   <div class="chwin" id="cWin">
     <div class="chh">
-      <img src="images/mascot.png" alt="" onerror="this.style.display='none'">
+      <img src="images/mascot.png" alt="" width="28" height="28" decoding="async" onerror="this.style.display='none'">
       <div>
         <div class="cn">INFINITE AI</div>
         <div class="cs"><span class="dot-g" style="width:5px;height:5px"></span> Online</div>
@@ -939,13 +1426,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </button>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     WEBSOCKET STATUS BAR
+     ═══════════════════════════════════════════ -->
 <div class="wsb" id="wsBar">
   <span class="wsd" id="wsDot"></span>
   <span class="wsl">WS:</span>
   <span class="wsv" id="wsStatus">CONNECTING</span>
   <span style="color:#333">|</span>
   <span class="wsl">API:</span>
-  <span class="wsv">JUPITER v6</span>
+  <span class="wsv">JUPITER V6</span>
   <span style="color:#333">|</span>
   <span class="wsl">CHAIN:</span>
   <span class="wsv">SOLANA</span>
@@ -954,6 +1444,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   <span class="wsv" id="wsVisitors">--</span>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     COMING SOON MODAL
+     ═══════════════════════════════════════════ -->
 <div class="modal-overlay" id="csModal" onclick="if(event.target===this)closeCsModal()">
   <div class="modal-box cs-modal">
     <button type="button" class="modal-close" onclick="closeCsModal()">&times;</button>
@@ -966,13 +1459,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     TOAST CONTAINER
+     ═══════════════════════════════════════════ -->
 <div class="toast-wrap" id="toastWrap"></div>
 
+<!-- THEME TOGGLE (hidden, moved to menu) -->
 <button type="button" class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
   <span id="themeIcon">&#9788;</span>
 </button>
 
+<!-- JAVASCRIPT -->
 <script>
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
 const CA='C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump';
 const JUPITER_ENDPOINTS=['https://api.jup.ag/price/v2?ids=','https://price.jup.ag/v6/price?ids=','https://api.jup.ag/price?ids='];
 const WS_URL=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'ws://localhost:3001':'wss://ws.infinitecoinhq.com';
@@ -980,6 +1481,134 @@ let ws=null,wsReconnectDelay=2000,wsMaxDelay=30000,wsConnected=false;
 let wsAttempts=0;
 const WS_MAX_SILENT=3;
 
+// ═══════════════════════════════════════════
+// IMAGE LOADING & FALLBACKS
+// ═══════════════════════════════════════════
+function handleImgError(img,title){
+  img.style.display='none';
+  const fallback=document.createElement('div');
+  fallback.className='img-fallback';
+  fallback.innerHTML='<span>'+(title||'Image')+'</span>';
+  if(img.parentNode)img.parentNode.insertBefore(fallback,img);
+}
+
+// Lazy load images below fold
+const lazyObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const img=entry.target;
+      if(img.dataset.src){
+        img.src=img.dataset.src;
+        img.removeAttribute('data-src');
+      }
+      lazyObserver.unobserve(img);
+    }
+  });
+},{rootMargin:'100px'});
+
+document.querySelectorAll('img[data-lazy]').forEach(img=>lazyObserver.observe(img));
+
+// ═══════════════════════════════════════════
+// MOBILE DETECTION — Switch wallet buttons
+// ═══════════════════════════════════════════
+function checkMobile(){
+  const isMobile=window.innerWidth<=768;
+  const desktopBtn=document.getElementById('walletBtnDesktop');
+  const mobileBtn=document.getElementById('walletBtnMobile');
+  if(desktopBtn&&mobileBtn){
+    desktopBtn.style.display=isMobile?'none':'inline-flex';
+    mobileBtn.style.display=isMobile?'flex':'none';
+  }
+}
+checkMobile();
+window.addEventListener('resize',checkMobile);
+
+// ═══════════════════════════════════════════
+// WALLET MODAL
+// ═══════════════════════════════════════════
+function openWalletModal(){
+  document.getElementById('wmOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeWalletModal(){
+  document.getElementById('wmOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// ═══════════════════════════════════════════
+// UTILITY DRAWER (3-dot menu)
+// ═══════════════════════════════════════════
+function toggleUtilityDrawer(){
+  const drawer=document.getElementById('udDrawer');
+  const overlay=document.getElementById('udOverlay');
+  const isOpen=drawer.classList.contains('active');
+  if(isOpen){
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow='';
+  }else{
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+  }
+}
+
+// Share Site
+function shareSite(){
+  if(navigator.share){
+    navigator.share({title:'Infinite Coin HQ',text:'Check out Infinite Coin HQ - The next generation memecoin on Solana!',url:location.href});
+  }else{
+    copyToClipboard(location.href);
+    showToast('Link Copied','Website URL copied to clipboard','success');
+  }
+}
+
+// Refresh Data
+function refreshData(){
+  fetchPrice();
+  if(ws&&ws.readyState===1){ws.close();}
+  setTimeout(connectWS,500);
+  showToast('Refreshing','Price data and WebSocket refreshed','success');
+}
+
+// Notification Settings
+let notifEnabled=localStorage.getItem('infinite_notifs')!=='false';
+function toggleNotifications(){
+  notifEnabled=!notifEnabled;
+  localStorage.setItem('infinite_notifs',notifEnabled);
+  const tag=document.getElementById('notifTag');
+  if(tag)tag.textContent=notifEnabled?'ON':'OFF';
+  showToast('Notifications',notifEnabled?'Price alerts enabled':'Price alerts disabled',notifEnabled?'success':'warn');
+}
+(function initNotifTag(){
+  const tag=document.getElementById('notifTag');
+  if(tag)tag.textContent=notifEnabled?'ON':'OFF';
+})();
+
+// ═══════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════
+function toggleTheme(){
+  const html=document.documentElement;
+  const current=html.getAttribute('data-theme');
+  const next=current==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+  const tag=document.getElementById('themeTag');
+  if(tag)tag.textContent=next==='dark'?'DARK':'LIGHT';
+}
+(function(){
+  const saved=localStorage.getItem('theme');
+  if(saved){
+    document.documentElement.setAttribute('data-theme',saved);
+    const tag=document.getElementById('themeTag');
+    if(tag)tag.textContent=saved==='dark'?'DARK':'LIGHT';
+  }
+})();
+
+// ═══════════════════════════════════════════
+// WEBSOCKET CLIENT
+// ═══════════════════════════════════════════
 function connectWS(){
   try{
     ws=new WebSocket(WS_URL);
@@ -1027,8 +1656,14 @@ function handleWSMessage(d){
     case 'tx':addTx(d.tx);break;
     case 'visitorCount':
       document.getElementById('vCounter').textContent=d.count;
-      document.getElementById('wsVisitors').textContent=d.count;break;
-    case 'priceAlert':showPriceAlert(d.direction,d.percent,d.price);break;
+      document.getElementById('wsVisitors').textContent=d.count;
+      localStorage.setItem('infinite_visitors',d.count);
+      break;
+    case 'priceAlert':
+      if(localStorage.getItem('infinite_notifs')!=='false'){
+        showPriceAlert(d.direction,d.percent,d.price);
+      }
+      break;
     case 'chatReply':addChat(d.reply,'bot');break;
   }
 }
@@ -1080,6 +1715,25 @@ function updateWSStatus(status,online){
   }
 }
 
+// ═══════════════════════════════════════════
+// VISITOR COUNTER FALLBACK
+// ═══════════════════════════════════════════
+function updateVisitorDisplay(){
+  const el=document.getElementById('wsVisitors');
+  const vEl=document.getElementById('vCounter');
+  if(!wsConnected){
+    const cached=localStorage.getItem('infinite_visitors');
+    const display=cached||'18,420+';
+    if(el)el.textContent=display;
+    if(vEl)vEl.textContent=display;
+  }
+}
+setInterval(updateVisitorDisplay,5000);
+updateVisitorDisplay();
+
+// ═══════════════════════════════════════════
+// JUPITER PRICE FALLBACK
+// ═══════════════════════════════════════════
 async function fetchPrice(){
   let lastErr='';
   for(let i=0;i<JUPITER_ENDPOINTS.length;i++){
@@ -1118,6 +1772,9 @@ async function fetchPrice(){
   }
 }
 
+// ═══════════════════════════════════════════
+// STATIC DATA
+// ═══════════════════════════════════════════
 const txData=[
   {t:'buy',a:'2,450 INF',v:'$11.92',tm:'2s'},{t:'sell',a:'1,200 INF',v:'$5.84',tm:'5s'},
   {t:'buy',a:'5,000 INF',v:'$24.35',tm:'8s'},{t:'buy',a:'850 INF',v:'$4.14',tm:'12s'},
@@ -1153,6 +1810,9 @@ document.getElementById('tTrack').innerHTML=doubled.map(f=>
   '<span class="ti '+(f.t==='buy'?'tbuy':'tsell')+'">'+f.tx+'</span>'
 ).join('');
 
+// ═══════════════════════════════════════════
+// COUNTDOWN TIMER
+// ═══════════════════════════════════════════
 (function(){
   const launchDate=new Date('2026-10-01T00:00:00Z').getTime();
   function updateCountdown(){
@@ -1178,6 +1838,81 @@ document.getElementById('tTrack').innerHTML=doubled.map(f=>
   setInterval(updateCountdown,1000);
 })();
 
+// ═══════════════════════════════════════════
+// SOCIAL EMBEDS WITH TIMEOUT FALLBACK
+// ═══════════════════════════════════════════
+(function loadXFeed(){
+  const container=document.getElementById('xFeedContainer');
+  const fallback=document.getElementById('xFallback');
+  if(!container)return;
+
+  let loaded=false;
+  const timeout=setTimeout(()=>{
+    if(!loaded&&fallback){
+      fallback.style.display='flex';
+      fallback.innerHTML='<div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">X feed unavailable</div><a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>';
+    }
+  },5000);
+
+  if(window.twttr){
+    renderX();
+    return;
+  }
+  const s=document.createElement('script');
+  s.src='https://platform.twitter.com/widgets.js';
+  s.onload=function(){
+    clearTimeout(timeout);
+    loaded=true;
+    renderX();
+  };
+  s.onerror=function(){
+    clearTimeout(timeout);
+    if(fallback){
+      fallback.style.display='flex';
+      fallback.innerHTML='<div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">X feed unavailable</div><a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>';
+    }
+  };
+  document.head.appendChild(s);
+
+  function renderX(){
+    if(!window.twttr||!container)return;
+    container.innerHTML='';
+    twttr.widgets.createTimeline(
+      {sourceType:'profile',screenName:'infinitecoinhq'},
+      container,
+      {height:440,theme:'dark',chrome:'noheader nofooter transparent'}
+    ).then(()=>{
+      loaded=true;
+      clearTimeout(timeout);
+    }).catch(()=>{
+      if(fallback){
+        fallback.style.display='flex';
+        fallback.innerHTML='<div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">X feed unavailable</div><a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>';
+      }
+    });
+  }
+})();
+
+// YouTube embed timeout
+(function(){
+  const iframe=document.getElementById('ytEmbed');
+  const fallback=document.getElementById('ytFallback');
+  if(!iframe)return;
+  setTimeout(()=>{
+    try{
+      if(iframe.contentWindow&&iframe.contentWindow.document&&iframe.contentWindow.document.body&&iframe.contentWindow.document.body.innerHTML===''){
+        iframe.style.display='none';
+        if(fallback)fallback.style.display='flex';
+      }
+    }catch(e){
+      // Cross-origin, can't check — assume it loaded
+    }
+  },6000);
+})();
+
+// ═══════════════════════════════════════════
+// COMING SOON MODAL
+// ═══════════════════════════════════════════
 function showComingSoon(title,desc){
   document.getElementById('csTitle').textContent=title||'Coming Soon';
   document.getElementById('csDesc').textContent=desc||'This feature is launching soon. Stay tuned!';
@@ -1189,11 +1924,14 @@ function closeCsModal(){
   document.body.style.overflow='';
 }
 
+// ═══════════════════════════════════════════
+// TOAST NOTIFICATIONS
+// ═══════════════════════════════════════════
 function showToast(title,body,type){
   const wrap=document.getElementById('toastWrap');
   const toast=document.createElement('div');
-  toast.className='toast toast-'+(type||'info');
-  if(type==='success')toast.style.borderLeftColor='#39FF14';
+  toast.className='toast';
+  if(type==='success')toast.classList.add('toast-success');
   else if(type==='warn')toast.classList.add('toast-warn');
   else if(type==='error')toast.classList.add('toast-err');
   const now=new Date();
@@ -1207,81 +1945,38 @@ function showToast(title,body,type){
   },6000);
 }
 
-async function connectWallet(){
-  try{
-    if(window.solana?.isPhantom){
-      const resp=await window.solana.connect();
-      const addr=resp.publicKey.toString();
-      document.getElementById('wt').textContent=addr.slice(0,4)+'...'+addr.slice(-4);
-      const btn=document.getElementById('walletBtn');
-      btn.style.background='linear-gradient(135deg,#BC13FE,#5500aa)';
-      btn.style.boxShadow='0 0 30px rgba(188,19,254,.35)';
-      showToast('Wallet Connected',addr.slice(0,8)+'...'+addr.slice(-8),'success');
-    }else{
-      window.open('https://phantom.app/download','_blank','noopener,noreferrer');
-    }
-  }catch(e){
-    console.error('Wallet error:',e);
-    showToast('Wallet Error','Could not connect. Try again.','error');
+// ═══════════════════════════════════════════
+// COPY FUNCTIONS
+// ═══════════════════════════════════════════
+function copyToClipboard(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text);
+  }else{
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   }
 }
-window.addEventListener('load',()=>{
-  if(window.solana?.isConnected){
-    const addr=window.solana.publicKey.toString();
-    document.getElementById('wt').textContent=addr.slice(0,4)+'...'+addr.slice(-4);
-    const btn=document.getElementById('walletBtn');
-    btn.style.background='linear-gradient(135deg,#BC13FE,#5500aa)';
-  }
-});
 
+function copyCA(){
+  copyToClipboard(CA);
+  showToast('Copied!','Contract address copied to clipboard.','success');
+}
+
+// ═══════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════
 function openGameModal(){document.getElementById('gameModal').classList.add('active');document.body.style.overflow='hidden'}
 function closeGameModal(){document.getElementById('gameModal').classList.remove('active');document.body.style.overflow=''}
 function openMemeModal(src){document.getElementById('memeFullImg').src=src;document.getElementById('memeOverlay').classList.add('active');document.body.style.overflow='hidden'}
 function closeMemeModal(){document.getElementById('memeOverlay').classList.remove('active');document.body.style.overflow=''}
 
-function copyCA(){
-  navigator.clipboard.writeText(CA);
-  const btn=document.querySelector('.cpbtn');
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-  showToast('Copied!','Contract address copied to clipboard.','success');
-  setTimeout(()=>btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',2000);
-}
-
-function toggleMenu(){const m=document.getElementById('mobMenu');m.style.display=m.style.display==='flex'?'none':'flex';m.style.flexDirection='column'}
-
-function toggleTheme(){
-  const html=document.documentElement;
-  const icon=document.getElementById('themeIcon');
-  const current=html.getAttribute('data-theme');
-  const next=current==='dark'?'light':'dark';
-  html.setAttribute('data-theme',next);
-  icon.innerHTML=next==='dark'?'&#9788;':'&#9790;';
-  localStorage.setItem('theme',next);
-}
-(function(){
-  const saved=localStorage.getItem('theme');
-  if(saved){
-    document.documentElement.setAttribute('data-theme',saved);
-    document.getElementById('themeIcon').innerHTML=saved==='dark'?'&#9788;':'&#9790;';
-  }
-})();
-
-(function(){
-  var bv=document.getElementById('bgVideo');
-  var fb=document.getElementById('videoFallback');
-  function checkVideo(){
-    if(!bv||bv.readyState<2){
-      bv.style.display='none';
-      if(fb)fb.style.zIndex='-2';
-    }
-  }
-  if(bv){
-    bv.addEventListener('error',function(){bv.style.display='none';if(fb)fb.style.zIndex='-2';});
-    bv.addEventListener('stalled',function(){bv.style.display='none';if(fb)fb.style.zIndex='-2';});
-    setTimeout(checkVideo,3000);
-  }
-})();
-
+// ═══════════════════════════════════════════
+// VIDEO CONTROLS
+// ═══════════════════════════════════════════
 function toggleIntroVideo(){
   const v=document.getElementById('introVideo');
   const btn=document.getElementById('vidPlayBtn');
@@ -1299,6 +1994,9 @@ document.getElementById('introVideo').addEventListener('error',function(){
   this.parentElement.style.background='url(images/infinity-glow.jpg) center/cover';
 });
 
+// ═══════════════════════════════════════════
+// CHATBOT — 50+ FAQ ENGINE
+// ═══════════════════════════════════════════
 const FAQ_ENGINE={
   'contract':'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump (Solana SPL). Verify on DexScreener or Jupiter.',
   'ca':'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump','address':'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
@@ -1405,12 +2103,18 @@ function replyChat(input){
   addChat(r,'bot');
 }
 
+// ═══════════════════════════════════════════
+// NAVBAR SCROLL
+// ═══════════════════════════════════════════
 window.addEventListener('scroll',()=>{
   const n=document.getElementById('mainNav');
   if(window.scrollY>50)n.classList.add('nav-scrolled');
   else n.classList.remove('nav-scrolled');
 });
 
+// ═══════════════════════════════════════════
+// SMOOTH SCROLL
+// ═══════════════════════════════════════════
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',function(e){
     const h=this.getAttribute('href');
@@ -1421,39 +2125,34 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 });
 
+// ═══════════════════════════════════════════
+// ESCAPE KEY
+// ═══════════════════════════════════════════
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeGameModal();closeMemeModal();closeCsModal();}
+  if(e.key==='Escape'){
+    closeGameModal();closeMemeModal();closeCsModal();closeWalletModal();
+    const drawer=document.getElementById('udDrawer');
+    if(drawer.classList.contains('active'))toggleUtilityDrawer();
+  }
 });
 
-(function loadXFeed(){
-  const container=document.getElementById('xFeed');
-  if(window.twttr){renderX();return}
-  const s=document.createElement('script');
-  s.src='https://platform.twitter.com/widgets.js';
-  s.onload=renderX;
-  s.onerror=()=>{
-    container.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">X feed unavailable (third-party restriction)</div><a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">VIEW ON X.COM</a></div>';
-  };
-  document.head.appendChild(s);
-  function renderX(){
-    if(!window.twttr||!container)return;
-    container.innerHTML='';
-    twttr.widgets.createTimeline(
-      {sourceType:'profile',screenName:'infinitecoinhq'},
-      container,
-      {height:440,theme:'dark',chrome:'noheader nofooter transparent'}
-    ).catch(()=>{
-      container.innerHTML='<div style="text-align:center;padding:40px"><a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2">VIEW @infinitecoinhq ON X</a></div>';
-    });
-  }
-})();
-
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   fetchPrice();
   setInterval(fetchPrice,12000);
   connectWS();
+
+  // Mark all eager-loaded images
+  document.querySelectorAll('img[loading="eager"]').forEach(img=>{
+    if(img.complete)img.classList.add('loaded');
+  });
 });
 
+// ═══════════════════════════════════════════
+// PWA SERVICE WORKER
+// ═══════════════════════════════════════════
 if('serviceWorker'in navigator){
   const swCode=`self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});`;
   const swBlob=new Blob([swCode],{type:'application/javascript'});
