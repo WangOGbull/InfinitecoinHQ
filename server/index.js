@@ -3,7 +3,7 @@
  * Node.js + Express + ws (WebSocket library)
  * 
  * Features:
- * - Jupiter API price polling (every 10s)
+ * - DexScreener API price polling (every 10s)
  * - Simulated realistic TX feed
  * - AI FAQ bot engine (50+ responses)
  * - Live visitor counter
@@ -28,7 +28,7 @@ const wss = new WebSocketServer({ server });
 // ═══════════════════════════════════════════
 const PORT = process.env.PORT || 3001;
 const TOKEN_CA = process.env.TOKEN_CA || 'C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump';
-const JUPITER_API = process.env.JUPITER_API || 'https://price.jup.ag/v6/price';
+const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex/tokens';
 const PRICE_INTERVAL = parseInt(process.env.PRICE_INTERVAL) || 10000;
 const ALERT_THRESHOLD = parseFloat(process.env.ALERT_THRESHOLD) || 5;
 const WS_PING_INTERVAL = parseInt(process.env.WS_PING_INTERVAL) || 30000;
@@ -37,6 +37,9 @@ const RATE_LIMIT = parseInt(process.env.RATE_LIMIT) || 20;
 // State
 let lastPrice = 0;
 let lastAlertPrice = 0;
+let lastMcap = 0;
+let lastVol = '890K';
+let lastLiq = '1.1M';
 const visitors = new Set();        // unique IPs
 const rateLimits = new Map();      // ip -> {count, resetTime}
 const clients = new Set();
@@ -102,26 +105,51 @@ function send(ws, data) {
 }
 
 // ═══════════════════════════════════════════
-// JUPITER PRICE POLLING
+// DEXSCREENER PRICE POLLING
 // ═══════════════════════════════════════════
 async function fetchPrice() {
   try {
-    const url = `${JUPITER_API}?ids=${TOKEN_CA}`;
+    const url = `${DEXSCREENER_API}/${TOKEN_CA}`;
     const res = await fetch(url, { timeout: 8000 });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const token = data.data?.[TOKEN_CA];
-    if (!token?.price) throw new Error('No price data');
-
-    const price = parseFloat(token.price);
-    const mcap = price * 1000000000;
-    const vol = (890000 + Math.random() * 100000).toFixed(0);
-    const liq = (1100000 + Math.random() * 50000).toFixed(0);
-    const change = lastPrice > 0
-      ? (((price - lastPrice) / lastPrice) * 100).toFixed(2)
-      : (Math.random() * 4 - 1).toFixed(2);
-
-    // Check price alert
+    
+    if (!data.pairs || data.pairs.length === 0) {
+      throw new Error('No pairs found');
+    }
+    
+    // Get the first pair (usually the most liquid)
+    const pair = data.pairs[0];
+    const price = parseFloat(pair.priceUsd);
+    const mcap = parseFloat(pair.fdv || pair.marketCap || 0);
+    const vol24h = pair.volume?.h24 || 0;
+    const liquidity = pair.liquidity?.usd || 0;
+    
+    // Format values
+    const volFormatted = vol24h > 1000000 
+      ? `$${(vol24h / 1000000).toFixed(1)}M`
+      : vol24h > 1000 
+        ? `$${(vol24h / 1000).toFixed(0)}K`
+        : `$${vol24h.toFixed(0)}`;
+    
+    const liqFormatted = liquidity > 1000000 
+      ? `$${(liquidity / 1000000).toFixed(1)}M`
+      : `$${(liquidity / 1000).toFixed(0)}K`;
+    
+    const mcapFormatted = mcap > 1000000 
+      ? `$${(mcap / 1000000).toFixed(1)}M`
+      : `$${(mcap / 1000).toFixed(0)}K`;
+    
+    // Calculate change from last price
+    let change = 0;
+    if (lastPrice > 0) {
+      change = ((price - lastPrice) / lastPrice) * 100;
+    } else {
+      // Random small change for first fetch
+      change = (Math.random() * 4 - 1);
+    }
+    
+    // Check price alert (5%+ movement)
     if (lastAlertPrice > 0) {
       const pctChange = Math.abs((price - lastAlertPrice) / lastAlertPrice * 100);
       if (pctChange >= ALERT_THRESHOLD) {
@@ -136,24 +164,43 @@ async function fetchPrice() {
     } else {
       lastAlertPrice = price;
     }
-
+    
     lastPrice = price;
-
+    lastMcap = mcap;
+    lastVol = volFormatted;
+    lastLiq = liqFormatted;
+    
     broadcast({
       type: 'price',
       price: price.toFixed(8),
-      change: change,
-      mcap: mcap.toFixed(0),
-      vol: `$${(vol/1000).toFixed(0)}K`,
-      liq: `$${(liq/1000000).toFixed(1)}M`
+      change: change.toFixed(2),
+      mcap: mcapFormatted,
+      vol: volFormatted,
+      liq: liqFormatted
     });
+    
+    console.log(`[Price] $${price.toFixed(8)} | Change: ${change.toFixed(2)}%`);
+    
   } catch (err) {
-    console.error('[Price] Error:', err.message);
+    console.error('[Price] DexScreener error:', err.message);
+    
+    // Fallback: send last known price if available
+    if (lastPrice > 0) {
+      broadcast({
+        type: 'price',
+        price: lastPrice.toFixed(8),
+        change: '0.00',
+        mcap: lastMcap > 0 ? `$${(lastMcap / 1000000).toFixed(1)}M` : '$18.4M',
+        vol: lastVol,
+        liq: lastLiq
+      });
+    }
   }
 }
 
 // Start price polling
 setInterval(fetchPrice, PRICE_INTERVAL);
+// Fetch immediately on start
 fetchPrice();
 
 // ═══════════════════════════════════════════
@@ -235,9 +282,9 @@ const FAQ_BOT = {
   'total supply': '1 billion $INFINITE. Fixed. No more can ever be minted.',
   'burn': 'Deflationary mechanics via game fees and NFT royalties. Burn address publicly tracked.',
   'deflationary': 'Yes. Game fees, NFT royalties and staking penalties feed the burn wallet. Supply decreases over time.',
-  'mcap': 'Market cap updates live from Jupiter. Check the Trading Headquarters section for real-time data.',
-  'market cap': 'Live market cap shown in Trading HQ. Calculated from Jupiter price * circulating supply.',
-  'liquidity': '$1.1M+ liquidity on Solana DEXs via Jupiter. LP tokens locked.',
+  'mcap': 'Market cap updates live from DexScreener. Check the Trading Headquarters section for real-time data.',
+  'market cap': 'Live market cap shown in Trading HQ. Calculated from DexScreener price * circulating supply.',
+  'liquidity': '$1.1M+ liquidity on Solana DEXs. LP tokens locked.',
   'holders': '18,420+ real holders and growing fast. Check the live counter in the status bar.',
   'community': 'Join us: X @infinitecoinhq, TikTok @infinitecoinhq, YouTube @infinitecoinhq, Insta @infinitecoinhq, Telegram @InfiniteCoinHQ.',
   'dao': 'Decentralized governance launching 2026. Genesis NFT holders = voting power. 1 NFT = 1 vote.',
@@ -315,9 +362,9 @@ wss.on('connection', (ws, req) => {
       type: 'price',
       price: lastPrice.toFixed(8),
       change: '0.00',
-      mcap: (lastPrice * 1000000000).toFixed(0),
-      vol: '$890K',
-      liq: '$1.1M'
+      mcap: lastMcap > 0 ? `$${(lastMcap / 1000000).toFixed(1)}M` : '$18.4M',
+      vol: lastVol,
+      liq: lastLiq
     });
   }
 
@@ -334,12 +381,10 @@ wss.on('connection', (ws, req) => {
 
       switch (msg.type) {
         case 'subscribe':
-          // Client subscribed to a channel
           send(ws, { type: 'subscribed', channel: msg.channel || 'all' });
           break;
 
         case 'chat':
-          // AI bot response
           const reply = getBotReply(msg.message || '');
           send(ws, { type: 'chatReply', reply });
           break;
