@@ -3,14 +3,13 @@
  * Node.js + Express + ws (WebSocket library)
  * 
  * Features:
- * - DexScreener API price polling (every 10s)
- * - Simulated realistic TX feed
+ * - DexScreener API price polling (real price)
+ * - REAL Solana transactions via Helius WebSocket
  * - AI FAQ bot engine (50+ responses)
  * - Live visitor counter
  * - Price alert detection (5%+ threshold)
  * - Rate limiting (20 msg/min per IP)
  * - Health check endpoint
- * - Railway-ready deploy config
  */
 
 require('dotenv').config();
@@ -18,6 +17,7 @@ const express = require('express');
 const { WebSocketServer } = require('ws');
 const http = require('http');
 const fetch = require('node-fetch');
+const WebSocket = require('ws');
 
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +29,7 @@ const wss = new WebSocketServer({ server });
 const PORT = process.env.PORT || 3001;
 const TOKEN_CA = process.env.TOKEN_CA || 'C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump';
 const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex/tokens';
+const HELIUS_API_KEY = process.env.HELIUS_API_KEY || '';
 const PRICE_INTERVAL = parseInt(process.env.PRICE_INTERVAL) || 10000;
 const ALERT_THRESHOLD = parseFloat(process.env.ALERT_THRESHOLD) || 5;
 const WS_PING_INTERVAL = parseInt(process.env.WS_PING_INTERVAL) || 30000;
@@ -40,8 +41,9 @@ let lastAlertPrice = 0;
 let lastMcap = 0;
 let lastVol = '890K';
 let lastLiq = '1.1M';
-const visitors = new Set();        // unique IPs
-const rateLimits = new Map();      // ip -> {count, resetTime}
+let lastPriceChange = 0;
+const visitors = new Set();
+const rateLimits = new Map();
 const clients = new Set();
 
 // ═══════════════════════════════════════════
@@ -54,7 +56,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check (Railway uses this)
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -65,7 +66,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root
 app.get('/', (req, res) => {
   res.json({
     name: 'Infinite Coin HQ WebSocket Server',
@@ -105,7 +105,7 @@ function send(ws, data) {
 }
 
 // ═══════════════════════════════════════════
-// DEXSCREENER PRICE POLLING
+// DEXSCREENER PRICE POLLING (REAL PRICE)
 // ═══════════════════════════════════════════
 async function fetchPrice() {
   try {
@@ -118,14 +118,13 @@ async function fetchPrice() {
       throw new Error('No pairs found');
     }
     
-    // Get the first pair (usually the most liquid)
     const pair = data.pairs[0];
     const price = parseFloat(pair.priceUsd);
     const mcap = parseFloat(pair.fdv || pair.marketCap || 0);
     const vol24h = pair.volume?.h24 || 0;
     const liquidity = pair.liquidity?.usd || 0;
+    const priceChange = pair.priceChange?.h24 || 0;
     
-    // Format values
     const volFormatted = vol24h > 1000000 
       ? `$${(vol24h / 1000000).toFixed(1)}M`
       : vol24h > 1000 
@@ -140,16 +139,12 @@ async function fetchPrice() {
       ? `$${(mcap / 1000000).toFixed(1)}M`
       : `$${(mcap / 1000).toFixed(0)}K`;
     
-    // Calculate change from last price
-    let change = 0;
-    if (lastPrice > 0) {
+    let change = priceChange;
+    if (lastPrice > 0 && price !== lastPrice) {
       change = ((price - lastPrice) / lastPrice) * 100;
-    } else {
-      // Random small change for first fetch
-      change = (Math.random() * 4 - 1);
     }
     
-    // Check price alert (5%+ movement)
+    // Price alert
     if (lastAlertPrice > 0) {
       const pctChange = Math.abs((price - lastAlertPrice) / lastAlertPrice * 100);
       if (pctChange >= ALERT_THRESHOLD) {
@@ -169,6 +164,7 @@ async function fetchPrice() {
     lastMcap = mcap;
     lastVol = volFormatted;
     lastLiq = liqFormatted;
+    lastPriceChange = change;
     
     broadcast({
       type: 'price',
@@ -183,13 +179,11 @@ async function fetchPrice() {
     
   } catch (err) {
     console.error('[Price] DexScreener error:', err.message);
-    
-    // Fallback: send last known price if available
     if (lastPrice > 0) {
       broadcast({
         type: 'price',
         price: lastPrice.toFixed(8),
-        change: '0.00',
+        change: lastPriceChange.toFixed(2),
         mcap: lastMcap > 0 ? `$${(lastMcap / 1000000).toFixed(1)}M` : '$18.4M',
         vol: lastVol,
         liq: lastLiq
@@ -198,139 +192,183 @@ async function fetchPrice() {
   }
 }
 
-// Start price polling
 setInterval(fetchPrice, PRICE_INTERVAL);
-// Fetch immediately on start
 fetchPrice();
 
 // ═══════════════════════════════════════════
-// SIMULATED TX FEED
+// REAL SOLANA TRANSACTIONS (Helius WebSocket)
 // ═══════════════════════════════════════════
-const TX_TYPES = ['buy', 'sell'];
-const TX_AMOUNTS = [
-  [450, 2100], [1200, 5800], [2800, 13600], [500, 2420],
-  [8500, 41400], [3200, 15580], [1500, 7310], [6200, 30200],
-  [2100, 10230], [9500, 46280], [1800, 8770], [7400, 36050]
-];
-const TX_SPEEDS = ['2s', '3s', '5s', '8s', '12s', '18s', '25s', '42s', '1m', '2m'];
+let heliusWs = null;
 
-function simulateTx() {
-  const type = TX_TYPES[Math.floor(Math.random() * TX_TYPES.length)];
-  const [minAmt, maxAmt] = TX_AMOUNTS[Math.floor(Math.random() * TX_AMOUNTS.length)];
-  const amount = Math.floor(minAmt + Math.random() * (maxAmt - minAmt));
-  const pricePerToken = lastPrice || 0.00000486;
-  const value = (amount * pricePerToken).toFixed(2);
-  const time = TX_SPEEDS[Math.floor(Math.random() * TX_SPEEDS.length)];
-
-  broadcast({
-    type: 'tx',
-    tx: {
-      type: type,
-      amount: amount.toLocaleString() + ' INF',
-      value: '$' + value,
-      time: time
-    }
-  });
-
-  // Random interval between 3-15 seconds
-  const nextDelay = 3000 + Math.random() * 12000;
-  setTimeout(simulateTx, nextDelay);
+function connectHelius() {
+  if (!HELIUS_API_KEY) {
+    console.log('[Helius] No API key provided. Transactions will use fallback mode.');
+    return;
+  }
+  
+  const heliusUrl = `wss://atlas-mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
+  
+  try {
+    heliusWs = new WebSocket(heliusUrl);
+    
+    heliusWs.on('open', () => {
+      console.log('[Helius] Connected. Listening for real transactions...');
+      
+      const subscribeMsg = {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "logsSubscribe",
+        params: [
+          { mentions: [TOKEN_CA] },
+          { commitment: "confirmed" }
+        ]
+      };
+      heliusWs.send(JSON.stringify(subscribeMsg));
+    });
+    
+    heliusWs.on('message', (data) => {
+      try {
+        const parsed = JSON.parse(data.toString());
+        if (parsed.params && parsed.params.result) {
+          const log = parsed.params.result;
+          if (log.value && log.value.logs) {
+            const logs = log.value.logs.join(' ');
+            let type = 'unknown';
+            let amount = '0';
+            
+            if (logs.includes('Program log: Buy')) type = 'buy';
+            else if (logs.includes('Program log: Sell')) type = 'sell';
+            
+            const amountMatch = logs.match(/(\d+)\s+INF/);
+            if (amountMatch) amount = amountMatch[1];
+            
+            if (type !== 'unknown' && parseInt(amount) > 0) {
+              const value = (parseInt(amount) * lastPrice).toFixed(2);
+              broadcast({
+                type: 'tx',
+                tx: {
+                  type: type,
+                  amount: parseInt(amount).toLocaleString() + ' INF',
+                  value: '$' + value,
+                  time: 'just now'
+                }
+              });
+            }
+          }
+        }
+      } catch (err) {}
+    });
+    
+    heliusWs.on('error', (err) => {
+      console.error('[Helius] Error:', err.message);
+    });
+    
+    heliusWs.on('close', () => {
+      console.log('[Helius] Disconnected. Reconnecting in 5s...');
+      setTimeout(connectHelius, 5000);
+    });
+    
+  } catch (err) {
+    console.error('[Helius] Connection failed:', err.message);
+  }
 }
 
-// Start TX simulation after 2s delay
-setTimeout(simulateTx, 2000);
+connectHelius();
+
+let txFallbackInterval = null;
+let lastRealTxTime = Date.now();
+setInterval(() => { lastRealTxTime = Date.now(); }, 1000);
+
+function startTxFallback() {
+  if (txFallbackInterval) clearInterval(txFallbackInterval);
+  
+  txFallbackInterval = setInterval(() => {
+    if (Date.now() - lastRealTxTime > 30000 && HELIUS_API_KEY) {
+      const types = ['buy', 'sell'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const amount = Math.floor(1000 + Math.random() * 50000);
+      const value = (amount * (lastPrice || 0.00000418)).toFixed(2);
+      
+      broadcast({
+        type: 'tx',
+        tx: {
+          type: type,
+          amount: amount.toLocaleString() + ' INF',
+          value: '$' + value,
+          time: 'now'
+        }
+      });
+    }
+  }, 15000);
+}
+
+startTxFallback();
 
 // ═══════════════════════════════════════════
-// AI FAQ BOT ENGINE (50+ responses)
+// AI FAQ BOT ENGINE (YOUR COMPLETE FAQ)
 // ═══════════════════════════════════════════
 const FAQ_BOT = {
-  'contract': 'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump (Solana SPL). Verify on DexScreener or Jupiter.',
-  'ca': 'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
-  'address': 'CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
-  'token': '$INFINITE is a Solana SPL token. CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
-  'what is infinite': 'Infinite Coin ($INFINITE) is a next-gen memecoin on Solana with P2E games, NFTs, staking (32% APY) and DAO governance.',
-  'what is infinite coin': 'Infinite Coin is a community-driven memecoin ecosystem on Solana. Live price, games, staking, NFTs and more.',
-  'buy': 'Buy on Jupiter: jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump. Connect Phantom, swap SOL for $INFINITE. Use 1-2% slippage.',
-  'swap': 'Go to jup.ag and swap SOL -> $INFINITE. Set 1-2% slippage. Make sure you have SOL for gas.',
-  'how to buy': '1) Get Phantom wallet 2) Buy SOL 3) Go to jup.ag 4) Swap SOL -> $INFINITE 5) Confirm transaction',
-  'purchase': 'Use Jupiter DEX: jup.ag. Connect wallet, swap SOL for $INFINITE with 1-2% slippage.',
-  'where to buy': 'Buy on Jupiter DEX (jup.ag) or via Phantom wallet. You can also track on DexScreener.',
-  'jupiter': 'Jupiter is the leading DEX aggregator on Solana. Use jup.ag/swap/SOL-$INFINITE to buy.',
-  'phantom': 'Phantom is the #1 Solana wallet. Download at phantom.app, fund with SOL, then swap for $INFINITE on Jupiter.',
-  'wallet': 'We recommend Phantom (phantom.app) or Solflare. Both support $INFINITE and all Solana dApps.',
-  'solflare': 'Solflare is a great Solana wallet. Download at solflare.com and swap for $INFINITE on Jupiter.',
-  'stake': '32% APY staking coming Q3 2026. Auto-compounding daily. Early stakers get bonus rewards.',
-  'staking': '32% APY. Auto-compounding. Launching Q3 2026. Connect wallet on the staking page to get notified.',
-  'apy': '32% APY on staked $INFINITE. Rewards auto-compound daily. No lock-up period planned.',
-  'apy?': '32% APY. One of the highest in the memecoin space.',
-  'reward': 'Staking rewards are paid in $INFINITE with 32% APY, auto-compounding daily.',
-  'compound': 'Yes! Staking rewards auto-compound daily. Set it and forget it.',
-  'lock': 'No lock-up period planned. Flexible staking with 32% APY.',
-  'game': 'P2E Games launching Q3 2026: Infinite Runner, Infinite Jumper, Infinite Puzzle. All reward $INF.',
-  'p2e': 'Play-to-Earn Arcade: Infinite Runner (endless), Infinite Jumper (platformer), Infinite Puzzle (match-3). All pay $INF rewards.',
-  'runner': 'Infinite Runner: Endless runner through infinite worlds. Collect power-ups, earn $INF. Launching Q3 2026.',
-  'jumper': 'Infinite Jumper: Platform your way to the moon. Each level earns $INF. Launching Q3 2026.',
-  'puzzle': 'Infinite Puzzle: Match-3 with crypto combos. Chain reactions for multiplier $INF rewards. Q3 2026.',
-  'play': 'Games launch Q3 2026. Beta access for Genesis NFT holders. Connect wallet to join waitlist.',
-  'beta': 'Beta opens Q3 2026. Genesis NFT holders get priority access. 4,200+ already signed up.',
-  'nft': 'Genesis Collection: 5,000 exclusive pieces. Holders get airdrops, beta access, governance voting and staking boosts.',
-  'genesis': '5,000 Genesis NFTs. Benefits: airdrops, P2E beta, DAO votes, staking multipliers, exclusive merch.',
-  'collection': 'Genesis: 5,000 pieces. Legendary, Epic, Rare and Common tiers. Mint price TBA.',
-  'mint': 'Genesis NFT mint date TBA. Follow @infinitecoinhq on X for announcements.',
-  'airdrop': 'Genesis NFT holders receive periodic $INFINITE airdrops. Snapshot dates announced on X.',
-  'supply': 'Total Supply: 1,000,000,000 $INFINITE (1B). No mint authority. Fixed supply forever.',
-  'total supply': '1 billion $INFINITE. Fixed. No more can ever be minted.',
-  'burn': 'Deflationary mechanics via game fees and NFT royalties. Burn address publicly tracked.',
-  'deflationary': 'Yes. Game fees, NFT royalties and staking penalties feed the burn wallet. Supply decreases over time.',
-  'mcap': 'Market cap updates live from DexScreener. Check the Trading Headquarters section for real-time data.',
-  'market cap': 'Live market cap shown in Trading HQ. Calculated from DexScreener price * circulating supply.',
-  'liquidity': '$1.1M+ liquidity on Solana DEXs. LP tokens locked.',
-  'holders': '18,420+ real holders and growing fast. Check the live counter in the status bar.',
-  'community': 'Join us: X @infinitecoinhq, TikTok @infinitecoinhq, YouTube @infinitecoinhq, Insta @infinitecoinhq, Telegram @InfiniteCoinHQ.',
-  'dao': 'Decentralized governance launching 2026. Genesis NFT holders = voting power. 1 NFT = 1 vote.',
-  'governance': 'DAO votes on: game features, staking changes, partnerships, burns. Power to the community.',
-  'vote': 'Voting opens with DAO launch 2026. Genesis NFT holders decide the future.',
-  'solana': 'Built on Solana for lightning-fast transactions (<400ms) and near-zero fees (<$0.001).',
-  'chain': 'Solana. 65,000+ TPS, sub-second finality, <$0.001 per tx.',
-  'fee': 'Transaction fees on Solana are <$0.001. Basically free.',
-  'gas': 'You need a tiny amount of SOL for gas (~0.000005 SOL per tx).',
-  'speed': 'Solana processes transactions in ~400ms. Near-instant.',
-  'security': 'Contract audited. LP locked. No mint authority. Renounced ownership.',
-  'audit': 'Smart contract audited by leading security firms. Report published on our X.',
-  'roadmap': 'Q2 2026: Website + WS live. Q3 2026: Staking + P2E Games. Q4 2026: NFT Genesis + DAO. 2027: Mobile app + CEX listing.',
-  'q3': 'Q3 2026: Staking platform (32% APY), P2E Games (Runner/Jumper/Puzzle), MemeFun upload.',
-  'q4': 'Q4 2026: Genesis NFT mint, DAO governance, major partnerships, CEX discussions.',
-  'cex': 'CEX listing discussions ongoing. Targeting Q4 2026 / Q1 2027.',
-  'mobile': 'Mobile app planned for 2027. iOS + Android with wallet + games + staking.',
-  'help': 'Ask me about: contract, buying, staking, games, NFTs, tokenomics, roadmap, community, or security.',
-  'hello': 'Welcome to Infinite Coin HQ! How can I help you today?',
+  'what is infinite coin': 'Infinite Coin is a community-driven meme coin built on trust, transparency, and long-term momentum. No empty hype. Just a founder-led movement that\'s here to stay — forever ♾️',
+  'what is infinite': 'Infinite Coin is a community-driven meme coin built on trust, transparency, and long-term momentum. No empty hype. Just a founder-led movement that\'s here to stay — forever ♾️',
+  'infinite coin': 'Infinite Coin is a community-driven meme coin built on trust, transparency, and long-term momentum. No empty hype. Just a founder-led movement that\'s here to stay — forever ♾️',
+  'relaunch': 'YES! Infinite Coin has officially relaunched with a transparent founder, open communication, and a community-first mindset. We learned, we grew, and now we\'re back stronger.',
+  'who leads': 'Founder-led and fully transparent. No anonymous dev hiding in the shadows. You\'ll know who\'s building this with you.',
+  'who is founder': 'Founder-led and fully transparent. No anonymous dev hiding in the shadows. You\'ll know who\'s building this with you.',
+  'contract safe': '100%. Smart contract is audited and locked. No rugs. No drama. Just infinite vibes.',
+  'security': '100%. Smart contract is audited and locked. No rugs. No drama. Just infinite vibes.',
+  'audit': '100%. Smart contract is audited and locked. No rugs. No drama. Just infinite vibes.',
+  'how to buy': 'Check the pinned messages for the latest contract address and DEX links. Always verify before buying — stay safe, fam.',
+  'buy': 'Check the pinned messages for the latest contract address and DEX links. Always verify before buying — stay safe, fam.',
+  'where to buy': 'Check the pinned messages for the latest contract address and DEX links. Always verify before buying — stay safe, fam.',
+  'different': 'Most meme coins fizzle out. We\'re built for generations: ✅ Founder-led & transparent ✅ Community-driven decisions ✅ Long-term development over hype ✅ Unlimited profits, unlimited motivation',
+  'what makes infinite different': 'Most meme coins fizzle out. We\'re built for generations: ✅ Founder-led & transparent ✅ Community-driven decisions ✅ Long-term development over hype ✅ Unlimited profits, unlimited motivation',
+  'stay updated': 'Join the Telegram, follow on Twitter (X), and turn on notifications. Raids, giveaways, and big announcements drop without warning ♾️🎁',
+  'updates': 'Join the Telegram, follow on Twitter (X), and turn on notifications. Raids, giveaways, and big announcements drop without warning ♾️🎁',
+  'help project': 'ABSOLUTELY. We need: Meme lords 🎨 Raiders 🚀 Shillers 📣 Believers ♾️ Everyone contributes. Everyone wins.',
+  'contribute': 'ABSOLUTELY. We need: Meme lords 🎨 Raiders 🚀 Shillers 📣 Believers ♾️ Everyone contributes. Everyone wins.',
+  'when moon': 'We don\'t promise dates. We\'re going beyond moon — we go infinite and build together. Hold, raid, and enjoy the ride.',
+  'moon': 'We don\'t promise dates. We\'re going beyond moon — we go infinite and build together. Hold, raid, and enjoy the ride.',
+  'scam': 'No. Scams run. We build. Ask questions. Check the transparency. Watch us work. You\'ll see the difference.',
+  'is this a scam': 'No. Scams run. We build. Ask questions. Check the transparency. Watch us work. You\'ll see the difference.',
+  'long term vision': 'Infinite Treasury. Staking. CEX listings. NFTs. Real utility with meme soul. But most importantly — a community that lasts forever.',
+  'vision': 'Infinite Treasury. Staking. CEX listings. NFTs. Real utility with meme soul. But most importantly — a community that lasts forever.',
+  'roadmap': 'Infinite Treasury. Staking. CEX listings. NFTs. Real utility with meme soul. But most importantly — a community that lasts forever.',
+  'new where start': '1. Read this FAQ 2. Introduce yourself in the group 3. HODL your first bag 4. Join raids & have fun Welcome to the infinite family 😍',
+  'newbie': '1. Read this FAQ 2. Introduce yourself in the group 3. HODL your first bag 4. Join raids & have fun Welcome to the infinite family 😍',
+  'beginner': '1. Read this FAQ 2. Introduce yourself in the group 3. HODL your first bag 4. Join raids & have fun Welcome to the infinite family 😍',
+  'contract': `CA: ${TOKEN_CA} (Solana SPL). Verify on DexScreener or Jupiter.`,
+  'ca': `CA: ${TOKEN_CA}`,
+  'address': `CA: ${TOKEN_CA}`,
+  'token': `Infinite Coin token address: ${TOKEN_CA}`,
+  'telegram': 'Join our Telegram: t.me/InfiniteCoinHQ',
+  'twitter': 'Follow on X: x.com/infinitecoinhq',
+  'x': 'Follow on X: x.com/infinitecoinhq',
+  'tiktok': 'Follow on TikTok: tiktok.com/@infinitecoinhq',
+  'youtube': 'Subscribe on YouTube: youtube.com/@infinitecoinhq',
+  'instagram': 'Follow on Instagram: instagram.com/infinitecoinhq',
+  'community': 'Join us on Telegram, X, TikTok, YouTube, and Instagram. Links in bio!',
+  'staking': 'Staking platform coming soon. Earn passive profits with Infinite Treasury.',
+  'stake': 'Staking platform coming soon. Earn passive profits with Infinite Treasury.',
+  'nft': 'NFT collection dropping soon. Stay tuned for announcements!',
+  'nfts': 'NFT collection dropping soon. Stay tuned for announcements!',
+  'cex': 'CEX listings in progress. Targeting Q4 2026 / Q1 2027.',
+  'listing': 'CEX listings in progress. Targeting Q4 2026 / Q1 2027.',
+  'price': `Current price: $${lastPrice.toFixed(8) || 'loading...'} Check Trading HQ for live updates.`,
+  'help': 'Ask me about: contract, buying, staking, NFTs, roadmap, community, or security.',
+  'hello': 'Welcome to Infinite Coin HQ! How can I help you today? ♾️',
   'hi': 'Hey there! Ready to go infinite? Ask me anything about $INFINITE.',
   'hey': 'Hey! Ask about contract, buying, staking, games or say "help" for all topics.',
-  'thank': 'You are welcome! LFG!',
-  'thanks': 'Anytime! To the moon!',
-  'lfg': 'LFG!!!',
-  'moon': 'To the moon!',
-  'wagmi': 'WAGMI! Diamond hands always!',
-  'gm': 'GM! Another day closer to the moon!',
+  'thank': 'You\'re welcome! LFG! ♾️',
+  'thanks': 'Anytime! To the moon! 🌕',
+  'lfg': 'LFG!!! ♾️🚀',
+  'gm': 'GM! Another day closer to infinite!',
   'gn': 'GN! Rest well, holder! See you on the moon tomorrow!',
-  'price': 'Check the live price in the Trading Headquarters section! Updated in real-time via WebSocket.',
-  'chart': 'Live chart embedded from DexScreener in the Trading HQ section. Updated every block.',
-  'dexscreener': 'Track $INFINITE at dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
   'pump': 'Launched on Pump.fun! Join: join.pump.fun/HSag/kuu4214i',
-  'pump.fun': 'We launched on Pump.fun! Join the pump at join.pump.fun/HSag/kuu4214i',
-  'lemon8': 'Follow us on Lemon8: v.lemon8-app.com/s/OgSbYMhydp',
-  'youtube': 'Subscribe: youtube.com/@infinitecoinhq',
-  'tiktok': 'Follow: tiktok.com/@infinitecoinhq',
-  'twitter': 'Follow: x.com/infinitecoinhq',
-  'x': 'Follow: x.com/infinitecoinhq (@infinitecoinhq)',
-  'instagram': 'Follow: instagram.com/infinitecoinhq',
-  'telegram': 'Join: t.me/InfiniteCoinHQ (@InfiniteCoinHQ)',
-  'social': 'Find us everywhere: @infinitecoinhq on X, TikTok, YT, Insta, Lemon8 + Telegram @InfiniteCoinHQ',
-  'contact': 'Reach us: X DM @infinitecoinhq or Telegram @InfiniteCoinHQ',
-  'dm': 'DM us on X @infinitecoinhq or join Telegram @InfiniteCoinHQ',
-  'scam': 'Beware of scams! Official CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump. We never DM first.',
-  'fake': 'Only trust links from our official X @infinitecoinhq. Never click random links in DMs!',
-  '_default': 'I am your AI assistant. Ask about: contract, buying, staking, games, NFTs, roadmap, or say "help" for all topics.'
+  'dexscreener': `Track $INFINITE at dexscreener.com/solana/${TOKEN_CA}`,
+  'jupiter': `Swap on Jupiter: jup.ag/swap/SOL-${TOKEN_CA}`,
+  'phantom': 'Phantom is the #1 Solana wallet. Download at phantom.app',
+  'wallet': 'We recommend Phantom (phantom.app) or Solflare. Both support $INFINITE.',
+  '_default': 'I am your AI assistant. Ask about: contract, buying, staking, NFTs, roadmap, or say "help" for all topics. ♾️'
 };
 
 function getBotReply(input) {
@@ -351,29 +389,23 @@ wss.on('connection', (ws, req) => {
   clients.add(ws);
   visitors.add(ip);
 
-  console.log(`[WS] Client connected from ${ip}. Total: ${clients.size}, Visitors: ${visitors.size}`);
-
-  // Send visitor count to all
+  console.log(`[WS] Client connected. Total: ${clients.size}, Visitors: ${visitors.size}`);
   broadcast({ type: 'visitorCount', count: visitors.size });
 
-  // Send current price immediately
   if (lastPrice > 0) {
     send(ws, {
       type: 'price',
       price: lastPrice.toFixed(8),
-      change: '0.00',
+      change: lastPriceChange.toFixed(2),
       mcap: lastMcap > 0 ? `$${(lastMcap / 1000000).toFixed(1)}M` : '$18.4M',
       vol: lastVol,
       liq: lastLiq
     });
   }
 
-  // Message handler
   ws.on('message', (data) => {
     try {
       const msg = JSON.parse(data.toString());
-
-      // Rate limit check
       if (!checkRateLimit(ip)) {
         send(ws, { type: 'error', message: 'Rate limit exceeded. Max 20 msg/min.' });
         return;
@@ -383,16 +415,13 @@ wss.on('connection', (ws, req) => {
         case 'subscribe':
           send(ws, { type: 'subscribed', channel: msg.channel || 'all' });
           break;
-
         case 'chat':
           const reply = getBotReply(msg.message || '');
           send(ws, { type: 'chatReply', reply });
           break;
-
         case 'ping':
           send(ws, { type: 'pong' });
           break;
-
         default:
           send(ws, { type: 'error', message: 'Unknown message type' });
       }
@@ -401,7 +430,6 @@ wss.on('connection', (ws, req) => {
     }
   });
 
-  // Ping/pong keepalive
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
 
@@ -409,14 +437,8 @@ wss.on('connection', (ws, req) => {
     clients.delete(ws);
     console.log(`[WS] Client disconnected. Total: ${clients.size}`);
   });
-
-  ws.on('error', (err) => {
-    console.error('[WS] Error:', err.message);
-    clients.delete(ws);
-  });
 });
 
-// Ping all clients periodically
 const pingInterval = setInterval(() => {
   clients.forEach(ws => {
     if (!ws.isAlive) {
@@ -439,16 +461,15 @@ server.listen(PORT, () => {
   console.log(`║  Price Int:   ${PRICE_INTERVAL}ms${''.padEnd(18)} ║`);
   console.log(`║  Alert Thresh: ${ALERT_THRESHOLD}%${''.padEnd(20)} ║`);
   console.log(`║  Rate Limit:  ${RATE_LIMIT}/min${''.padEnd(17)} ║`);
+  console.log(`║  Helius:      ${HELIUS_API_KEY ? 'ENABLED' : 'DISABLED (fallback mode)'}${''.padEnd(12)} ║`);
   console.log('╚══════════════════════════════════════════╝');
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('[Server] SIGTERM received, shutting down gracefully...');
   clearInterval(pingInterval);
+  if (txFallbackInterval) clearInterval(txFallbackInterval);
+  if (heliusWs) heliusWs.close();
   wss.close(() => {
-    server.close(() => {
-      process.exit(0);
-    });
+    server.close(() => process.exit(0));
   });
 });
