@@ -1,0 +1,23 @@
+# Infinite Coin HQ WebSocket Server
+# Copy this to .env and fill in your values
+
+# Server port (Railway overrides this automatically)
+PORT=3001
+
+# Solana token contract address
+TOKEN_CA=C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump
+
+# Jupiter API endpoint
+JUPITER_API=https://price.jup.ag/v6/price
+
+# Price polling interval in ms (default 10000 = 10 seconds)
+PRICE_INTERVAL=10000
+
+# Price alert threshold percentage (default 5%)
+ALERT_THRESHOLD=5
+
+# WebSocket ping interval in ms (default 30000 = 30 seconds)
+WS_PING_INTERVAL=30000
+
+# Rate limit: max messages per minute per IP
+RATE_LIMIT=20
