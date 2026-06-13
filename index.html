@@ -1476,7 +1476,7 @@ img.loaded{
 // ═══════════════════════════════════════════
 const CA='C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump';
 const JUPITER_ENDPOINTS=['https://api.jup.ag/price/v2?ids=','https://price.jup.ag/v6/price?ids=','https://api.jup.ag/price?ids='];
-const WS_URL=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'ws://localhost:3001':'wss://ws.infinitecoinhq.com';
+const WS_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'ws://localhost:3001' : 'wss://infinitecoinhq-production.up.railway.app';
 let ws=null,wsReconnectDelay=2000,wsMaxDelay=30000,wsConnected=false;
 let wsAttempts=0;
 const WS_MAX_SILENT=3;
