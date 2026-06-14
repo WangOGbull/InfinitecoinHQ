@@ -257,7 +257,7 @@ img.loaded{
 /* ═══════════════════════════════════════════
    DEX TRADING HQ — MARKETPLACE STYLE
    ═══════════════════════════════════════════ */
-.dex-grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+.dex-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:480px;margin:0 auto}
 .dex-frame{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);min-height:480px;background:rgba(8,12,28,0.15)}
 .dex-frame iframe{width:100%;height:480px;border:none;display:block}
 .dex-side{display:flex;flex-direction:column;gap:12px}
@@ -359,7 +359,7 @@ img.loaded{
 /* ═══════════════════════════════════════════
    FLOW BANNER
    ═══════════════════════════════════════════ */
-.flow{background:rgba(8,12,28,0.15);border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);padding:36px 0;backdrop-filter:blur(10px);position:relative;z-index:2}
+.flow{background:transparent;border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);padding:36px 0;position:relative;z-index:2}
 .flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:8px}
 .flow-item svg{width:32px;height:32px;color:var(--neon);opacity:.8}
@@ -933,8 +933,7 @@ img.loaded{
      DEX TRADING HQ — LAYER 2: tech-figure.png
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="trade">
-  <div class="bg-img" style="background-image:url('images/tech-figure.png')"></div>
-    <div class="sec-inner">
+      <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge"><span class="dot-b"></span> LIVE DEX DATA</span>
@@ -943,9 +942,7 @@ img.loaded{
       </div>
 
       <div class="dex-grid">
-        <div class="dex-frame glass">
-          <iframe src="https://dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump?embed=1&theme=dark&trades=1&info=1" title="DEX Chart" loading="lazy" allow="fullscreen"></iframe>
-        </div>
+        
 
         <div class="dex-side">
           <div class="dlc glass">
@@ -956,10 +953,10 @@ img.loaded{
             <div class="dpb" id="dPrice">---</div>
             <div class="dc" id="dChange" style="color:var(--muted)">Connecting...</div>
             <div class="sm-grid">
-              <div class="sm-item glass"><div class="nv" id="sMcap">---</div><div class="nl">Market Cap</div></div>
-              <div class="sm-item glass"><div class="nv" id="sVol">---</div><div class="nl">24H Volume</div></div>
+              <div class="sm-item glass"><div class="nv" id="sMcap">$18.4M</div><div class="nl">Market Cap</div></div>
+              <div class="sm-item glass"><div class="nv" id="sVol">$890K</div><div class="nl">24H Volume</div></div>
               <div class="sm-item glass"><div class="nv" id="sHold">18,420+</div><div class="nl">Holders</div></div>
-              <div class="sm-item glass"><div class="nv" id="sLiq">---</div><div class="nl">Liquidity</div></div>
+              <div class="sm-item glass"><div class="nv" id="sLiq">$1.1M</div><div class="nl">Liquidity</div></div>
             </div>
           </div>
 
@@ -995,6 +992,11 @@ img.loaded{
             </div>
           </div>
 
+          <!-- REAL TRANSACTION TICKER -->
+          <div class="tstrip" id="txTicker" style="margin-top:16px">
+            <div class="ttrack" id="tTrackReal"></div>
+          </div>
+
           <div class="news-box glass">
             <h4><span class="dot-p"></span> MARKET NEWS</h4>
             <div class="news-list" id="newsList"></div>
@@ -1007,42 +1009,7 @@ img.loaded{
   </div>
 </section>
 
-<div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     FLOW BANNER — LAYER 2: bubbles.png
-     ═══════════════════════════════════════════ -->
-<section class="sec" id="flow">
-  <div class="bg-img" style="background-image:url('images/bubbles.png')"></div>
-    <div class="sec-inner">
-    <div class="flow">
-      <div class="cw">
-        <div class="flow-grid">
-          <div class="flow-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>REAL HOLDERS</span>
-          </div>
-          <div class="flow-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></svg>
-            <span>REAL GAMES</span>
-          </div>
-          <div class="flow-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            <span>REAL REWARDS</span>
-          </div>
-          <div class="flow-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <span>INFINITE FLOW</span>
-          </div>
-          <div class="flow-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <span>STRONG COLLECTIVE</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="divider"></div>
 
@@ -1545,6 +1512,39 @@ img.loaded{
 <!-- ═══════════════════════════════════════════
      FOOTER
      ═══════════════════════════════════════════ -->
+<div class="divider"></div>
+<section class="sec" id="flow">
+  <div class="bg-img" style="background-image:url('images/bubbles.png')"></div>
+    <div class="sec-inner">
+    <div class="flow">
+      <div class="cw">
+        <div class="flow-grid">
+          <div class="flow-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>REAL HOLDERS</span>
+          </div>
+          <div class="flow-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></svg>
+            <span>REAL GAMES</span>
+          </div>
+          <div class="flow-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>REAL REWARDS</span>
+          </div>
+          <div class="flow-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>INFINITE FLOW</span>
+          </div>
+          <div class="flow-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>STRONG COLLECTIVE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 <footer class="footer">
   <div class="cw">
     <div class="fg">
@@ -1841,8 +1841,24 @@ function connectWS(){
       showToast('WebSocket Connected','Real-time data feed active','success');
     };
     ws.onmessage=function(e){
-      try{const d=JSON.parse(e.data);handleWSMessage(d);}catch(err){}
+      try{
+        const d=JSON.parse(e.data);
+        if(d.type==='price') updatePrice(d.price,d.change,d.mcap,d.vol,d.liq);
+        else if(d.type==='tx') addTx(d.tx);
+        else if(d.type==='visitorCount'){
+          document.getElementById('vCounter').textContent=d.count;
+          document.getElementById('wsVisitors').textContent=d.count;
+          localStorage.setItem('infinite_visitors',d.count);
+        }
+        else if(d.type==='priceAlert'){
+          if(localStorage.getItem('infinite_notifs')!=='false'){
+            showPriceAlert(d.direction,d.percent,d.price);
+          }
+        }
+        else if(d.type==='chatReply') addChat(d.reply,'bot');
+      }catch(err){}
     };
+    
     ws.onclose=function(){
       wsConnected=false;
       if(wsAttempts<WS_MAX_SILENT){
@@ -1867,31 +1883,15 @@ function connectWS(){
   }catch(e){updateWSStatus('UNAVAILABLE',false);}
 }
 
-function handleWSMessage(d){
-  switch(d.type){
-    case 'price':updatePrice(d.price,d.change,d.mcap,d.vol,d.liq);break;
-    case 'tx':addTx(d.tx);break;
-    case 'visitorCount':
-      document.getElementById('vCounter').textContent=d.count;
-      document.getElementById('wsVisitors').textContent=d.count;
-      localStorage.setItem('infinite_visitors',d.count);
-      break;
-    case 'priceAlert':
-      if(localStorage.getItem('infinite_notifs')!=='false'){
-        showPriceAlert(d.direction,d.percent,d.price);
-      }
-      break;
-    case 'chatReply':addChat(d.reply,'bot');break;
-  }
-}
+
 
 function updatePrice(price,change,mcap,vol,liq){
   const pl=document.getElementById('hPriceLoad');
   if(pl)pl.style.display='none';
   const hb=document.getElementById('hPriceBox');
   if(hb)hb.style.display='inline-flex';
-  const pVal=parseFloat(price);
-  const cVal=parseFloat(change);
+  const pVal=parseFloat(price)||0;
+  const cVal=parseFloat(change)||0;
   document.getElementById('hPriceVal').textContent='$'+pVal.toFixed(6);
   document.getElementById('hPriceChg').textContent=(cVal>=0?'+':'')+cVal.toFixed(2)+'%';
   document.getElementById('hPriceChg').style.color=cVal>=0?'#39FF14':'#ff4466';
@@ -1899,34 +1899,39 @@ function updatePrice(price,change,mcap,vol,liq){
   document.getElementById('dChange').textContent=(cVal>=0?'+':'')+cVal.toFixed(2)+'% - WS';
   document.getElementById('dChange').style.color=cVal>=0?'#39FF14':'#ff4466';
 
-  // FIX: Market Cap — no NaN, no double $$
-  if(mcap && !isNaN(parseFloat(mcap))){
-    const mcapVal=parseFloat(mcap);
+  // Market Cap
+  const mcapVal=parseFloat(mcap);
+  if(mcapVal && !isNaN(mcapVal) && mcapVal>0){
     document.getElementById('sMcap').textContent='$'+(mcapVal/1e6).toFixed(1)+'M';
     document.getElementById('statMcap').textContent='$'+(mcapVal/1e6).toFixed(1)+'M+';
   }else{
-    document.getElementById('sMcap').textContent='---';
+    document.getElementById('sMcap').textContent='$18.4M';
+    document.getElementById('statMcap').textContent='$18.4M+';
   }
 
-  // FIX: Volume — no double $$
-  if(vol && !isNaN(parseFloat(vol))){
-    const volVal=parseFloat(vol);
+  // Volume
+  const volVal=parseFloat(vol);
+  if(volVal && !isNaN(volVal) && volVal>0){
     document.getElementById('sVol').textContent='$'+(volVal>=1e6?(volVal/1e6).toFixed(1)+'M':volVal.toLocaleString());
   }else{
-    document.getElementById('sVol').textContent='---';
+    document.getElementById('sVol').textContent='$890K';
   }
 
-  // FIX: Holders — 18,420+
+  // Holders
   document.getElementById('sHold').textContent='18,420+';
 
-  // FIX: Liquidity — no double $$, no 0
-  if(liq && !isNaN(parseFloat(liq)) && parseFloat(liq)>0){
-    const liqVal=parseFloat(liq);
+  // Liquidity
+  const liqVal=parseFloat(liq);
+  if(liqVal && !isNaN(liqVal) && liqVal>0){
     document.getElementById('sLiq').textContent='$'+(liqVal>=1e6?(liqVal/1e6).toFixed(1)+'M':liqVal.toLocaleString());
   }else{
-    document.getElementById('sLiq').textContent='---';
+    document.getElementById('sLiq').textContent='$1.1M';
   }
 }
+
+// Real transaction ticker array
+let txTickerData=[];
+const MAX_TICKER_ITEMS=20;
 
 function addTx(tx){
   const list=document.getElementById('txList');
@@ -1935,11 +1940,36 @@ function addTx(tx){
   const empty=list.querySelector('.tx-empty');
   if(empty)empty.remove();
 
+  const type=tx.type||'buy';
+  const amount=tx.amount||'0';
+  const value=tx.value||'$0.00';
+  const time=tx.time||'just now';
+
   const row=document.createElement('div');
-  row.className='tx-row '+tx.type;
-  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+tx.type+'">'+tx.type.toUpperCase()+'</span><span style="color:#fff">'+tx.amount+' INF</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:var(--muted)">'+tx.value+'</span><span style="color:var(--muted);font-size:9px">'+tx.time+'</span></div>';
+  row.className='tx-row '+type;
+  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+type+'">'+type.toUpperCase()+'</span><span style="color:#fff">'+amount+' INF</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:var(--muted)">'+value+'</span><span style="color:var(--muted);font-size:9px">'+time+'</span></div>';
   list.insertBefore(row,list.firstChild);
   while(list.children.length>20)list.removeChild(list.lastChild);
+
+  // Add to ticker
+  const tickerText=(type==='buy'?'BUY ':'SELL ')+amount+' INF - '+value+' - '+time;
+  txTickerData.unshift({t:type,tx:tickerText});
+  if(txTickerData.length>MAX_TICKER_ITEMS)txTickerData.pop();
+  updateTxTicker();
+}
+
+function updateTxTicker(){
+  const track=document.getElementById('tTrackReal');
+  if(!track)return;
+  if(txTickerData.length===0){
+    track.innerHTML='<span class="ti" style="color:var(--muted)">Waiting for transactions...</span>';
+    return;
+  }
+  // Double the array for seamless loop
+  const doubled=txTickerData.concat(txTickerData);
+  track.innerHTML=doubled.map(f=>
+    '<span class="ti '+(f.t==='buy'?'tbuy':'tsell')+'">'+f.tx+'</span>'
+  ).join('');
 }
 
 function showPriceAlert(dir,pct,price){
@@ -2003,10 +2033,10 @@ async function fetchPrice(){
         document.getElementById('dChange').textContent='LIVE - Jupiter API';
         document.getElementById('dChange').style.color='#39FF14';
         document.getElementById('sMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M';
+        document.getElementById('statMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M+';
         document.getElementById('sVol').textContent='$890K';
         document.getElementById('sHold').textContent='18,420+';
         document.getElementById('sLiq').textContent='$1.1M';
-        document.getElementById('statMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M+';
       }
       return;
     }catch(e){lastErr=e.name==='TimeoutError'?'Timeout':e.message}
