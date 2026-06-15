@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -44,6 +44,59 @@
 
 <style>
 /* ═══════════════════════════════════════════
+   SPLASH SCREEN — 12 SECOND INTRO
+   ═══════════════════════════════════════════ */
+.splash-screen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+  pointer-events:none;transition:opacity 1.5s ease;
+}
+.splash-screen.done{opacity:0}
+.splash-text{
+  font-family:'Orbitron',sans-serif;font-weight:900;
+  text-transform:uppercase;letter-spacing:.08em;
+  text-align:center;opacity:0;
+  animation:splashFadeIn 1.2s ease forwards;
+  text-shadow:0 0 20px rgba(0,240,255,0.5),0 0 40px rgba(188,19,254,0.3),0 0 80px rgba(0,240,255,0.2);
+}
+.splash-welcome{
+  font-size:clamp(28px,6vw,64px);
+  background:linear-gradient(90deg,#00F0FF,#BC13FE);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation-delay:8s;
+}
+.splash-opp{
+  font-size:clamp(20px,4vw,42px);color:#00F0FF;
+  animation-delay:9.5s;
+}
+.splash-mom{
+  font-size:clamp(20px,4vw,42px);color:#BC13FE;
+  animation-delay:11s;
+}
+@keyframes splashFadeIn{
+  from{opacity:0;transform:translateY(30px) scale(0.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+body.loading .nav,
+body.loading .hero,
+body.loading .sec,
+body.loading .footer,
+body.loading .chw,
+body.loading .wsb,
+body.loading .divider{
+  opacity:0;pointer-events:none;transition:opacity 1.5s ease .3s;
+}
+body.loaded .nav,
+body.loaded .hero,
+body.loaded .sec,
+body.loaded .footer,
+body.loaded .chw,
+body.loaded .wsb,
+body.loaded .divider{
+  opacity:1;pointer-events:auto;
+}
+/* ═══════════════════════════════════════════
    CSS VARIABLES — DARK / LIGHT MODE
    ═══════════════════════════════════════════ */
 :root[data-theme="dark"] {
@@ -56,16 +109,7 @@
   --vid-shadow:0 0 30px rgba(0,240,255,0.08);--input-bg:rgba(0,240,255,0.02);
   --skeleton-base:rgba(0,240,255,0.04);--skeleton-highlight:rgba(0,240,255,0.1);
 }
-:root[data-theme="light"] {
-  --bg:#f0f4f8;--bg-sec:#e2e8f0;--text:#2d3748;--text-bright:#1a202c;
-  --glass:rgba(255,255,255,0.75);--glass-border:rgba(0,240,255,0.15);
-  --glass-p-border:rgba(188,19,254,0.15);--neon:#0080aa;--neon-p:#8800bb;
-  --success:#22aa22;--danger:#cc2244;--muted:#718096;--nav-bg:rgba(255,255,255,0.9);
-  --wsb-bg:rgba(255,255,255,0.95);--overlay:linear-gradient(180deg,rgba(240,244,248,0.85) 0%,rgba(240,244,248,0.8) 50%,rgba(240,244,248,0.85) 100%);
-  --hero-grad:linear-gradient(180deg,rgba(240,244,248,0.8) 0%,rgba(240,244,248,0.5) 50%,rgba(240,244,248,0.8) 100%);
-  --vid-shadow:0 0 20px rgba(0,0,0,0.1);--input-bg:rgba(0,0,0,0.04);
-  --skeleton-base:rgba(0,0,0,0.04);--skeleton-highlight:rgba(0,0,0,0.08);
-}
+
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -111,7 +155,6 @@ img.loaded{
    VIDEO BACKGROUND — LAYER 1 (FIXED, UNCHANGED)
    ═══════════════════════════════════════════ */
 #bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:filter .3s;background:#000210}
-[data-theme="light"] #bgVideo{filter:brightness(0.4) saturate(0.7)}
 #videoOverlay{position:fixed;inset:0;z-index:-1;background:var(--hero-grad);pointer-events:none}
 #videoFallback{position:fixed;inset:0;z-index:-3;background:url('images/infinity-glow.png') center/cover no-repeat #000210}
 
@@ -174,7 +217,6 @@ img.loaded{
    ═══════════════════════════════════════════ */
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;background:var(--nav-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,240,255,0.05);transition:all .3s}
 .nav-scrolled{background:rgba(0,0,0,0.95)!important;border-bottom-color:rgba(0,240,255,0.1)!important}
-[data-theme="light"] .nav-scrolled{background:rgba(255,255,255,0.97)!important;border-bottom-color:rgba(0,240,255,0.2)!important}
 .ni{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:100%}
 .nb{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nb img{width:32px;height:32px;border-radius:50%}
@@ -521,11 +563,7 @@ img.loaded{
 .wsb .wsl{color:var(--muted)}
 .wsb .wsv{color:var(--neon)}
 
-/* ═══════════════════════════════════════════
-   THEME TOGGLE
-   ═══════════════════════════════════════════ */
-.theme-btn{position:fixed;bottom:60px;right:20px;z-index:2001;width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--neon);font-size:18px;box-shadow:0 0 15px rgba(0,240,255,0.1)}
-.theme-btn:hover{transform:scale(1.1);box-shadow:0 0 25px rgba(0,240,255,0.2)}
+
 
 /* ═══════════════════════════════════════════
    TOAST NOTIFICATIONS
@@ -763,6 +801,15 @@ img.loaded{
 <base target="_blank">
 </head>
 <body>
+<!-- ═══════════════════════════════════════════
+     SPLASH SCREEN — 12 SECOND INTRO
+     ═══════════════════════════════════════════ -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-text splash-welcome">WELCOME TO INFINITE COIN HQ</div>
+  <div class="splash-text splash-opp">INFINITE OPPORTUNITIES</div>
+  <div class="splash-text splash-mom">INFINITE MOMENTUMS</div>
+</div>
+
 
 <!-- ═══════════════════════════════════════════
      LAYER 1: BACKGROUND VIDEO (FIXED, UNCHANGED)
@@ -819,11 +866,7 @@ img.loaded{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       <span>Share Site</span>
     </button>
-    <button class="ud-item" onclick="toggleTheme();toggleUtilityDrawer()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <span>Dark/Light Mode</span>
-      <span class="ud-tag" id="themeTag">DARK</span>
-    </button>
+
     <a class="ud-item" href="https://solana.fm/address/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" onclick="toggleUtilityDrawer()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       <span>View on Explorer</span>
@@ -898,11 +941,7 @@ img.loaded{
      ═══════════════════════════════════════════ -->
 <section class="hero" id="hero">
   <div class="hero-inner">
-    <h1>
-      <span class="neon-blue">INFINITE OPPORTUNITIES</span>
-      <span class="neon-purple l2">INFINITE MOMENTUMS</span>
-    </h1>
-    <p class="hero-sub">The next generation memecoin ecosystem. Built on Solana. Powered by AI. Engineered for the community.</p>
+    <div style="height:20px"></div>
 
     <div class="contract-box glass">
       <label>$INFINITE Contract Address</label>
@@ -951,10 +990,10 @@ img.loaded{
             <div class="dpb" id="dPrice">---</div>
             <div class="dc" id="dChange" style="color:var(--muted)">Connecting...</div>
             <div class="sm-grid">
-              <div class="sm-item glass"><div class="nv" id="sMcap">$18.4M</div><div class="nl">Market Cap</div></div>
-              <div class="sm-item glass"><div class="nv" id="sVol">$890K</div><div class="nl">24H Volume</div></div>
-              <div class="sm-item glass"><div class="nv" id="sHold">18,420+</div><div class="nl">Holders</div></div>
-              <div class="sm-item glass"><div class="nv" id="sLiq">$1.1M</div><div class="nl">Liquidity</div></div>
+              <div class="sm-item glass"><div class="nv" id="sMcap">---</div><div class="nl">Market Cap</div></div>
+              <div class="sm-item glass"><div class="nv" id="sVol">---</div><div class="nl">24H Volume</div></div>
+              <div class="sm-item glass"><div class="nv" id="sHold">---</div><div class="nl">Holders</div></div>
+              <div class="sm-item glass"><div class="nv" id="sLiq">---</div><div class="nl">Liquidity</div></div>
             </div>
           </div>
 
@@ -1052,11 +1091,20 @@ img.loaded{
   <div class="modal-box">
     <button type="button" class="modal-close" onclick="closeGameModal()">&times;</button>
     <div class="modal-body">
-      <h2>INFINITE GAMES</h2>
-      <div style="text-align:center;padding:20px">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:16px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        <p style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:20px">Infinite Runner, Infinite Jumper & Infinite Puzzle launching Q3 2026.<br>Connect your wallet to earn $INF while you play!</p>
-        <button type="button" class="btn-b" onclick="showComingSoon('Games Launch','P2E Games launching Q3 2026. Beta access for Genesis NFT holders!')">JOIN BETA WAITLIST</button>
+      <h2 style="font-family:'Orbitron';font-size:20px;color:#fff;text-align:center;margin-bottom:24px">CHOOSE YOUR GAME</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6">INFINITE RUNNER</h3>
+          <p style="font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.5">Dash through infinite worlds. Earn $INF.</p>
+          <button class="btn-b" style="width:100%;justify-content:center" onclick="showComingSoon('Infinite Runner','Endless runner launching Q3 2026. Connect your wallet to earn $INF!');closeGameModal()">COMING SOON</button>
+        </div>
+        <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:14px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-bottom:10px;line-height:1.6">INFINITE JUMPER</h3>
+          <p style="font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.5">Jump to the moon. Earn $INF per level.</p>
+          <a href="https://infinitecoinjumper-v2.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1278,7 +1326,7 @@ img.loaded{
     <div class="sec-inner">
     <div class="cw">
       <div class="s4">
-        <div class="defi-card scard"><div class="df-stat" style="color:#00F0FF" id="statMcap">$18.4M+</div><div class="df-label">Market Cap</div></div>
+        <div class="defi-card scard"><div class="df-stat" style="color:#00F0FF" id="statMcap">---</div><div class="df-label">Market Cap</div></div>
         <div class="defi-card scard"><div class="df-stat" style="color:#BC13FE">18,420+</div><div class="df-label">Holders</div></div>
         <div class="defi-card scard"><div class="df-stat" style="color:#BC13FE">32%</div><div class="df-label">APY</div></div>
         <div class="defi-card scard"><div class="df-stat">4,200+</div><div class="df-label">Beta Players</div></div>
@@ -1593,10 +1641,7 @@ img.loaded{
      ═══════════════════════════════════════════ -->
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- THEME TOGGLE (hidden, moved to menu) -->
-<button type="button" class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-  <span id="themeIcon">&#9788;</span>
-</button>
+
 
 <!-- JAVASCRIPT -->
 <script>
@@ -1746,23 +1791,7 @@ function toggleNotifications(){
 // ═══════════════════════════════════════════
 // THEME TOGGLE
 // ═══════════════════════════════════════════
-function toggleTheme(){
-  const html=document.documentElement;
-  const current=html.getAttribute('data-theme');
-  const next=current==='dark'?'light':'dark';
-  html.setAttribute('data-theme',next);
-  localStorage.setItem('theme',next);
-  const tag=document.getElementById('themeTag');
-  if(tag)tag.textContent=next==='dark'?'DARK':'LIGHT';
-}
-(function(){
-  const saved=localStorage.getItem('theme');
-  if(saved){
-    document.documentElement.setAttribute('data-theme',saved);
-    const tag=document.getElementById('themeTag');
-    if(tag)tag.textContent=saved==='dark'?'DARK':'LIGHT';
-  }
-})();
+
 
 // ═══════════════════════════════════════════
 // WEBSOCKET CLIENT — REAL DATA
@@ -1840,33 +1869,28 @@ function updatePrice(price,change,mcap,vol,liq){
   document.getElementById('dChange').textContent=(cVal>=0?'+':'')+cVal.toFixed(2)+'% - WS';
   document.getElementById('dChange').style.color=cVal>=0?'#39FF14':'#ff4466';
 
-  // Market Cap
+  // Market Cap — REAL from WebSocket only
   const mcapVal=parseFloat(mcap);
   if(mcapVal && !isNaN(mcapVal) && mcapVal>0){
     document.getElementById('sMcap').textContent='$'+(mcapVal/1e6).toFixed(1)+'M';
     document.getElementById('statMcap').textContent='$'+(mcapVal/1e6).toFixed(1)+'M+';
-  }else{
-    document.getElementById('sMcap').textContent='$18.4M';
-    document.getElementById('statMcap').textContent='$18.4M+';
   }
 
-  // Volume
+  // Volume — REAL from WebSocket only
   const volVal=parseFloat(vol);
   if(volVal && !isNaN(volVal) && volVal>0){
     document.getElementById('sVol').textContent='$'+(volVal>=1e6?(volVal/1e6).toFixed(1)+'M':volVal.toLocaleString());
-  }else{
-    document.getElementById('sVol').textContent='$890K';
   }
 
-  // Holders
-  document.getElementById('sHold').textContent='18,420+';
-
-  // Liquidity
+  // Liquidity — REAL from WebSocket only
   const liqVal=parseFloat(liq);
   if(liqVal && !isNaN(liqVal) && liqVal>0){
     document.getElementById('sLiq').textContent='$'+(liqVal>=1e6?(liqVal/1e6).toFixed(1)+'M':liqVal.toLocaleString());
-  }else{
-    document.getElementById('sLiq').textContent='$1.1M';
+  }
+
+  // Holders — REAL from WebSocket only
+  if(typeof holders !== 'undefined' && holders){
+    document.getElementById('sHold').textContent=holders;
   }
 }
 
@@ -1993,17 +2017,8 @@ async function fetchPrice(){
 // ═══════════════════════════════════════════
 // REAL CRYPTO MARKET NEWS
 // ═══════════════════════════════════════════
-const newsData=[
-  {tg:'INF',tc:'ntag inf',tx:'$INFINITE breaks 18,000 holders. Community accelerating.',tm:'12m'},
-  {tg:'SOL',tc:'ntag sol',tx:'Solana hits 65,000 TPS. Memecoin infra scaling.',tm:'34m'},
-  {tg:'MEME',tc:'ntag meme',tx:'Memecoin sector $2.1B inflow. Community tokens leading.',tm:'1h'},
-  {tg:'INF',tc:'ntag inf',tx:'P2E gaming beta waitlist opens next month.',tm:'2h'},
-  {tg:'SOL',tc:'ntag sol',tx:'Jupiter $1B daily volume. SOL liquidity ATH.',tm:'3h'},
-  {tg:'INF',tc:'ntag inf',tx:'Genesis NFT: 50K+ engagements in 24h.',tm:'6h'},
-];
-document.getElementById('newsList').innerHTML=newsData.map(n=>
-  '<div class="news-item"><span class="ntag '+n.tc+'">'+n.tg+'</span><p>'+n.tx+'</p><div class="ntime">'+n.tm+' ago</div></div>'
-).join('');
+// News feed populated by WebSocket
+document.getElementById('newsList').innerHTML='<div class="news-item"><span class="ntag inf">INF</span><p>Loading market news from WebSocket...</p><div class="ntime">just now</div></div>';
 
 // ═══════════════════════════════════════════
 // MARQUEE FEED
@@ -2312,6 +2327,7 @@ document.addEventListener('keydown',e=>{
 // INIT
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
+  document.body.classList.add('loading');
   fetchPrice();
   setInterval(fetchPrice,12000);
   connectWS();
@@ -2319,6 +2335,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
     if(img.complete)img.classList.add('loaded');
   });
+
+  // Splash screen: reveal site at 12 seconds
+  setTimeout(()=>{
+    document.body.classList.remove('loading');
+    document.body.classList.add('loaded');
+    const splash=document.getElementById('splashScreen');
+    if(splash){
+      splash.classList.add('done');
+      setTimeout(()=>splash.style.display='none',1500);
+    }
+  },12000);
 });
 
 // ═══════════════════════════════════════════
