@@ -51,6 +51,7 @@
   display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:16px;
   pointer-events:none;transition:opacity 1.5s ease;
+  background:#000;
 }
 .splash-screen.done{opacity:0}
 .splash-text{
@@ -58,21 +59,23 @@
   text-transform:uppercase;letter-spacing:.08em;
   text-align:center;opacity:0;
   animation:splashFadeIn 1.2s ease forwards;
-  text-shadow:0 0 20px rgba(0,240,255,0.5),0 0 40px rgba(188,19,254,0.3),0 0 80px rgba(0,240,255,0.2);
 }
 .splash-welcome{
   font-size:clamp(28px,6vw,64px);
   background:linear-gradient(90deg,#00F0FF,#BC13FE);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   animation-delay:8s;
-}
-.splash-opp{
-  font-size:clamp(20px,4vw,42px);color:#00F0FF;
-  animation-delay:9.5s;
+  text-shadow:0 0 20px rgba(0,240,255,0.5),0 0 40px rgba(188,19,254,0.3);
 }
 .splash-mom{
   font-size:clamp(20px,4vw,42px);color:#BC13FE;
+  animation-delay:9s;
+  text-shadow:0 0 10px rgba(188,19,254,0.6),0 0 30px rgba(188,19,254,0.3);
+}
+.splash-opp{
+  font-size:clamp(20px,4vw,42px);color:#00F0FF;
   animation-delay:11s;
+  text-shadow:0 0 10px rgba(0,240,255,0.6),0 0 30px rgba(0,240,255,0.3);
 }
 @keyframes splashFadeIn{
   from{opacity:0;transform:translateY(30px) scale(0.95)}
@@ -161,9 +164,10 @@ img.loaded{
 /* ═══════════════════════════════════════════
    NEON TEXT
    ═══════════════════════════════════════════ */
-.neon-blue{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--neon);text-shadow:0 0 5px var(--neon),0 0 10px var(--neon),0 0 20px rgba(0,240,255,0.4),0 2px 4px rgba(0,0,0,0.8)}
-.neon-purple{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--neon-p);text-shadow:0 0 5px var(--neon-p),0 0 10px var(--neon-p),0 0 20px rgba(188,19,254,0.4),0 2px 4px rgba(0,0,0,0.8)}
-.neon-mixed{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;background:linear-gradient(90deg,var(--neon),var(--neon-p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 8px rgba(0,240,255,0.3))}
+.neon-blue{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#00F0FF;text-shadow:0 0 5px #00F0FF,0 0 10px #00F0FF,0 0 20px rgba(0,240,255,0.4),0 2px 4px rgba(0,0,0,0.8)}
+.neon-purple{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#BC13FE;text-shadow:0 0 5px #BC13FE,0 0 10px #BC13FE,0 0 20px rgba(188,19,254,0.4),0 2px 4px rgba(0,0,0,0.8)}
+.neon-cyan{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#8ECAE6;text-shadow:0 0 5px #8ECAE6,0 0 10px rgba(142,202,230,0.4),0 2px 4px rgba(0,0,0,0.8)}
+.neon-mixed{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;background:linear-gradient(90deg,#00F0FF,#BC13FE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 8px rgba(0,240,255,0.3))}
 
 /* ═══════════════════════════════════════════
    3-LAYER SECTION SYSTEM
@@ -172,7 +176,7 @@ img.loaded{
 .sec .bg-img{
   position:absolute;inset:0;z-index:0;
   background-position:center;background-size:contain;background-repeat:no-repeat;
-  opacity:.08;pointer-events:none;
+  opacity:.5;pointer-events:none;
 }
 .sec .sec-inner{position:relative;z-index:2}
 
@@ -191,7 +195,7 @@ img.loaded{
 .btn-b:hover{box-shadow:0 0 45px rgba(0,240,255,0.45);transform:translateY(-2px)}
 .btn-p{background:linear-gradient(135deg,#BC13FE,#5500aa);color:#fff;font-family:'Orbitron';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;padding:13px 28px;border-radius:8px;border:none;box-shadow:0 0 25px rgba(188,19,254,0.25),inset 0 1px 0 rgba(255,255,255,0.1);transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-p:hover{box-shadow:0 0 45px rgba(188,19,254,0.45);transform:translateY(-2px)}
-.btn-g2{color:var(--neon);font-family:'Orbitron';font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 22px;border-radius:8px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.03);transition:all .25s;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn-g2{color:#00F0FF;font-family:'Orbitron';font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 22px;border-radius:8px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.03);transition:all .25s;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-g2:hover{background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.4);box-shadow:0 0 15px rgba(0,240,255,0.1)}
 .btn-wallet-icon{
   width:40px;height:40px;border-radius:8px;
@@ -205,7 +209,7 @@ img.loaded{
 /* ═══════════════════════════════════════════
    BADGES & DOTS
    ═══════════════════════════════════════════ */
-.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.12);color:var(--neon);font-family:'Inter';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:5px 12px;border-radius:6px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;font-family:'Inter';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:5px 12px;border-radius:6px}
 .dot-g{width:7px;height:7px;border-radius:50%;background:#39FF14;box-shadow:0 0 6px #39FF14;animation:pulse 2s ease-in-out infinite}
 .dot-b{width:7px;height:7px;border-radius:50%;background:#00F0FF;box-shadow:0 0 6px #00F0FF;animation:pulse 2s ease-in-out infinite}
 .dot-p{width:7px;height:7px;border-radius:50%;background:#BC13FE;box-shadow:0 0 6px #BC13FE;animation:pulse 2s ease-in-out infinite}
@@ -220,12 +224,12 @@ img.loaded{
 .ni{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:100%}
 .nb{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nb img{width:32px;height:32px;border-radius:50%}
-.nb span{font-family:'Orbitron';font-weight:700;font-size:12px;color:var(--text-bright);letter-spacing:.06em}
+.nb span{font-family:'Orbitron';font-weight:700;font-size:12px;color:#fff;letter-spacing:.06em}
 .nl{display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:0}
-.nl a{font-family:'Rajdhani';font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);transition:.2s;text-decoration:none}
-.nl a:hover{color:var(--neon)}
+.nl a{font-family:'Rajdhani';font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#8ECAE6;transition:.2s;text-decoration:none}
+.nl a:hover{color:#00F0FF}
 .nmb{display:none;flex-direction:column;gap:4px;padding:8px;background:none;border:none;cursor:pointer}
-.nmb span{display:block;width:20px;height:2px;background:var(--neon);border-radius:1px;transition:.3s}
+.nmb span{display:block;width:20px;height:2px;background:#00F0FF;border-radius:1px;transition:.3s}
 
 /* ═══════════════════════════════════════════
    UTILITY DRAWER (3-dot menu — MOBILE ONLY)
@@ -238,14 +242,14 @@ img.loaded{
 .ud-header h3{font-family:'Orbitron';font-size:13px;color:#fff;text-transform:uppercase;letter-spacing:.06em}
 .ud-close{width:32px;height:32px;border-radius:50%;background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.15);color:#ff4466;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .ud-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px}
-.ud-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text);border:none;background:none;width:100%;font-family:'Inter';font-size:13px;text-align:left}
+.ud-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:8px;cursor:pointer;transition:all .2s;text-decoration:none;color:#8ECAE6;border:none;background:none;width:100%;font-family:'Inter';font-size:13px;text-align:left}
 .ud-item:hover{background:rgba(0,240,255,0.04)}
 .ud-item:active{background:rgba(0,240,255,0.08)}
-.ud-item svg{width:20px;height:20px;color:var(--neon);flex-shrink:0}
+.ud-item svg{width:20px;height:20px;color:#00F0FF;flex-shrink:0}
 .ud-item span{flex:1}
-.ud-item .ud-tag{font-family:'Space Mono';font-size:9px;color:var(--muted);background:rgba(0,240,255,0.04);padding:2px 6px;border-radius:4px}
+.ud-item .ud-tag{font-family:'Space Mono';font-size:9px;color:#8ECAE6;background:rgba(0,240,255,0.04);padding:2px 6px;border-radius:4px}
 .ud-divider{height:1px;background:rgba(0,240,255,0.06);margin:8px 0}
-.ud-footer{padding:16px 20px;border-top:1px solid rgba(0,240,255,0.06);font-family:'Space Mono';font-size:9px;color:var(--muted);text-align:center}
+.ud-footer{padding:16px 20px;border-top:1px solid rgba(0,240,255,0.06);font-family:'Space Mono';font-size:9px;color:#8ECAE6;text-align:center}
 
 /* ═══════════════════════════════════════════
    WALLET CONNECT MODAL — 5D ANIME ICONS
@@ -257,13 +261,13 @@ img.loaded{
 .wm-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.15);color:#ff4466;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
 .wm-body{padding:32px 28px}
 .wm-body h2{font-family:'Orbitron';font-size:18px;color:#fff;text-align:center;margin-bottom:6px}
-.wm-body>p{text-align:center;font-size:13px;color:var(--muted);margin-bottom:24px}
+.wm-body>p{text-align:center;font-size:13px;color:#8ECAE6;margin-bottom:24px}
 .wm-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);margin-bottom:10px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
 .wm-option:hover{border-color:rgba(0,240,255,0.2);background:rgba(0,240,255,0.05);transform:translateX(4px)}
 .wm-option img{width:40px;height:40px;border-radius:10px;object-fit:cover;box-shadow:0 0 15px rgba(0,240,255,0.1)}
 .wm-option .wm-info{flex:1}
 .wm-option .wm-name{font-family:'Orbitron';font-size:12px;font-weight:700}
-.wm-option .wm-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.wm-option .wm-desc{font-size:11px;color:#8ECAE6;margin-top:2px}
 
 /* ═══════════════════════════════════════════
    HERO
@@ -273,17 +277,17 @@ img.loaded{
 .hero h1{font-size:clamp(28px,6.5vw,72px);line-height:1.08;margin-bottom:16px}
 .hero h1 span{display:block}
 .hero h1 .l2{margin-top:8px}
-.hero-sub{font-family:'Rajdhani';font-weight:500;font-size:clamp(15px,1.6vw,20px);color:var(--text);max-width:500px;margin:0 auto 28px;line-height:1.5;opacity:.9}
+.hero-sub{font-family:'Rajdhani';font-weight:500;font-size:clamp(15px,1.6vw,20px);color:#8ECAE6;max-width:500px;margin:0 auto 28px;line-height:1.5;opacity:.9}
 
 .contract-box{display:inline-flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px;margin-bottom:20px}
-.contract-box label{font-family:'Space Mono';font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.contract-box label{font-family:'Space Mono';font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.1em}
 .crow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
-.crow code{font-family:'Space Mono';font-size:11px;color:var(--neon);background:rgba(0,240,255,0.04);padding:6px 12px;border-radius:6px;border:1px solid rgba(0,240,255,0.1)}
-.cpbtn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.12);color:var(--neon);cursor:pointer;transition:.2s;flex-shrink:0}
+.crow code{font-family:'Space Mono';font-size:11px;color:#00F0FF;background:rgba(0,240,255,0.04);padding:6px 12px;border-radius:6px;border:1px solid rgba(0,240,255,0.1)}
+.cpbtn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;cursor:pointer;transition:.2s;flex-shrink:0}
 .cpbtn:active{background:rgba(0,240,255,0.15)}
 .hero-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .hero-price{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:8px;margin-top:8px}
-.hp-loading{font-family:'Space Mono';font-size:10px;color:var(--muted);margin-top:12px;letter-spacing:.05em}
+.hp-loading{font-family:'Space Mono';font-size:10px;color:#8ECAE6;margin-top:12px;letter-spacing:.05em}
 .hp-error{color:#ff4466!important}
 
 /* ═══════════════════════════════════════════
@@ -294,7 +298,7 @@ img.loaded{
 .sh{text-align:center;margin-bottom:44px;position:relative;z-index:2}
 .sh .badge{margin-bottom:14px}
 .sh h2{font-family:'Orbitron';font-size:clamp(22px,3vw,38px);font-weight:800;text-transform:uppercase;letter-spacing:.05em;line-height:1.15}
-.sh p{font-family:'Rajdhani';font-size:clamp(14px,1.4vw,17px);color:var(--text);margin-top:10px;max-width:480px;margin-left:auto;margin-right:auto;opacity:.85}
+.sh p{font-family:'Rajdhani';font-size:clamp(14px,1.4vw,17px);color:#8ECAE6;margin-top:10px;max-width:480px;margin-left:auto;margin-right:auto;opacity:.85}
 
 /* ═══════════════════════════════════════════
    DEX TRADING HQ — MARKETPLACE STYLE
@@ -305,13 +309,13 @@ img.loaded{
 .dex-side{display:flex;flex-direction:column;gap:12px}
 .dlc{padding:16px}
 .dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.dh span{font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;gap:6px}
-.dpb{font-family:'Space Mono';font-size:26px;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em}
+.dh span{font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8ECAE6;display:flex;align-items:center;gap:6px}
+.dpb{font-family:'Space Mono';font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.02em}
 .dc{font-family:'Space Mono';font-size:11px;margin-top:2px;min-height:16px}
 .sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .sm-item{padding:12px;text-align:center}
-.sm-item .nv{font-family:'Orbitron';font-size:16px;font-weight:700;color:var(--text-bright)}
-.sm-item .nl{font-family:'Rajdhani';font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+.sm-item .nv{font-family:'Orbitron';font-size:16px;font-weight:700;color:#fff}
+.sm-item .nl{font-family:'Rajdhani';font-size:10px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
 
 .market-panel{
   background:rgba(8,12,28,0.2);
@@ -328,7 +332,7 @@ img.loaded{
 }
 .market-panel h4{
   font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;
-  color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:6px;
+  color:#8ECAE6;margin-bottom:16px;display:flex;align-items:center;gap:6px;
 }
 .market-actions{
   display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;
@@ -363,16 +367,16 @@ img.loaded{
   border-radius:8px;padding:12px;
 }
 .market-swap span{
-  font-family:'Space Mono';font-size:10px;color:var(--muted);
+  font-family:'Space Mono';font-size:10px;color:#8ECAE6;
 }
 .market-swap .swap-arrow{
-  color:var(--neon);font-size:16px;
+  color:#00F0FF;font-size:16px;
 }
 
 /* Transactions */
 .tx-box{padding:16px}
-.tx-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.tx-ws-note{font-family:'Space Mono';font-size:9px;color:var(--muted);margin-bottom:10px;padding:6px 8px;background:rgba(57,255,20,0.03);border:1px solid rgba(57,255,20,0.08);border-radius:6px}
+.tx-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#8ECAE6;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.tx-ws-note{font-family:'Space Mono';font-size:9px;color:#8ECAE6;margin-bottom:10px;padding:6px 8px;background:rgba(57,255,20,0.03);border:1px solid rgba(57,255,20,0.08);border-radius:6px}
 .tx-ws-note .ws-status{display:inline-flex;align-items:center;gap:4px}
 .tx-list{display:flex;flex-direction:column;gap:5px;max-height:260px;overflow-y:auto;min-height:100px}
 .tx-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:6px;font-family:'Space Mono';font-size:10px}
@@ -381,22 +385,15 @@ img.loaded{
 .tx-tag{font-size:8px;text-transform:uppercase;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:.05em}
 .tx-tag.buy{color:#39FF14;background:rgba(57,255,20,0.1)}
 .tx-tag.sell{color:#ff4466;background:rgba(255,68,102,0.1)}
-.tx-empty{text-align:center;font-family:'Space Mono';font-size:10px;color:var(--muted);padding:20px}
+.tx-empty{text-align:center;font-family:'Space Mono';font-size:10px;color:#8ECAE6;padding:20px}
 
-/* News */
-.news-box{padding:16px}
-.news-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.news-list{display:flex;flex-direction:column;gap:7px}
-.news-item{padding:10px;border-radius:6px;background:rgba(0,240,255,0.015);border:1px solid rgba(0,240,255,0.04);transition:.2s}
-.news-item:active{background:rgba(0,240,255,0.04)}
-.ntag{font-family:'Space Mono';font-size:8px;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:5px;font-weight:700;letter-spacing:.05em}
-.ntag.inf{background:rgba(0,240,255,0.08);color:#00F0FF;border:1px solid rgba(0,240,255,0.15)}
-.ntag.sol{background:rgba(188,19,254,0.08);color:#BC13FE;border:1px solid rgba(188,19,254,0.15)}
-.ntag.meme{background:rgba(57,255,20,0.06);color:#39FF14;border:1px solid rgba(57,255,20,0.12)}
-.news-item p{font-size:11px;color:var(--text);line-height:1.45}
-.news-item .ntime{font-size:9px;color:var(--muted);margin-top:3px;font-family:'Space Mono'}
-
-100%{transform:translateX(-50%)}}
+/* Transaction ticker strip */
+.tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.3);border:1px solid rgba(0,240,255,0.08);border-radius:8px;padding:10px 0;position:relative}
+.ttrack{display:inline-block;animation:tscroll 30s linear infinite}
+.ti{display:inline-block;padding:0 24px;font-family:'Space Mono';font-size:10px;letter-spacing:.05em}
+.ti.tbuy{color:#39FF14}
+.ti.tsell{color:#ff4466}
+@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ═══════════════════════════════════════════
    FLOW BANNER
@@ -404,8 +401,8 @@ img.loaded{
 .flow{background:transparent;border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);padding:36px 0;position:relative;z-index:2}
 .flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:8px}
-.flow-item svg{width:32px;height:32px;color:var(--neon);opacity:.8}
-.flow-item span{font-family:'Orbitron';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text)}
+.flow-item svg{width:32px;height:32px;color:#00F0FF;opacity:.8}
+.flow-item span{font-family:'Orbitron';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#8ECAE6}
 
 /* ═══════════════════════════════════════════
    GAMES — GAME CONTROLLER BACKGROUND MODAL
@@ -416,7 +413,7 @@ img.loaded{
 .game-hero img{width:100%;height:200px;object-fit:cover;display:block;position:relative;z-index:0}
 .game-hero .gh-body{padding:20px;text-align:center;position:relative;z-index:2}
 .game-hero .gh-body h3{font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6}
-.game-hero .gh-body p{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:12px}
+.game-hero .gh-body p{font-size:12px;color:#8ECAE6;line-height:1.5;margin-bottom:12px}
 
 /* ═══════════════════════════════════════════
    PUMP.FUN — DEFI/TERMINAL STYLE
@@ -427,7 +424,7 @@ img.loaded{
 .pump-terminal img{width:100%;height:220px;object-fit:cover;display:block}
 .pump-body{padding:24px;text-align:center;position:relative;z-index:2}
 .pump-body h3{font-family:'Orbitron';font-size:18px;color:#39FF14;margin-bottom:8px;text-shadow:0 0 10px rgba(57,255,20,0.3)}
-.pump-body p{font-size:13px;color:var(--text);margin-bottom:16px}
+.pump-body p{font-size:13px;color:#8ECAE6;margin-bottom:16px}
 
 /* ═══════════════════════════════════════════
    MEMES — VIRAL STYLE
@@ -451,7 +448,7 @@ img.loaded{
 .vid-box{border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);background:rgba(8,12,28,0.15);box-shadow:var(--vid-shadow);position:relative}
 .vid-box video{width:100%;display:block;border:none;max-height:540px}
 .vid-ctrl{position:absolute;bottom:8px;right:8px;display:flex;gap:6px;z-index:5}
-.vid-ctrl button{width:28px;height:28px;border-radius:6px;background:rgba(8,12,28,0.15);border:1px solid rgba(0,240,255,0.12);color:var(--neon);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.vid-ctrl button{width:28px;height:28px;border-radius:6px;background:rgba(8,12,28,0.15);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
 .vid-ctrl button:hover{background:rgba(0,240,255,0.12)}
 
 /* ═══════════════════════════════════════════
@@ -459,8 +456,8 @@ img.loaded{
    ═══════════════════════════════════════════ */
 .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:500px;margin:28px auto 0}
 .cd-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:18px 12px;text-align:center;backdrop-filter:blur(10px)}
-.cd-item .cd-num{font-family:'Orbitron';font-size:clamp(22px,3vw,36px);font-weight:800;color:var(--neon);line-height:1;text-shadow:0 0 10px rgba(0,240,255,0.3)}
-.cd-item .cd-label{font-family:'Rajdhani';font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.cd-item .cd-num{font-family:'Orbitron';font-size:clamp(22px,3vw,36px);font-weight:800;color:#00F0FF;line-height:1;text-shadow:0 0 10px rgba(0,240,255,0.3)}
+.cd-item .cd-label{font-family:'Rajdhani';font-size:10px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
 
 /* ═══════════════════════════════════════════
    MODALS
@@ -475,8 +472,8 @@ img.loaded{
 .modal-body h2{font-family:'Orbitron';font-size:20px;color:#fff;margin-bottom:20px;text-align:center}
 
 .cs-icon{font-size:48px;text-align:center;margin-bottom:12px}
-.cs-modal h2{text-align:center;font-family:'Orbitron';font-size:22px;color:var(--text-bright);margin-bottom:8px}
-.cs-modal p{text-align:center;font-family:'Rajdhani';font-size:15px;color:var(--text);margin-bottom:20px;opacity:.85}
+.cs-modal h2{text-align:center;font-family:'Orbitron';font-size:22px;color:#fff;margin-bottom:8px}
+.cs-modal p{text-align:center;font-family:'Rajdhani';font-size:15px;color:#8ECAE6;margin-bottom:20px;opacity:.85}
 .cs-modal .btn-b{margin:0 auto;display:flex;justify-content:center}
 
 .meme-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
@@ -491,15 +488,15 @@ img.loaded{
 .c3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .card-inner{padding:24px}
 .card-inner img{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;opacity:.6}
-.card-inner h3{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:6px}
-.card-inner p{font-size:12px;color:var(--text);line-height:1.5}
+.card-inner h3{font-family:'Orbitron';font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
+.card-inner p{font-size:12px;color:#8ECAE6;line-height:1.5}
 .s4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
 .scard{padding:28px 16px;text-align:center}
-.scard .n{font-family:'Orbitron';font-size:clamp(22px,2.2vw,32px);font-weight:800;color:var(--text-bright);line-height:1}
-.scard .l{font-family:'Rajdhani';font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:6px}
+.scard .n{font-family:'Orbitron';font-size:clamp(22px,2.2vw,32px);font-weight:800;color:#fff;line-height:1}
+.scard .l{font-family:'Rajdhani';font-size:11px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.1em;margin-top:6px}
 .cta-box{padding:44px 32px;text-align:center;border-radius:10px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(0,240,255,0.04),rgba(188,19,254,0.04))}
 .cta-box h3{font-family:'Orbitron';font-size:clamp(18px,2.2vw,28px);font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:linear-gradient(90deg,#00F0FF,#BC13FE);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cta-box p{font-family:'Rajdhani';font-size:14px;color:var(--text);margin-top:8px;margin-bottom:20px;opacity:.8}
+.cta-box p{font-family:'Rajdhani';font-size:14px;color:#8ECAE6;margin-top:8px;margin-bottom:20px;opacity:.8}
 
 /* ═══════════════════════════════════════════
    COMMUNITY
@@ -507,8 +504,8 @@ img.loaded{
 .cg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .ccard{padding:22px;text-align:center;text-decoration:none;display:block;transition:.3s}
 .ccard svg{width:26px;height:26px;margin-bottom:10px}
-.ccard h4{font-family:'Orbitron';font-size:12px;font-weight:700;color:var(--text-bright);margin-bottom:4px}
-.ccard p{font-size:11px;color:var(--text);line-height:1.45;opacity:.8}
+.ccard h4{font-family:'Orbitron';font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
+.ccard p{font-size:11px;color:#8ECAE6;line-height:1.45;opacity:.8}
 
 /* ═══════════════════════════════════════════
    SOCIAL EMBEDS
@@ -521,13 +518,13 @@ img.loaded{
 .footer{background:rgba(8,12,28,0.2);position:relative;border-top:1px solid rgba(0,240,255,0.05);backdrop-filter:blur(10px)}
 .fg{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;padding:48px 0}
 .fb img{width:32px;height:32px;border-radius:50%;margin-bottom:10px}
-.fb h4{font-family:'Orbitron';font-size:12px;color:var(--text-bright);margin-bottom:6px}
-.fb p{font-size:11px;color:var(--muted);line-height:1.6}
-.fca{font-family:'Space Mono';font-size:9px;color:var(--muted);margin-top:8px}
-.fc h5{font-family:'Orbitron';font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
-.fc a{display:block;font-size:11px;color:var(--text);padding:4px 0;transition:.2s;text-decoration:none}
-.fc a:hover{color:var(--neon)}
-.fbt{padding:18px 0;border-top:1px solid rgba(0,240,255,0.05);display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);flex-wrap:wrap;gap:10px}
+.fb h4{font-family:'Orbitron';font-size:12px;color:#fff;margin-bottom:6px}
+.fb p{font-size:11px;color:#8ECAE6;line-height:1.6}
+.fca{font-family:'Space Mono';font-size:9px;color:#8ECAE6;margin-top:8px}
+.fc h5{font-family:'Orbitron';font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.fc a{display:block;font-size:11px;color:#8ECAE6;padding:4px 0;transition:.2s;text-decoration:none}
+.fc a:hover{color:#00F0FF}
+.fbt{padding:18px 0;border-top:1px solid rgba(0,240,255,0.05);display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#8ECAE6;flex-wrap:wrap;gap:10px}
 
 /* ═══════════════════════════════════════════
    CHATBOT
@@ -540,18 +537,18 @@ img.loaded{
 .chh{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(0,240,255,0.06)}
 .chh img{width:28px;height:28px;border-radius:50%;border:2px solid rgba(0,240,255,0.2)}
 .chh .cn{font-family:'Orbitron';font-size:11px;color:#fff}
-.chh .cs{font-size:9px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.chh .cs{font-size:9px;color:#8ECAE6;display:flex;align-items:center;gap:5px}
 .chb{padding:14px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;max-height:280px;-webkit-overflow-scrolling:touch}
 .cm{padding:9px 13px;border-radius:10px;font-size:12px;line-height:1.5;max-width:88%}
-.cm.bot{align-self:flex-start;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.06);color:var(--text)}
-.cm.user{align-self:flex-end;background:rgba(188,19,254,0.08);border:1px solid rgba(188,19,254,0.15);color:var(--text-bright)}
+.cm.bot{align-self:flex-start;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.06);color:#8ECAE6}
+.cm.user{align-self:flex-end;background:rgba(188,19,254,0.08);border:1px solid rgba(188,19,254,0.15);color:#fff}
 .cch{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
-.cch button{padding:5px 10px;border-radius:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.08);font-size:9px;font-family:'Orbitron';color:var(--neon);cursor:pointer;transition:.2s}
+.cch button{padding:5px 10px;border-radius:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.08);font-size:9px;font-family:'Orbitron';color:#00F0FF;cursor:pointer;transition:.2s}
 .cch button:active{background:rgba(0,240,255,0.1)}
 .ci{padding:10px 14px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px}
-.ci input{flex:1;padding:9px 14px;border-radius:8px;background:var(--input-bg);border:1px solid rgba(0,240,255,0.06);color:var(--text-bright);font-size:12px;outline:none;font-family:'Inter'}
+.ci input{flex:1;padding:9px 14px;border-radius:8px;background:var(--input-bg);border:1px solid rgba(0,240,255,0.06);color:#fff;font-size:12px;outline:none;font-family:'Inter'}
 .ci input:focus{border-color:rgba(0,240,255,0.2)}
-.ci input::placeholder{color:var(--muted);font-size:11px}
+.ci input::placeholder{color:#8ECAE6;font-size:11px}
 .ci button{width:34px;height:34px;border-radius:8px;background:#00F0FF;color:#000;display:flex;align-items:center;justify-content:center;font-size:14px;border:none;cursor:pointer;flex-shrink:0}
 
 /* ═══════════════════════════════════════════
@@ -560,8 +557,8 @@ img.loaded{
 .wsb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--wsb-bg);border-top:1px solid rgba(0,240,255,0.08);z-index:999;display:flex;align-items:center;justify-content:center;gap:16px;font-family:'Space Mono';font-size:9px;text-transform:uppercase;letter-spacing:.08em;backdrop-filter:blur(10px);transition:background .3s}
 .wsb .wsd{width:5px;height:5px;border-radius:50%;background:#39FF14;box-shadow:0 0 4px #39FF14}
 .wsb .wsd.off{background:#ff4466;box-shadow:0 0 4px #ff4466}
-.wsb .wsl{color:var(--muted)}
-.wsb .wsv{color:var(--neon)}
+.wsb .wsl{color:#8ECAE6}
+.wsb .wsv{color:#00F0FF}
 
 
 
@@ -569,14 +566,14 @@ img.loaded{
    TOAST NOTIFICATIONS
    ═══════════════════════════════════════════ */
 .toast-wrap{position:fixed;top:80px;right:20px;z-index:6000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{pointer-events:auto;background:rgba(8,12,28,0.85);border:1px solid rgba(0,240,255,0.15);border-left:4px solid var(--neon);border-radius:8px;padding:12px 16px;max-width:320px;backdrop-filter:blur(10px);transform:translateX(120%);transition:transform .4s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+.toast{pointer-events:auto;background:rgba(8,12,28,0.85);border:1px solid rgba(0,240,255,0.15);border-left:4px solid #00F0FF;border-radius:8px;padding:12px 16px;max-width:320px;backdrop-filter:blur(10px);transform:translateX(120%);transition:transform .4s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 .toast.show{transform:translateX(0)}
 .toast.toast-warn{border-left-color:#ffaa00}
 .toast.toast-err{border-left-color:#ff4466}
 .toast.toast-success{border-left-color:#39FF14}
-.toast-title{font-family:'Orbitron';font-size:10px;color:var(--text-bright);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
-.toast-body{font-size:11px;color:var(--text);line-height:1.4}
-.toast-time{font-family:'Space Mono';font-size:9px;color:var(--muted);margin-top:4px}
+.toast-title{font-family:'Orbitron';font-size:10px;color:#fff;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.toast-body{font-size:11px;color:#8ECAE6;line-height:1.4}
+.toast-time{font-family:'Space Mono';font-size:9px;color:#8ECAE6;margin-top:4px}
 
 /* ═══════════════════════════════════════════
    DIVIDER
@@ -596,22 +593,22 @@ img.loaded{
 .wc-hero-main .wc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,68,102,0.15);border:1px solid rgba(255,68,102,0.3);color:#ff4466;font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.12em;padding:5px 12px;border-radius:6px;margin-bottom:12px}
 .wc-hero-main .wc-badge .live-dot{width:6px;height:6px;border-radius:50%;background:#ff4466;box-shadow:0 0 6px #ff4466;animation:pulse 1.5s ease-in-out infinite}
 .wc-hero-main h3{font-family:'Orbitron';font-size:clamp(16px,2vw,24px);font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px}
-.wc-hero-main p{font-size:13px;color:var(--text);opacity:.8;line-height:1.5}
+.wc-hero-main p{font-size:13px;color:#8ECAE6;opacity:.8;line-height:1.5}
 .wc-side-grid{display:grid;grid-template-columns:1fr;gap:14px}
 .wc-side-item{display:flex;gap:14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:14px;cursor:pointer;transition:all .25s ease;text-decoration:none;color:inherit}
 .wc-side-item:hover{border-color:rgba(0,240,255,0.15);background:rgba(0,240,255,0.03);transform:translateX(4px)}
 .wc-side-item .wc-thumb{width:80px;height:80px;border-radius:8px;background-size:cover;background-position:center;flex-shrink:0;opacity:.8}
 .wc-side-item .wc-info{flex:1;display:flex;flex-direction:column;justify-content:center}
-.wc-side-item .wc-info h4{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--text-bright);line-height:1.4;margin-bottom:6px}
-.wc-side-item .wc-info p{font-size:11px;color:var(--muted);line-height:1.4}
-.wc-side-item .wc-info .wc-source{font-family:'Space Mono';font-size:9px;color:var(--neon);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+.wc-side-item .wc-info h4{font-family:'Orbitron';font-size:11px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}
+.wc-side-item .wc-info p{font-size:11px;color:#8ECAE6;line-height:1.4}
+.wc-side-item .wc-info .wc-source{font-family:'Space Mono';font-size:9px;color:#00F0FF;text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
 .wc-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .wc-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;transition:all .3s ease;text-decoration:none;color:inherit}
 .wc-card:hover{border-color:rgba(0,240,255,0.15);box-shadow:0 8px 30px rgba(0,240,255,0.08);transform:translateY(-3px)}
 .wc-card .wc-card-img{width:100%;height:140px;background-size:cover;background-position:center;opacity:.7}
 .wc-card .wc-card-body{padding:14px}
-.wc-card .wc-card-body h4{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--text-bright);line-height:1.4;margin-bottom:6px}
-.wc-card .wc-card-body p{font-size:11px;color:var(--muted);line-height:1.4}
+.wc-card .wc-card-body h4{font-family:'Orbitron';font-size:11px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}
+.wc-card .wc-card-body p{font-size:11px;color:#8ECAE6;line-height:1.4}
 
 /* ═══════════════════════════════════════════
    TOKENOMICS / NFT CARDS
@@ -798,16 +795,15 @@ img.loaded{
 </style>
 <base target="_blank">
 <base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <!-- ═══════════════════════════════════════════
      SPLASH SCREEN — 12 SECOND INTRO
      ═══════════════════════════════════════════ -->
 <div class="splash-screen" id="splashScreen">
-  <div class="splash-text splash-welcome">WELCOME TO INFINITE COIN HQ</div>
-  <div class="splash-text splash-opp">INFINITE OPPORTUNITIES</div>
+  <div class="splash-text splash-welcome">WELCOME TO INFINITECOINHQ</div>
   <div class="splash-text splash-mom">INFINITE MOMENTUMS</div>
+  <div class="splash-text splash-opp">INFINITE OPPORTUNITIES</div>
 </div>
 
 
@@ -914,7 +910,7 @@ img.loaded{
           <div class="wm-name">PHANTOM</div>
           <div class="wm-desc">Most popular Solana wallet</div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
       <button class="wm-option" onclick="connectSolflare()">
         <img src="https://i.postimg.cc/ZRJ27QRQ/logo2-sphere-5d-anime.png" alt="Solflare" width="40" height="40" style="border-radius:10px">
@@ -922,7 +918,7 @@ img.loaded{
           <div class="wm-name">SOLFLARE</div>
           <div class="wm-desc">Secure Solana wallet</div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
       <button class="wm-option" onclick="connectJupiter()">
         <img src="https://i.postimg.cc/9QKckc5s/logo3-s-5d-anime.png" alt="Jupiter" width="40" height="40" style="border-radius:10px">
@@ -930,18 +926,22 @@ img.loaded{
           <div class="wm-name">JUPITER</div>
           <div class="wm-desc">DEX + Wallet integration</div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════
-     HERO
+     HERO — PERMANENT AFTER SPLASH
      ═══════════════════════════════════════════ -->
 <section class="hero" id="hero">
   <div class="hero-inner">
-    <div style="height:20px"></div>
+    <!-- Permanent headlines -->
+    <h1 style="margin-bottom:24px">
+      <span class="neon-purple" style="font-size:clamp(32px,7vw,80px);display:block;margin-bottom:12px">INFINITE MOMENTUMS</span>
+      <span class="neon-blue" style="font-size:clamp(28px,6vw,64px);display:block">INFINITE OPPORTUNITIES</span>
+    </h1>
 
     <div class="contract-box glass">
       <label>$INFINITE Contract Address</label>
@@ -969,18 +969,17 @@ img.loaded{
 </section>
 
 <!-- ═══════════════════════════════════════════
-     DEX TRADING HQ — LAYER 2: tech-figure.png
+     DEX TRADING HQ
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="trade">
-      <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
-        <h2 class="neon-mixed" style="font-size:clamp(24px,4vw,42px);text-shadow:0 0 20px rgba(0,240,255,0.4),0 0 40px rgba(188,19,254,0.2),0 0 60px rgba(0,240,255,0.1);letter-spacing:.08em">WELCOME TO INFINITE COIN MARKET HQ</h2>
+        <span class="badge"><span class="dot-g"></span> LIVE TRADING</span>
+        <h2 class="neon-mixed">TRADING HEADQUARTERS</h2>
       </div>
 
       <div class="dex-grid">
-        
-
         <div class="dex-side">
           <div class="dlc glass">
             <div class="dh">
@@ -988,7 +987,7 @@ img.loaded{
               <span class="badge">JUPITER</span>
             </div>
             <div class="dpb" id="dPrice">---</div>
-            <div class="dc" id="dChange" style="color:var(--muted)">Connecting...</div>
+            <div class="dc" id="dChange" style="color:#8ECAE6">Connecting...</div>
             <div class="sm-grid">
               <div class="sm-item glass"><div class="nv" id="sMcap">---</div><div class="nl">Market Cap</div></div>
               <div class="sm-item glass"><div class="nv" id="sVol">---</div><div class="nl">24H Volume</div></div>
@@ -1013,7 +1012,7 @@ img.loaded{
               <span>SOL</span>
               <span class="swap-arrow">&#8644;</span>
               <span>$INFINITE</span>
-              <span style="margin-left:auto;color:var(--neon);font-family:Orbitron;font-size:9px">JUPITER V6</span>
+              <span style="margin-left:auto;color:#00F0FF;font-family:Orbitron;font-size:9px">JUPITER V6</span>
             </div>
           </div>
 
@@ -1021,8 +1020,8 @@ img.loaded{
             <h4><span class="dot-b"></span> LIVE TRANSACTIONS</h4>
             <div class="tx-ws-note">
               <span class="ws-status"><span class="dot-g" id="txDot"></span> <span id="txWsText">WebSocket: Connecting...</span></span>
-              <span style="color:var(--muted);margin-left:8px">|</span>
-              <span style="color:var(--muted);margin-left:8px">Visitors: <span id="vCounter" style="color:var(--neon)">--</span></span>
+              <span style="color:#8ECAE6;margin-left:8px">|</span>
+              <span style="color:#8ECAE6;margin-left:8px">Visitors: <span id="vCounter" style="color:#00F0FF">--</span></span>
             </div>
             <div class="tx-list" id="txList">
               <div class="tx-empty">Waiting for real transactions from WebSocket...</div>
@@ -1033,29 +1032,20 @@ img.loaded{
           <div class="tstrip" id="txTicker" style="margin-top:16px">
             <div class="ttrack" id="tTrackReal"></div>
           </div>
-
-          <div class="news-box glass">
-            <h4><span class="dot-p"></span> MARKET NEWS</h4>
-            <div class="news-list" id="newsList"></div>
-          </div>
         </div>
       </div>
-
-      
     </div>
   </div>
 </section>
 
-
-
 <div class="divider"></div>
 
 <!-- ═══════════════════════════════════════════
-     GAMES — LAYER 2: game-controller.png
+     GAMES — LAYER 2: game-controller.png (ONE ONLY)
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="games">
   <div class="bg-img" style="background-image:url('images/game-controller.png');opacity:.5"></div>
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge">PLAY TO EARN</span>
@@ -1066,10 +1056,10 @@ img.loaded{
       <div style="max-width:560px;margin:0 auto 36px" onclick="openGameModal()">
         <div class="game-modal-bg">
           <div class="gmb-img"></div>
-                    <div class="gmb-scanlines"></div>
+          <div class="gmb-scanlines"></div>
           <div class="gmb-content">
             <h3 style="font-family:'Press Start 2P',cursive;font-size:11px;color:#00F0FF;margin-bottom:12px;line-height:1.6;text-shadow:0 0 10px rgba(0,240,255,0.5)">INFINITE COIN GAMES</h3>
-            <p style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:16px;max-width:360px;margin-left:auto;margin-right:auto">Tap to play Infinite Jumper & Infinite Runners. Earn $INF while you play.</p>
+            <p style="font-size:14px;color:#8ECAE6;line-height:1.6;margin-bottom:16px;max-width:360px;margin-left:auto;margin-right:auto">Tap to play Infinite Jumper & Infinite Runners. Earn $INF while you play.</p>
             <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
               <span class="badge"><span class="dot-g"></span> INFINITE RUNNERS</span>
               <span class="badge" style="border-color:rgba(188,19,254,.2);color:#BC13FE;background:rgba(188,19,254,.06)"><span class="dot-p"></span> INFINITE JUMPER</span>
@@ -1080,8 +1070,6 @@ img.loaded{
           </div>
         </div>
       </div>
-
-
     </div>
   </div>
 </section>
@@ -1096,13 +1084,13 @@ img.loaded{
         <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6">INFINITE RUNNER</h3>
-          <p style="font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.5">Dash through infinite worlds. Earn $INF.</p>
+          <p style="font-size:12px;color:#8ECAE6;margin-bottom:16px;line-height:1.5">Dash through infinite worlds. Earn $INF.</p>
           <button class="btn-b" style="width:100%;justify-content:center" onclick="showComingSoon('Infinite Runner','Endless runner launching Q3 2026. Connect your wallet to earn $INF!');closeGameModal()">COMING SOON</button>
         </div>
         <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:14px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
           <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-bottom:10px;line-height:1.6">INFINITE JUMPER</h3>
-          <p style="font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.5">Jump to the moon. Earn $INF per level.</p>
+          <p style="font-size:12px;color:#8ECAE6;margin-bottom:16px;line-height:1.5">Jump to the moon. Earn $INF per level.</p>
           <a href="https://infinitecoinjumper-v2.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
         </div>
       </div>
@@ -1114,7 +1102,7 @@ img.loaded{
      PUMP.FUN — LAYER 2: to-the-moon.png
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="pump">
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge"><span class="dot-p"></span> PUMP.FUN</span>
@@ -1141,7 +1129,7 @@ img.loaded{
      MEMES — LAYER 2: bg-digital-landscape.png
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="memes">
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge"><span class="dot-p"></span> MEME ZONE</span>
@@ -1218,7 +1206,7 @@ img.loaded{
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="staking">
   <div class="bg-img" style="background-image:url('images/bg-moon-mission.png');opacity:.5"></div>
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge">STAKING</span>
@@ -1252,7 +1240,7 @@ img.loaded{
 <div class="divider"></div>
 
 <!-- ═══════════════════════════════════════════
-     WORLD CUP 2026 — LAYER 2: arena.png
+     WORLD CUP 2026 — LAYER 2: arena.png (ONE ONLY)
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="worldcup">
   <div class="bg-img" style="background-image:url('images/arena.png');opacity:.5"></div>
@@ -1282,7 +1270,7 @@ img.loaded{
      TOKENOMICS / NFTs — LAYER 2: bg-bubble-map.png + knights.png
      ═══════════════════════════════════════════ -->
 <section class="sec sp" id="ecosystem">
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="sh">
         <span class="badge">ECOSYSTEM</span>
@@ -1296,7 +1284,7 @@ img.loaded{
             <img src="images/tech-figure.png" alt="DeFi" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'DeFi Powerhouse')">
           </div>
           <h3 class="nft-title">DEFI POWERHOUSE</h3>
-          <p style="font-size:12px;color:var(--text);line-height:1.5">Staking, yield farming, liquidity &#8212; all natively integrated.</p>
+          <p style="font-size:12px;color:#8ECAE6;line-height:1.5">Staking, yield farming, liquidity &#8212; all natively integrated.</p>
         </div>
         <div class="nft-card card-inner">
           <span class="nft-rarity" style="background:rgba(188,19,254,0.9)">GENESIS</span>
@@ -1304,7 +1292,7 @@ img.loaded{
             <img src="images/knights.png" alt="NFTs" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Exclusive NFTs')">
           </div>
           <h3 class="nft-title">EXCLUSIVE NFTs</h3>
-          <p style="font-size:12px;color:var(--text);line-height:1.5">Genesis holders unlock airdrops, beta, governance.</p>
+          <p style="font-size:12px;color:#8ECAE6;line-height:1.5">Genesis holders unlock airdrops, beta, governance.</p>
         </div>
         <div class="nft-card card-inner">
           <span class="nft-rarity" style="background:rgba(0,240,255,0.9);color:#000">DAO</span>
@@ -1312,7 +1300,7 @@ img.loaded{
             <img src="images/mascot.png" alt="Community" width="400" height="140" decoding="async" loading="lazy" onload="this.classList.add('loaded')" onerror="handleImgError(this,'Community Driven')">
           </div>
           <h3 class="nft-title">COMMUNITY DRIVEN</h3>
-          <p style="font-size:12px;color:var(--text);line-height:1.5">Decentralized governance. Vote. Shape the future.</p>
+          <p style="font-size:12px;color:#8ECAE6;line-height:1.5">Decentralized governance. Vote. Shape the future.</p>
         </div>
       </div>
     </div>
@@ -1323,7 +1311,7 @@ img.loaded{
      STATS + CTA
      ═══════════════════════════════════════════ -->
 <section class="sec sp">
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="cw">
       <div class="s4">
         <div class="defi-card scard"><div class="df-stat" style="color:#00F0FF" id="statMcap">---</div><div class="df-label">Market Cap</div></div>
@@ -1361,13 +1349,13 @@ img.loaded{
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             <div>
               <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">X (Twitter) Live Feed</div>
+              <div style="font-size:10px;color:#8ECAE6">X (Twitter) Live Feed</div>
             </div>
           </div>
           <div class="sf-body" id="xFeedContainer" style="padding:0;min-height:400px">
             <a class="twitter-timeline" data-height="400" data-theme="dark" data-chrome="noheader nofooter transparent" href="https://x.com/infinitecoinhq?ref_src=twsrc%5Etfw">Tweets by infinitecoinhq</a>
             <div class="sf-fallback" id="xFallback" style="display:none">
-              <div style="font-family:Space Mono;font-size:11px;color:var(--muted);margin-bottom:12px">X feed loading...</div>
+              <div style="font-family:Space Mono;font-size:11px;color:#8ECAE6;margin-bottom:12px">X feed loading...</div>
               <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>
             </div>
           </div>
@@ -1378,7 +1366,7 @@ img.loaded{
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69A4.83 4.83 0 0 1 15.82 2.44V2h-3.45v16a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V8.78a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.83 1.54V6.83a4.85 4.85 0 0 1-1.07-.14z"/></svg>
             <div>
               <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">TikTok Profile</div>
+              <div style="font-size:10px;color:#8ECAE6">TikTok Profile</div>
             </div>
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px">
@@ -1386,21 +1374,21 @@ img.loaded{
               <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#BC13FE);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">@infinitecoinhq</div>
-                <div style="font-size:11px;color:var(--muted);margin-top:2px">Infinite Coin HQ Official</div>
+                <div style="font-size:11px;color:#8ECAE6;margin-top:2px">Infinite Coin HQ Official</div>
               </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">12.4K</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Followers</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
               </div>
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">89</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Videos</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Videos</div>
               </div>
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">1.2M</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Likes</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Likes</div>
               </div>
             </div>
             <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;padding:11px;font-size:10px">VIEW TIKTOK PROFILE</a>
@@ -1415,7 +1403,7 @@ img.loaded{
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <div>
               <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">YouTube Channel</div>
+              <div style="font-size:10px;color:#8ECAE6">YouTube Channel</div>
             </div>
           </div>
           <div class="sf-body" style="padding:0">
@@ -1431,7 +1419,7 @@ img.loaded{
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
             <div>
               <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
-              <div style="font-size:10px;color:var(--muted)">Instagram Profile</div>
+              <div style="font-size:10px;color:#8ECAE6">Instagram Profile</div>
             </div>
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px">
@@ -1439,21 +1427,21 @@ img.loaded{
               <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#BC13FE,#ff4466);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">@infinitecoinhq</div>
-                <div style="font-size:11px;color:var(--muted);margin-top:2px">Infinite Coin HQ Official</div>
+                <div style="font-size:11px;color:#8ECAE6;margin-top:2px">Infinite Coin HQ Official</div>
               </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
               <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">8.7K</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Followers</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
               </div>
               <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">142</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Posts</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Posts</div>
               </div>
               <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
                 <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">45.2K</div>
-                <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Likes</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Likes</div>
               </div>
             </div>
             <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-p" style="width:100%;justify-content:center;padding:11px;font-size:10px">VIEW INSTAGRAM PROFILE</a>
@@ -1504,7 +1492,7 @@ img.loaded{
      ═══════════════════════════════════════════ -->
 <div class="divider"></div>
 <section class="sec" id="flow">
-    <div class="sec-inner">
+  <div class="sec-inner">
     <div class="flow">
       <div class="cw">
         <div class="flow-grid">
@@ -1567,7 +1555,7 @@ img.loaded{
     </div>
     <div class="fbt">
       <span>&copy; 2026 Infinite Coin HQ</span>
-      <span style="font-family:Orbitron;font-size:9px;color:var(--neon);letter-spacing:.1em">POWERED BY SOLANA</span>
+      <span style="font-family:Orbitron;font-size:9px;color:#00F0FF;letter-spacing:.1em">POWERED BY SOLANA</span>
     </div>
   </div>
 </footer>
@@ -1789,11 +1777,6 @@ function toggleNotifications(){
 })();
 
 // ═══════════════════════════════════════════
-// THEME TOGGLE
-// ═══════════════════════════════════════════
-
-
-// ═══════════════════════════════════════════
 // WEBSOCKET CLIENT — REAL DATA
 // ═══════════════════════════════════════════
 function connectWS(){
@@ -1828,7 +1811,7 @@ function connectWS(){
         else if(d.type==='chatReply') addChat(d.reply,'bot');
       }catch(err){}
     };
-    
+
     ws.onclose=function(){
       wsConnected=false;
       if(wsAttempts<WS_MAX_SILENT){
@@ -1912,7 +1895,7 @@ function addTx(tx){
 
   const row=document.createElement('div');
   row.className='tx-row '+type;
-  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+type+'">'+type.toUpperCase()+'</span><span style="color:#fff">'+amount+' INF</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:var(--muted)">'+value+'</span><span style="color:var(--muted);font-size:9px">'+time+'</span></div>';
+  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+type+'">'+type.toUpperCase()+'</span><span style="color:#fff">'+amount+' INF</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:#8ECAE6">'+value+'</span><span style="color:#8ECAE6;font-size:9px">'+time+'</span></div>';
   list.insertBefore(row,list.firstChild);
   while(list.children.length>20)list.removeChild(list.lastChild);
 
@@ -1927,7 +1910,7 @@ function updateTxTicker(){
   const track=document.getElementById('tTrackReal');
   if(!track)return;
   if(txTickerData.length===0){
-    track.innerHTML='<span class="ti" style="color:var(--muted)">Waiting for transactions...</span>';
+    track.innerHTML='<span class="ti" style="color:#8ECAE6">Waiting for transactions...</span>';
     return;
   }
   // Double the array for seamless loop
@@ -2013,19 +1996,6 @@ async function fetchPrice(){
     document.getElementById('dChange').style.color='#ff4466';
   }
 }
-
-// ═══════════════════════════════════════════
-// REAL CRYPTO MARKET NEWS
-// ═══════════════════════════════════════════
-// News feed populated by WebSocket
-document.getElementById('newsList').innerHTML='<div class="news-item"><span class="ntag inf">INF</span><p>Loading market news from WebSocket...</p><div class="ntime">just now</div></div>';
-
-// ═══════════════════════════════════════════
-// MARQUEE FEED
-// ═══════════════════════════════════════════
-
-
-
 
 // ═══════════════════════════════════════════
 // COUNTDOWN TIMER
@@ -2336,7 +2306,16 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(img.complete)img.classList.add('loaded');
   });
 
-  // Splash screen: reveal site at 12 seconds
+  // Splash screen: fade out WELCOME at 12s, keep MOMENTUMS + OPPORTUNITIES
+  setTimeout(()=>{
+    const welcome=document.querySelector('.splash-welcome');
+    if(welcome){
+      welcome.style.transition='opacity 1s ease';
+      welcome.style.opacity='0';
+    }
+  },12000);
+
+  // Reveal site at 13s
   setTimeout(()=>{
     document.body.classList.remove('loading');
     document.body.classList.add('loaded');
@@ -2345,7 +2324,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       splash.classList.add('done');
       setTimeout(()=>splash.style.display='none',1500);
     }
-  },12000);
+  },13000);
 });
 
 // ═══════════════════════════════════════════
