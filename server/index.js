@@ -289,7 +289,7 @@ function connectHelius() {
     return;
   }
   
-  const heliusUrl = `wss://atlas-mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
+  const heliusUrl = `wss://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
   
   try {
     if (heliusWs && heliusWs.readyState === WebSocket.OPEN) {
