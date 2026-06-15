@@ -1,12 +1,13 @@
 /**
- * Infinite Coin HQ — WebSocket Command Center Backend (FIXED)
+ * Infinite Coin HQ — WebSocket Command Center Backend (FINAL)
  * 
  * Features:
  * - DexScreener API price polling (real price)
- * - REAL Solana transactions via Helius WebSocket (FIXED)
+ * - REAL transactions from DexScreener history + Helius WebSocket
  * - AI FAQ bot engine
  * - Live visitor counter
  * - Price alerts
+ * - Scrolling ticker with real transactions
  */
 
 require('dotenv').config();
@@ -45,6 +46,7 @@ const rateLimits = new Map();
 const clients = new Set();
 let heliusWs = null;
 let lastRealTxTime = Date.now();
+let recentTransactions = []; // Store recent transactions
 
 // ═══════════════════════════════════════════
 // EXPRESS MIDDLEWARE
@@ -70,7 +72,7 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     name: 'Infinite Coin HQ WebSocket Server',
-    version: '1.2.0',
+    version: '1.3.0',
     endpoints: ['/health', '/ws'],
     status: 'running'
   });
@@ -199,6 +201,56 @@ setInterval(fetchPrice, PRICE_INTERVAL);
 fetchPrice();
 
 // ═══════════════════════════════════════════
+// FETCH RECENT TRANSACTIONS FROM DEXSCREENER
+// ═══════════════════════════════════════════
+async function fetchRecentTransactions() {
+  try {
+    const url = `${DEXSCREENER_API}/${TOKEN_CA}`;
+    const res = await fetch(url, { timeout: 8000 });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    if (!data.pairs || data.pairs.length === 0) return;
+    
+    const pair = data.pairs[0];
+    const trades = pair.trades || [];
+    
+    if (trades.length === 0) return;
+    
+    // Store recent transactions
+    recentTransactions = [];
+    
+    // Process trades and broadcast to all clients
+    trades.slice(0, 15).forEach(trade => {
+      const type = trade.side === 'buy' ? 'buy' : 'sell';
+      const amount = parseFloat(trade.amount).toLocaleString() + ' INF';
+      const value = '$' + parseFloat(trade.priceUsd * trade.amount).toFixed(2);
+      const time = trade.timeAgo || 'recent';
+      
+      const txData = { type, amount, value, time };
+      recentTransactions.push(txData);
+      
+      // Broadcast to all connected clients
+      broadcast({
+        type: 'tx',
+        tx: txData
+      });
+    });
+    
+    console.log(`[DexScreener] Loaded ${trades.slice(0, 15).length} recent transactions`);
+    
+  } catch (err) {
+    console.error('[DexScreener] Failed to fetch recent transactions:', err.message);
+  }
+}
+
+// Fetch recent transactions on startup
+fetchRecentTransactions();
+
+// Refresh recent transactions every 30 seconds
+setInterval(fetchRecentTransactions, 30000);
+
+// ═══════════════════════════════════════════
 // HELIUS - FETCH REAL HOLDER COUNT
 // ═══════════════════════════════════════════
 async function fetchHolders() {
@@ -229,15 +281,14 @@ setInterval(fetchHolders, 300000);
 fetchHolders();
 
 // ═══════════════════════════════════════════
-// HELIUS WEB SOCKET FOR REAL TRANSACTIONS
+// HELIUS WEB SOCKET FOR REAL-TIME TRANSACTIONS
 // ═══════════════════════════════════════════
 function connectHelius() {
   if (!HELIUS_API_KEY) {
-    console.log('[Helius] No API key provided. Transactions will use fallback mode.');
+    console.log('[Helius] No API key provided. Transactions will use DexScreener only.');
     return;
   }
   
-  // Use the correct Helius WebSocket URL
   const heliusUrl = `wss://atlas-mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
   
   try {
@@ -248,9 +299,8 @@ function connectHelius() {
     heliusWs = new WebSocket(heliusUrl);
     
     heliusWs.on('open', () => {
-      console.log('[Helius] ✅ Connected successfully. Listening for transactions...');
+      console.log('[Helius] ✅ Connected. Listening for real-time transactions...');
       
-      // Subscribe to logs for your token
       const subscribeMsg = {
         jsonrpc: "2.0",
         id: 1,
@@ -261,20 +311,18 @@ function connectHelius() {
         ]
       };
       heliusWs.send(JSON.stringify(subscribeMsg));
-      console.log(`[Helius] Subscribed to logs for token: ${TOKEN_CA}`);
+      console.log(`[Helius] Subscribed to token: ${TOKEN_CA}`);
     });
     
     heliusWs.on('message', (data) => {
       try {
         const parsed = JSON.parse(data.toString());
         
-        // Check for subscription confirmation
         if (parsed.id === 1 && parsed.result) {
-          console.log('[Helius] Subscription confirmed:', parsed.result);
+          console.log('[Helius] Subscription confirmed');
           return;
         }
         
-        // Parse transaction logs
         if (parsed.params && parsed.params.result) {
           const log = parsed.params.result;
           if (log.value && log.value.logs) {
@@ -282,7 +330,6 @@ function connectHelius() {
             let type = null;
             let amount = null;
             
-            // Detect buy/sell from logs (Pump.fun style)
             const logsLower = logs.toLowerCase();
             if (logsLower.includes('buy') || logsLower.includes('swap')) {
               type = 'buy';
@@ -290,11 +337,9 @@ function connectHelius() {
               type = 'sell';
             }
             
-            // Try multiple patterns to extract amount
             let amountMatch = logs.match(/(\d+(?:,\d+)?)\s+(?:INF|INFINITE)/i);
             if (!amountMatch) amountMatch = logs.match(/(\d+(?:,\d+)?)\s+tokens?/i);
             if (!amountMatch) amountMatch = logs.match(/amount[:\s]*(\d+(?:,\d+)?)/i);
-            if (!amountMatch) amountMatch = logs.match(/(\d+(?:,\d+)?)\s+INFINITE/i);
             
             if (amountMatch) {
               amount = amountMatch[1].replace(/,/g, '');
@@ -311,25 +356,20 @@ function connectHelius() {
                 time: 'just now'
               };
               
-              broadcast({
-                type: 'tx',
-                tx: txData
-              });
-              console.log(`[Helius] ${type.toUpperCase()} transaction: ${parseInt(amount).toLocaleString()} INF - $${value}`);
+              broadcast({ type: 'tx', tx: txData });
+              console.log(`[Helius] Real-time ${type.toUpperCase()}: ${parseInt(amount).toLocaleString()} INF - $${value}`);
             }
           }
         }
-      } catch (err) {
-        // Silent fail for non-JSON messages
-      }
+      } catch (err) {}
     });
     
     heliusWs.on('error', (err) => {
-      console.error('[Helius] ❌ Error:', err.message);
+      console.error('[Helius] Error:', err.message);
     });
     
-    heliusWs.on('close', (code, reason) => {
-      console.log(`[Helius] Disconnected (code: ${code}). Reconnecting in 5s...`);
+    heliusWs.on('close', () => {
+      console.log('[Helius] Disconnected. Reconnecting in 5s...');
       setTimeout(connectHelius, 5000);
     });
     
@@ -339,65 +379,36 @@ function connectHelius() {
   }
 }
 
-// Start Helius connection
 connectHelius();
 
 // Update lastRealTxTime periodically
 setInterval(() => { lastRealTxTime = Date.now(); }, 1000);
 
-// Fallback - only if no real tx for 60 seconds
-let txFallbackInterval = null;
-function startTxFallback() {
-  if (txFallbackInterval) clearInterval(txFallbackInterval);
-  
-  txFallbackInterval = setInterval(() => {
-    if (Date.now() - lastRealTxTime > 60000) {
-      console.log('[Fallback] No real transactions for 60s, sending occasional simulated tx');
-      const types = ['buy', 'sell'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      const amount = Math.floor(10000 + Math.random() * 90000);
-      const value = (amount * (lastPrice || 0.00000418)).toFixed(2);
-      
-      broadcast({
-        type: 'tx',
-        tx: {
-          type: type,
-          amount: amount.toLocaleString() + ' INF',
-          value: '$' + value,
-          time: 'now'
-        }
-      });
-    }
-  }, 60000);
-}
-startTxFallback();
-
 // ═══════════════════════════════════════════
-// AI FAQ BOT ENGINE (COMPLETE)
+// AI FAQ BOT ENGINE
 // ═══════════════════════════════════════════
 const FAQ_BOT = {
   'what is infinite coin': 'Infinite Coin is a community-driven meme coin built on trust, transparency, and long-term momentum.',
-  'what is infinite': 'Infinite Coin is a community-driven meme coin built on trust, transparency, and long-term momentum.',
-  'contract': `CA: ${TOKEN_CA} (Solana SPL)`,
+  'what is infinite': 'Infinite Coin is a community-driven meme coin.',
+  'contract': `CA: ${TOKEN_CA}`,
   'ca': `CA: ${TOKEN_CA}`,
   'address': `CA: ${TOKEN_CA}`,
   'how to buy': 'Buy on Jupiter: jup.ag. Connect Phantom, swap SOL for $INFINITE.',
-  'buy': 'Buy on Jupiter DEX. Check pinned messages for latest links.',
+  'buy': 'Buy on Jupiter DEX.',
   'staking': '32% APY staking coming Q3 2026.',
   'stake': '32% APY staking coming Q3 2026.',
-  'telegram': 'Join our Telegram: t.me/InfiniteCoinHQ',
-  'twitter': 'Follow on X: x.com/infinitecoinhq',
-  'x': 'Follow on X: x.com/infinitecoinhq',
-  'tiktok': 'Follow on TikTok: tiktok.com/@infinitecoinhq',
-  'youtube': 'Subscribe on YouTube: youtube.com/@infinitecoinhq',
-  'instagram': 'Follow on Instagram: instagram.com/infinitecoinhq',
-  'help': 'Ask me about: contract, buying, staking, NFTs, roadmap, community.',
+  'telegram': 'Join Telegram: t.me/InfiniteCoinHQ',
+  'twitter': 'Follow X: x.com/infinitecoinhq',
+  'x': 'Follow X: x.com/infinitecoinhq',
+  'tiktok': 'Follow TikTok: tiktok.com/@infinitecoinhq',
+  'youtube': 'Subscribe YouTube: youtube.com/@infinitecoinhq',
+  'instagram': 'Follow Instagram: instagram.com/infinitecoinhq',
+  'help': 'Ask about: contract, buying, staking, NFTs, roadmap.',
   'hello': 'Welcome to Infinite Coin HQ! ♾️',
   'hi': 'Hey there! Ready to go infinite?',
   'lfg': 'LFG!!! ♾️🚀',
   'moon': 'To the moon! 🌕',
-  'price': `Current price: $${lastPrice.toFixed(8) || 'loading...'}`,
-  '_default': 'I am your AI assistant. Ask about contract, buying, staking, or say "help". ♾️'
+  '_default': 'Ask about contract, buying, staking, or say "help". ♾️'
 };
 
 function getBotReply(input) {
@@ -421,6 +432,7 @@ wss.on('connection', (ws, req) => {
   console.log(`[WS] Client connected. Total: ${clients.size}, Visitors: ${visitors.size}`);
   broadcast({ type: 'visitorCount', count: visitors.size });
 
+  // Send current price immediately
   if (lastPrice > 0) {
     send(ws, {
       type: 'price',
@@ -432,6 +444,11 @@ wss.on('connection', (ws, req) => {
       holders: lastHolders
     });
   }
+  
+  // Send recent transactions to new client
+  recentTransactions.forEach(tx => {
+    send(ws, { type: 'tx', tx: tx });
+  });
 
   ws.on('message', (data) => {
     try {
@@ -485,7 +502,7 @@ const pingInterval = setInterval(() => {
 // ═══════════════════════════════════════════
 server.listen(PORT, () => {
   console.log('╔══════════════════════════════════════════╗');
-  console.log('║   Infinite Coin HQ WS Server v1.2.0     ║');
+  console.log('║   Infinite Coin HQ WS Server v1.3.0     ║');
   console.log('╠══════════════════════════════════════════╣');
   console.log(`║  Port:        ${PORT.toString().padEnd(27)} ║`);
   console.log(`║  Price Int:   ${PRICE_INTERVAL}ms${''.padEnd(18)} ║`);
@@ -497,7 +514,6 @@ server.listen(PORT, () => {
 
 process.on('SIGTERM', () => {
   clearInterval(pingInterval);
-  if (txFallbackInterval) clearInterval(txFallbackInterval);
   if (heliusWs) heliusWs.close();
   wss.close(() => {
     server.close(() => process.exit(0));
