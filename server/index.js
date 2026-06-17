@@ -47,6 +47,7 @@ const clients = new Set();
 let heliusWs = null;
 let lastRealTxTime = Date.now();
 let recentTransactions = []; // Store recent transactions
+let initDone = false;
 
 // ═══════════════════════════════════════════
 // EXPRESS MIDDLEWARE
@@ -65,6 +66,7 @@ app.get('/health', (req, res) => {
     connections: clients.size,
     visitors: visitors.size,
     heliusConnected: heliusWs && heliusWs.readyState === WebSocket.OPEN,
+    recentTxCount: recentTransactions.length,
     timestamp: new Date().toISOString()
   });
 });
@@ -72,7 +74,7 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     name: 'Infinite Coin HQ WebSocket Server',
-    version: '1.3.0',
+    version: '1.3.1',
     endpoints: ['/health', '/ws'],
     status: 'running'
   });
@@ -210,18 +212,25 @@ async function fetchRecentTransactions() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
-    if (!data.pairs || data.pairs.length === 0) return;
+    if (!data.pairs || data.pairs.length === 0) {
+      console.log('[DexScreener] No pairs found for token');
+      return;
+    }
     
     const pair = data.pairs[0];
     const trades = pair.trades || [];
     
-    if (trades.length === 0) return;
+    if (trades.length === 0) {
+      console.log('[DexScreener] No trades found');
+      return;
+    }
     
-    // Store recent transactions
+    // Clear and store recent transactions
     recentTransactions = [];
     
     // Process trades and broadcast to all clients
-    trades.slice(0, 15).forEach(trade => {
+    const tradesToSend = trades.slice(0, 15);
+    tradesToSend.forEach(trade => {
       const type = trade.side === 'buy' ? 'buy' : 'sell';
       const amount = parseFloat(trade.amount).toLocaleString() + ' INF';
       const value = '$' + parseFloat(trade.priceUsd * trade.amount).toFixed(2);
@@ -237,15 +246,29 @@ async function fetchRecentTransactions() {
       });
     });
     
-    console.log(`[DexScreener] Loaded ${trades.slice(0, 15).length} recent transactions`);
+    console.log(`[DexScreener] Loaded ${tradesToSend.length} recent transactions`);
+    initDone = true;
     
   } catch (err) {
     console.error('[DexScreener] Failed to fetch recent transactions:', err.message);
   }
 }
 
-// Fetch recent transactions on startup
-fetchRecentTransactions();
+// Force fetch on startup with retry
+async function initRecentTransactions() {
+  console.log('[Init] Fetching recent transactions from DexScreener...');
+  await fetchRecentTransactions();
+  
+  if (recentTransactions.length === 0) {
+    console.log('[Init] No recent transactions found. Will retry in 10s...');
+    setTimeout(initRecentTransactions, 10000);
+  } else {
+    console.log(`[Init] Successfully loaded ${recentTransactions.length} recent transactions`);
+  }
+}
+
+// Start the init process
+initRecentTransactions();
 
 // Refresh recent transactions every 30 seconds
 setInterval(fetchRecentTransactions, 30000);
@@ -446,9 +469,23 @@ wss.on('connection', (ws, req) => {
   }
   
   // Send recent transactions to new client
-  recentTransactions.forEach(tx => {
-    send(ws, { type: 'tx', tx: tx });
-  });
+  if (recentTransactions.length > 0) {
+    console.log(`[WS] Sending ${recentTransactions.length} recent transactions to new client`);
+    recentTransactions.forEach(tx => {
+      send(ws, { type: 'tx', tx: tx });
+    });
+  } else {
+    // Send a placeholder so client doesn't show empty
+    send(ws, { 
+      type: 'tx', 
+      tx: { 
+        type: 'info', 
+        amount: 'Loading transactions...', 
+        value: '', 
+        time: 'recent' 
+      } 
+    });
+  }
 
   ws.on('message', (data) => {
     try {
@@ -502,7 +539,7 @@ const pingInterval = setInterval(() => {
 // ═══════════════════════════════════════════
 server.listen(PORT, () => {
   console.log('╔══════════════════════════════════════════╗');
-  console.log('║   Infinite Coin HQ WS Server v1.3.0     ║');
+  console.log('║   Infinite Coin HQ WS Server v1.3.1     ║');
   console.log('╠══════════════════════════════════════════╣');
   console.log(`║  Port:        ${PORT.toString().padEnd(27)} ║`);
   console.log(`║  Price Int:   ${PRICE_INTERVAL}ms${''.padEnd(18)} ║`);
