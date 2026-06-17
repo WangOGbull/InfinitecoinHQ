@@ -709,6 +709,69 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 }
 
 /* ═══════════════════════════════════════════
+   FIXED TICKER BAR (below navbar)
+   ═══════════════════════════════════════════ */
+.tx-ticker-bar{
+  position:fixed;top:60px;left:0;right:0;z-index:998;
+  background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,240,255,0.12);
+  padding:10px 0;overflow:hidden;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,240,255,0.08);
+}
+.tx-ticker-track{
+  display:inline-block;
+  animation:tickerScroll 35s linear infinite;
+  padding-left:100%;
+}
+.tx-ticker-bar:hover .tx-ticker-track{
+  animation-play-state:paused;
+}
+.txi{
+  display:inline-block;padding:0 40px;
+  font-family:'Space Mono',monospace;font-size:12px;
+  letter-spacing:.06em;font-weight:700;
+}
+.txi.tbuy{color:#39FF14;text-shadow:0 0 10px rgba(57,255,20,0.5)}
+.txi.tsell{color:#ff4466;text-shadow:0 0 10px rgba(255,68,102,0.5)}
+.txi .tsep{color:rgba(0,240,255,0.3);margin:0 8px}
+@keyframes tickerScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-100%)}
+}
+
+/* ═══════════════════════════════════════════
+   SOCIAL ACTION MODAL
+   ═══════════════════════════════════════════ */
+.sa-modal p{font-size:13px;color:#8ECAE6;line-height:1.6;margin-bottom:20px;text-align:center}
+.sa-modal .btn-b{margin:0 auto 10px;display:flex;justify-content:center;width:100%}
+.sa-modal .btn-g2{margin:0 auto;display:flex;justify-content:center;width:100%}
+
+/* Social post cards */
+.sp-card{
+  background:rgba(8,12,28,0.3);
+  border:1px solid rgba(0,240,255,0.08);
+  border-radius:12px;padding:16px;
+  margin-bottom:12px;transition:all .3s;
+}
+.sp-card:hover{border-color:rgba(0,240,255,0.2);box-shadow:0 0 20px rgba(0,240,255,0.06)}
+.sp-card .sp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sp-card .sp-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.sp-card .sp-name{font-family:'Orbitron';font-size:12px;color:#fff}
+.sp-card .sp-handle{font-size:10px;color:#8ECAE6}
+.sp-card .sp-body{font-size:12px;color:#8ECAE6;line-height:1.5;margin-bottom:12px}
+.sp-card .sp-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sp-btn{
+  padding:6px 12px;border-radius:6px;
+  background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.1);
+  color:#00F0FF;font-family:'Orbitron';font-size:9px;
+  text-transform:uppercase;letter-spacing:.08em;
+  cursor:pointer;transition:all .2s;display:inline-flex;
+  align-items:center;gap:5px;text-decoration:none;
+}
+.sp-btn:hover{background:rgba(0,240,255,0.1);border-color:rgba(0,240,255,0.3)}
+.sp-btn svg{width:14px;height:14px}
+
+/* ═══════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════ */
 @media(max-width:1024px){
@@ -721,6 +784,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .embed-row{grid-template-columns:1fr}
 }
 @media(max-width:768px){
+  .tx-ticker-bar{top:52px}
   .nav{height:52px}
   .ni{padding:0 14px}
   .nb span{font-size:10px}
@@ -818,6 +882,15 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
     </div>
   </div>
 </nav>
+
+<!-- ═══════════════════════════════════════════
+     FIXED LIVE TRANSACTION TICKER BAR
+     ═══════════════════════════════════════════ -->
+<div class="tx-ticker-bar" id="txTickerBar">
+  <div class="tx-ticker-track" id="txTickerTrack">
+    <span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════
      UTILITY DRAWER (3-dot menu — MOBILE ONLY)
@@ -1316,24 +1389,40 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <p>Real-time posts from the Infinite Coin HQ community.</p>
       </div>
 
+      <!-- ROW 1: X + TikTok -->
       <div class="embed-row">
         <!-- X / Twitter Timeline -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             <div>
-              <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+              <div style="font-family:Orbitron;font-size:12px;color:#fff">@InfiniteCoinHQ</div>
               <div style="font-size:10px;color:#8ECAE6">X (Twitter) Live Feed</div>
             </div>
           </div>
-          <div class="sf-body" id="xFeedContainer" style="padding:0;min-height:400px">
-            <a class="twitter-timeline" data-height="400" data-theme="dark" data-chrome="noheader nofooter transparent" href="https://x.com/infinitecoinhq?ref_src=twsrc%5Etfw">Tweets by infinitecoinhq</a>
-            <div class="sf-fallback" id="xFallback" style="display:none">
+          <div class="sf-body" id="xFeedContainer" style="padding:0;min-height:400px;max-height:500px;overflow-y:auto">
+            <a class="twitter-timeline" data-height="480" data-theme="dark" data-chrome="noheader nofooter noborders transparent" href="https://x.com/InfiniteCoinHQ?ref_src=twsrc%5Etfw">Tweets by InfiniteCoinHQ</a>
+            <div class="sf-fallback" id="xFallback" style="display:none;position:static;padding:40px">
               <div style="font-family:Space Mono;font-size:11px;color:#8ECAE6;margin-bottom:12px">X feed loading...</div>
-              <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>
+              <a href="https://x.com/InfiniteCoinHQ" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>
             </div>
           </div>
+          <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
+            <button class="sp-btn" onclick="openSocialAction('X','Like','https://x.com/InfiniteCoinHQ')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Like
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('X','Repost','https://x.com/InfiniteCoinHQ')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              Repost
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('X','Comment','https://x.com/InfiniteCoinHQ')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Comment
+            </button>
+          </div>
         </div>
+
         <!-- TikTok -->
         <div class="social-feed-card">
           <div class="sf-header">
@@ -1343,7 +1432,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
               <div style="font-size:10px;color:#8ECAE6">TikTok Profile</div>
             </div>
           </div>
-          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:10px">
               <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#BC13FE);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
               <div>
@@ -1353,40 +1442,79 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">12.4K</div>
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">189</div>
                 <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
               </div>
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">89</div>
-                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Videos</div>
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">74</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Following</div>
               </div>
               <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">1.2M</div>
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">1.3K</div>
                 <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Likes</div>
               </div>
             </div>
+            <div style="font-size:11px;color:#8ECAE6;line-height:1.5;padding:8px;background:rgba(0,240,255,0.02);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
+              Official HQ of Infinite Coin &#8734;<br>
+              Anti-rug | Infinite Rewards &#127873;<br>
+              Infinite Games &#127918;<br>
+              Telegram: Infinite_Coin_1
+            </div>
             <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;padding:11px;font-size:10px">VIEW TIKTOK PROFILE</a>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
+            <button class="sp-btn" onclick="openSocialAction('TikTok','Like','https://www.tiktok.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Like
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('TikTok','Comment','https://www.tiktok.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Comment
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('TikTok','Share','https://www.tiktok.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
           </div>
         </div>
       </div>
 
+      <!-- ROW 2: YouTube + Instagram -->
       <div class="embed-row" style="margin-top:16px">
         <!-- YouTube -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <div>
-              <div style="font-family:Orbitron;font-size:12px;color:#fff">@infinitecoinhq</div>
+              <div style="font-family:Orbitron;font-size:12px;color:#fff">@InfiniteCoinHQ</div>
               <div style="font-size:10px;color:#8ECAE6">YouTube Channel</div>
             </div>
           </div>
-          <div class="sf-body" style="padding:0">
-            <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed?listType=user_uploads&list=infinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px" onerror="document.getElementById('ytEmbed').style.display='none';document.getElementById('ytFallback').style.display='flex';"></iframe>
-            <div class="sf-fallback" id="ytFallback" style="display:none;position:static;padding:40px">
-              <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE CHANNEL</a>
+          <div class="sf-body" style="padding:0;min-height:400px">
+            <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed?listType=user_uploads&list=infinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px" onload="document.getElementById('ytFallback').style.display='none'" onerror="document.getElementById('ytEmbed').style.display='none';document.getElementById('ytFallback').style.display='flex';"></iframe>
+            <div class="sf-fallback" id="ytFallback" style="display:flex;position:absolute;inset:0;padding:40px">
+              <div style="text-align:center">
+                <div style="font-family:Space Mono;font-size:11px;color:#8ECAE6;margin-bottom:16px">YouTube channel loading...</div>
+                <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE CHANNEL</a>
+              </div>
             </div>
           </div>
+          <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
+            <button class="sp-btn" onclick="openSocialAction('YouTube','Like','https://www.youtube.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              Like
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('YouTube','Subscribe','https://www.youtube.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M20 12v4H6a2 2 0 0 0-2 2c0 1.1.9 2 2 2h12v-4"/><path d="M4 6v12"/></svg>
+              Subscribe
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('YouTube','Share','https://www.youtube.com/@infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+          </div>
         </div>
+
         <!-- Instagram -->
         <div class="social-feed-card">
           <div class="sf-header">
@@ -1396,65 +1524,48 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
               <div style="font-size:10px;color:#8ECAE6">Instagram Profile</div>
             </div>
           </div>
-          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(188,19,254,0.03);border:1px solid rgba(188,19,254,0.08);border-radius:10px">
               <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#BC13FE,#ff4466);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
               <div>
-                <div style="font-family:Orbitron;font-size:13px;color:#fff">@infinitecoinhq</div>
+                <div style="font-family:Orbitron;font-size:13px;color:#fff">infinitecoinhq</div>
                 <div style="font-size:11px;color:#8ECAE6;margin-top:2px">Infinite Coin HQ Official</div>
               </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
               <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">8.7K</div>
-                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
-              </div>
-              <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">142</div>
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">40</div>
                 <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Posts</div>
               </div>
               <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
-                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">45.2K</div>
-                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Likes</div>
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">42</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
               </div>
+              <div style="padding:10px;background:rgba(188,19,254,0.03);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">0</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Following</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#8ECAE6;line-height:1.5;padding:8px;background:rgba(188,19,254,0.02);border-radius:8px;border:1px solid rgba(188,19,254,0.06)">
+              Official HQ of Infinite Coin &#8734;<br>
+              Anti-rug | Infinite Rewards &#127873; Infinite Games &#127918;<br>
+              Powered by the Infinite Collective
             </div>
             <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-p" style="width:100%;justify-content:center;padding:11px;font-size:10px">VIEW INSTAGRAM PROFILE</a>
           </div>
-        </div>
-      </div>
-
-      <!-- Community Links -->
-      <div style="margin-top:36px">
-        <div class="cg">
-          <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            <h4>X / TWITTER</h4>
-            <p>@infinitecoinhq</p>
-          </a>
-          <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="ccard glass-p" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69A4.83 4.83 0 0 1 15.82 2.44V2h-3.45v16a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V8.78a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.83 1.54V6.83a4.85 4.85 0 0 1-1.07-.14z"/></svg>
-            <h4>TIKTOK</h4>
-            <p>@infinitecoinhq</p>
-          </a>
-          <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            <h4>YOUTUBE</h4>
-            <p>@infinitecoinhq</p>
-          </a>
-          <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer" class="ccard glass-p" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            <h4>INSTAGRAM</h4>
-            <p>@infinitecoinhq</p>
-          </a>
-          <a href="https://v.lemon8-app.com/s/OgSbYMhydp" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            <h4>LEMON8</h4>
-            <p>@infinitecoinhq</p>
-          </a>
-          <div class="ccard glass-p" style="color:#fff">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <h4>TELEGRAM</h4>
-            <p>@InfiniteCoinHQ</p>
+          <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
+            <button class="sp-btn" onclick="openSocialAction('Instagram','Like','https://www.instagram.com/infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Like
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('Instagram','Comment','https://www.instagram.com/infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Comment
+            </button>
+            <button class="sp-btn" onclick="openSocialAction('Instagram','Share','https://www.instagram.com/infinitecoinhq')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
           </div>
         </div>
       </div>
@@ -1595,6 +1706,21 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <h2 id="csTitle">Coming Soon</h2>
       <p id="csDesc">This feature is launching soon. Stay tuned!</p>
       <button type="button" class="btn-b" onclick="closeCsModal()" style="margin-top:8px">GOT IT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SOCIAL ACTION MODAL
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="saModal" onclick="if(event.target===this)closeSocialActionModal()">
+  <div class="modal-box sa-modal">
+    <button type="button" class="modal-close" onclick="closeSocialActionModal()">&times;</button>
+    <div class="modal-body">
+      <h2 id="saTitle" style="font-family:'Orbitron';font-size:18px;color:#fff;text-align:center;margin-bottom:12px">Like on X</h2>
+      <p id="saDesc">You'll be redirected to X where you can like this post after logging in.</p>
+      <a id="saLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;margin-bottom:10px">Continue to X</a>
+      <button type="button" class="btn-g2" style="width:100%;justify-content:center" onclick="closeSocialActionModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -1871,16 +1997,21 @@ function addTx(tx){
 }
 
 function updateTxTicker(){
-  const track=document.getElementById('tTrackReal');
-  if(!track)return;
+  // Update both the trading card ticker and the fixed bar
+  const trackCard=document.getElementById('tTrackReal');
+  const trackBar=document.getElementById('txTickerTrack');
+
+  let content='';
   if(txTickerData.length===0){
-    track.innerHTML='<span class="ti" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>';
-    return;
+    content='<span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>';
+  }else{
+    const doubled=txTickerData.concat(txTickerData).concat(txTickerData).concat(txTickerData);
+    content=doubled.map(f=>
+      '<span class="txi '+(f.t==='buy'?'tbuy':'tsell')+'">&#9654; '+f.tx+' &#9654;</span>'
+    ).join('<span class="tsep">|</span>');
   }
-  const doubled=txTickerData.concat(txTickerData);
-  track.innerHTML=doubled.map(f=>
-    '<span class="ti '+(f.t==='buy'?'tbuy':'tsell')+'">&#9654; '+f.tx+' &#9654;</span>'
-  ).join('');
+  if(trackCard)trackCard.innerHTML=content.replace(/txi/g,'ti').replace(/tsep/g,'tsep');
+  if(trackBar)trackBar.innerHTML=content;
 }
 
 function showPriceAlert(dir,pct,price){
@@ -1919,9 +2050,43 @@ setInterval(updateVisitorDisplay,5000);
 updateVisitorDisplay();
 
 // ═══════════════════════════════════════════
-// JUPITER PRICE FALLBACK
+// DEXSCREENER + JUPITER PRICE DATA
 // ═══════════════════════════════════════════
-async function fetchPrice(){
+async function fetchDexScreener(){
+  try{
+    const r=await fetch('https://api.dexscreener.com/latest/dex/tokens/'+CA,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(!d.pairs||d.pairs.length===0)throw new Error('No pairs');
+    const p=d.pairs[0];
+    const price=parseFloat(p.priceUsd)||0;
+    const mcap=parseFloat(p.marketCap)||0;
+    const vol=parseFloat(p.volume24h)||0;
+    const liq=parseFloat(p.liquidity)||0;
+    const chg=parseFloat(p.priceChange24h)||0;
+
+    document.getElementById('hPriceLoad').style.display='none';
+    document.getElementById('hPriceBox').style.display='inline-flex';
+    document.getElementById('hPriceVal').textContent='$'+price.toFixed(6);
+    document.getElementById('hPriceChg').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';
+    document.getElementById('hPriceChg').style.color=chg>=0?'#39FF14':'#ff4466';
+    document.getElementById('dPrice').textContent='$'+price.toFixed(6);
+    document.getElementById('dChange').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'% - DexScreener';
+    document.getElementById('dChange').style.color=chg>=0?'#39FF14':'#ff4466';
+
+    if(mcap>0){
+      document.getElementById('sMcap').textContent='$'+(mcap>=1e9?(mcap/1e9).toFixed(2)+'B':(mcap/1e6).toFixed(1)+'M');
+      document.getElementById('statMcap').textContent='$'+(mcap>=1e9?(mcap/1e9).toFixed(2)+'B':(mcap/1e6).toFixed(1)+'M');
+    }
+    if(vol>0)document.getElementById('sVol').textContent='$'+(vol>=1e6?(vol/1e6).toFixed(1)+'M':vol.toLocaleString());
+    if(liq>0)document.getElementById('sLiq').textContent='$'+(liq>=1e6?(liq/1e6).toFixed(1)+'M':liq.toLocaleString());
+    document.getElementById('sHold').textContent=wsHolders;
+  }catch(e){
+    fetchJupiterFallback();
+  }
+}
+
+async function fetchJupiterFallback(){
   let lastErr='';
   for(let i=0;i<JUPITER_ENDPOINTS.length;i++){
     try{
@@ -1932,33 +2097,30 @@ async function fetchPrice(){
       if(d.data?.[CA]?.price) price=parseFloat(d.data[CA].price);
       else if(d[CA]?.price) price=parseFloat(d[CA].price);
       if(!price || isNaN(price)){lastErr='No price';continue}
-
       const mcap=price*1000000000;
-      if(!wsConnected){
-        document.getElementById('hPriceLoad').style.display='none';
-        document.getElementById('hPriceBox').style.display='inline-flex';
-        document.getElementById('hPriceVal').textContent='$'+price.toFixed(6);
-        document.getElementById('hPriceChg').textContent='LIVE';
-        document.getElementById('hPriceChg').style.color='#39FF14';
-        document.getElementById('dPrice').textContent='$'+price.toFixed(6);
-        document.getElementById('dChange').textContent='LIVE - Jupiter API';
-        document.getElementById('dChange').style.color='#39FF14';
-        document.getElementById('sMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M';
-        document.getElementById('statMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M+';
-        document.getElementById('sVol').textContent='$890K';
-        document.getElementById('sHold').textContent=wsHolders;
-        document.getElementById('sLiq').textContent='$1.1M';
-      }
+      document.getElementById('hPriceLoad').style.display='none';
+      document.getElementById('hPriceBox').style.display='inline-flex';
+      document.getElementById('hPriceVal').textContent='$'+price.toFixed(6);
+      document.getElementById('hPriceChg').textContent='LIVE';
+      document.getElementById('hPriceChg').style.color='#39FF14';
+      document.getElementById('dPrice').textContent='$'+price.toFixed(6);
+      document.getElementById('dChange').textContent='LIVE - Jupiter API';
+      document.getElementById('dChange').style.color='#39FF14';
+      document.getElementById('sMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M';
+      document.getElementById('statMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M+';
+      document.getElementById('sVol').textContent='$890K';
+      document.getElementById('sHold').textContent=wsHolders;
+      document.getElementById('sLiq').textContent='$1.1M';
       return;
     }catch(e){lastErr=e.name==='TimeoutError'?'Timeout':e.message}
   }
-  if(!wsConnected){
-    const pl=document.getElementById('hPriceLoad');
-    if(pl){pl.textContent='Price API offline. Connect WebSocket backend for live data.';pl.classList.add('hp-error')}
-    document.getElementById('dChange').textContent='API OFFLINE';
-    document.getElementById('dChange').style.color='#ff4466';
-  }
+  const pl=document.getElementById('hPriceLoad');
+  if(pl){pl.textContent='Price API offline. Connect WebSocket backend for live data.';pl.classList.add('hp-error')}
+  document.getElementById('dChange').textContent='API OFFLINE';
+  document.getElementById('dChange').style.color='#ff4466';
 }
+
+async function fetchPrice(){await fetchDexScreener();}
 
 // ═══════════════════════════════════════════
 // COUNTDOWN TIMER
@@ -1995,6 +2157,7 @@ async function fetchPrice(){
   const container=document.getElementById('xFeedContainer');
   const fallback=document.getElementById('xFallback');
   if(!container)return;
+  // Load X widgets script
   const script=document.createElement('script');
   script.src='https://platform.twitter.com/widgets.js';
   script.charset='utf-8';
@@ -2003,6 +2166,10 @@ async function fetchPrice(){
   script.onload=function(){
     loaded=true;
     if(fallback)fallback.style.display='none';
+    // Force timeline render
+    if(window.twttr&&window.twttr.widgets){
+      window.twttr.widgets.load(container);
+    }
   };
   script.onerror=function(){
     if(fallback){
@@ -2015,7 +2182,7 @@ async function fetchPrice(){
     if(!loaded&&fallback){
       fallback.style.display='flex';
     }
-  },8000);
+  },10000);
   document.head.appendChild(script);
 })();
 
@@ -2102,6 +2269,22 @@ document.getElementById('introVideo').addEventListener('error',function(){
   this.style.display='none';
   this.parentElement.style.background='url(images/infinity-glow.png) center/cover';
 });
+
+// ═══════════════════════════════════════════
+// SOCIAL ACTION MODAL
+// ═══════════════════════════════════════════
+function openSocialAction(platform,action,url){
+  document.getElementById('saTitle').textContent=action+' on '+platform;
+  document.getElementById('saDesc').textContent='You will be redirected to '+platform+' where you can '+action.toLowerCase()+' after logging in. Once logged in, your '+action.toLowerCase()+' will be registered on the platform.';
+  document.getElementById('saLink').textContent='Continue to '+platform;
+  document.getElementById('saLink').href=url;
+  document.getElementById('saModal').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeSocialActionModal(){
+  document.getElementById('saModal').classList.remove('active');
+  document.body.style.overflow='';
+}
 
 // ═══════════════════════════════════════════
 // CHATBOT — 50+ FAQ ENGINE
@@ -2239,7 +2422,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 // ═══════════════════════════════════════════
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    closeGameModal();closeMemeModal();closeCsModal();closeWalletModal();
+    closeGameModal();closeMemeModal();closeCsModal();closeWalletModal();closeSocialActionModal();
     const drawer=document.getElementById('udDrawer');
     if(drawer.classList.contains('active'))toggleUtilityDrawer();
   }
@@ -2250,8 +2433,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   document.body.classList.add('loading');
-  fetchPrice();
-  setInterval(fetchPrice,12000);
+  fetchDexScreener();
+  setInterval(fetchDexScreener,15000);
   connectWS();
 
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
