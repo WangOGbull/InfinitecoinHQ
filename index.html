@@ -403,11 +403,11 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .tx-empty{text-align:center;font-family:'Space Mono';font-size:10px;color:#8ECAE6;padding:20px}
 
 /* Transaction ticker strip */
-.tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.3);border:1px solid rgba(0,240,255,0.08);border-radius:8px;padding:10px 0;position:relative;margin-top:16px}
-.ttrack{display:inline-block;animation:tscroll 30s linear infinite}
-.ti{display:inline-block;padding:0 24px;font-family:'Space Mono';font-size:10px;letter-spacing:.05em}
-.ti.tbuy{color:#39FF14}
-.ti.tsell{color:#ff4466}
+.tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.5);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:12px 0;position:relative;margin-top:16px;box-shadow:0 0 20px rgba(0,240,255,0.05)}
+.ttrack{display:inline-block;animation:tscroll 25s linear infinite}
+.ti{display:inline-block;padding:0 32px;font-family:'Space Mono';font-size:11px;letter-spacing:.06em;font-weight:700}
+.ti.tbuy{color:#39FF14;text-shadow:0 0 8px rgba(57,255,20,0.4)}
+.ti.tsell{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,0.4)}
 @keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ═══════════════════════════════════════════
@@ -1026,7 +1026,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <div class="sh">
         <span class="badge">PLAY TO EARN</span>
         <h2 class="neon-blue">INFINITE GAMES</h2>
-        <p>Tap the game card to launch Infinite Jumper and Infinite Runners.</p>
+        
       </div>
 
       <div style="max-width:560px;margin:0 auto 36px" onclick="openGameModal()">
@@ -1171,7 +1171,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       </div>
     </div>
     <div style="text-align:center;margin-top:20px">
-      <a href="https://youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2">MORE VIDEOS</a>
+      <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2">MORE VIDEOS</a>
     </div>
   </div>
 </section>
@@ -1381,9 +1381,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
             </div>
           </div>
           <div class="sf-body" style="padding:0">
-            <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed/videoseries?list=UUinfinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px" onerror="document.getElementById('ytEmbed').style.display='none';document.getElementById('ytFallback').style.display='flex';"></iframe>
+            <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed?listType=user_uploads&list=infinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px" onerror="document.getElementById('ytEmbed').style.display='none';document.getElementById('ytFallback').style.display='flex';"></iframe>
             <div class="sf-fallback" id="ytFallback" style="display:none;position:static;padding:40px">
-              <a href="https://youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE CHANNEL</a>
+              <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE CHANNEL</a>
             </div>
           </div>
         </div>
@@ -1436,7 +1436,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
             <h4>TIKTOK</h4>
             <p>@infinitecoinhq</p>
           </a>
-          <a href="https://youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
+          <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="ccard glass" style="color:#fff">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <h4>YOUTUBE</h4>
             <p>@infinitecoinhq</p>
@@ -1517,7 +1517,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <h5>Community</h5>
         <a href="https://x.com/infinitecoinhq?s=21" target="_blank" rel="noopener noreferrer">X</a>
         <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer">TikTok</a>
-        <a href="https://youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer">YouTube</a>
         <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer">Instagram</a>
       </div>
       <div class="fc">
@@ -1864,7 +1864,7 @@ function addTx(tx){
   list.insertBefore(row,list.firstChild);
   while(list.children.length>20)list.removeChild(list.lastChild);
 
-  const tickerText=(type==='buy'?'BUY ':'SELL ')+amount+' INF - '+value+' - '+time;
+  const tickerText=(type==='buy'?'BUY ':'SELL ')+amount+' INF | '+value+' | '+time;
   txTickerData.unshift({t:type,tx:tickerText});
   if(txTickerData.length>MAX_TICKER_ITEMS)txTickerData.pop();
   updateTxTicker();
@@ -1874,12 +1874,12 @@ function updateTxTicker(){
   const track=document.getElementById('tTrackReal');
   if(!track)return;
   if(txTickerData.length===0){
-    track.innerHTML='<span class="ti" style="color:#8ECAE6">Waiting for transactions...</span>';
+    track.innerHTML='<span class="ti" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>';
     return;
   }
   const doubled=txTickerData.concat(txTickerData);
   track.innerHTML=doubled.map(f=>
-    '<span class="ti '+(f.t==='buy'?'tbuy':'tsell')+'">'+f.tx+'</span>'
+    '<span class="ti '+(f.t==='buy'?'tbuy':'tsell')+'">&#9654; '+f.tx+' &#9654;</span>'
   ).join('');
 }
 
