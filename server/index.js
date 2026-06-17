@@ -3,7 +3,7 @@
  * 
  * Features:
  * - DexScreener API price polling (real price)
- * - REAL transactions from DexScreener history + Helius WebSocket
+ * - REAL transactions from Helius API history + Helius WebSocket
  * - AI FAQ bot engine
  * - Live visitor counter
  * - Price alerts
@@ -46,8 +46,7 @@ const rateLimits = new Map();
 const clients = new Set();
 let heliusWs = null;
 let lastRealTxTime = Date.now();
-let recentTransactions = []; // Store recent transactions
-let initDone = false;
+let recentTransactions = [];
 
 // ═══════════════════════════════════════════
 // EXPRESS MIDDLEWARE
@@ -74,7 +73,7 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     name: 'Infinite Coin HQ WebSocket Server',
-    version: '1.3.1',
+    version: '1.4.0',
     endpoints: ['/health', '/ws'],
     status: 'running'
   });
@@ -149,7 +148,6 @@ async function fetchPrice() {
       change = ((price - lastPrice) / lastPrice) * 100;
     }
     
-    // Price alert
     if (lastAlertPrice > 0) {
       const pctChange = Math.abs((price - lastAlertPrice) / lastAlertPrice * 100);
       if (pctChange >= ALERT_THRESHOLD) {
@@ -203,75 +201,160 @@ setInterval(fetchPrice, PRICE_INTERVAL);
 fetchPrice();
 
 // ═══════════════════════════════════════════
-// FETCH RECENT TRANSACTIONS FROM DEXSCREENER
+// FETCH TRANSACTION HISTORY FROM HELIUS API
 // ═══════════════════════════════════════════
-async function fetchRecentTransactions() {
+async function fetchTransactionHistory() {
+  if (!HELIUS_API_KEY) {
+    console.log('[Helius] No API key. Cannot fetch transaction history.');
+    return;
+  }
+
+  try {
+    // Helius API endpoint for transaction history
+    const url = `https://api.helius.xyz/v0/addresses/${TOKEN_CA}/transactions?api-key=${HELIUS_API_KEY}&limit=20`;
+    
+    const res = await fetch(url, { timeout: 10000 });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    if (!data || data.length === 0) {
+      console.log('[Helius] No transaction history found');
+      return;
+    }
+
+    // Process transactions
+    const txs = [];
+    let txCount = 0;
+    
+    for (const tx of data) {
+      // Only process confirmed transactions
+      if (!tx.confirmed) continue;
+      
+      // Try to find token transfers
+      const transfers = tx.tokenTransfers || [];
+      let found = false;
+      
+      for (const transfer of transfers) {
+        // Check if this transfer involves our token
+        if (transfer.mint === TOKEN_CA) {
+          const amount = parseFloat(transfer.tokenAmount) || 0;
+          if (amount <= 0) continue;
+          
+          // Determine if buy or sell (simplified)
+          const type = tx.feePayer === transfer.toUserAccount ? 'buy' : 'sell';
+          const value = (amount * (lastPrice || 0.00000418)).toFixed(2);
+          const time = tx.timestamp ? Math.floor((Date.now() / 1000 - tx.timestamp) / 60) + 'm ago' : 'recent';
+          
+          txs.push({
+            type: type,
+            amount: amount.toLocaleString() + ' INF',
+            value: '$' + value,
+            time: time
+          });
+          
+          found = true;
+          txCount++;
+          break;
+        }
+      }
+      
+      if (txCount >= 15) break;
+    }
+
+    if (txs.length > 0) {
+      recentTransactions = txs;
+      console.log(`[Helius] Loaded ${txs.length} historical transactions`);
+      
+      // Broadcast to all connected clients
+      txs.forEach(tx => {
+        broadcast({ type: 'tx', tx: tx });
+      });
+    } else {
+      console.log('[Helius] No transactions found for this token');
+      // Try fallback - DexScreener
+      await fetchRecentTransactionsFallback();
+    }
+    
+  } catch (err) {
+    console.error('[Helius] Error fetching transaction history:', err.message);
+    // Fallback to DexScreener
+    await fetchRecentTransactionsFallback();
+  }
+}
+
+// ═══════════════════════════════════════════
+// FALLBACK: FETCH FROM DEXSCREENER
+// ═══════════════════════════════════════════
+async function fetchRecentTransactionsFallback() {
   try {
     const url = `${DEXSCREENER_API}/${TOKEN_CA}`;
     const res = await fetch(url, { timeout: 8000 });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
-    if (!data.pairs || data.pairs.length === 0) {
-      console.log('[DexScreener] No pairs found for token');
-      return;
-    }
+    if (!data.pairs || data.pairs.length === 0) return;
     
     const pair = data.pairs[0];
     const trades = pair.trades || [];
     
     if (trades.length === 0) {
-      console.log('[DexScreener] No trades found');
+      console.log('[DexScreener] No trades found (fallback)');
+      // No transactions available - send placeholder
       return;
     }
     
-    // Clear and store recent transactions
-    recentTransactions = [];
-    
-    // Process trades and broadcast to all clients
-    const tradesToSend = trades.slice(0, 15);
-    tradesToSend.forEach(trade => {
+    const txs = [];
+    trades.slice(0, 15).forEach(trade => {
       const type = trade.side === 'buy' ? 'buy' : 'sell';
       const amount = parseFloat(trade.amount).toLocaleString() + ' INF';
       const value = '$' + parseFloat(trade.priceUsd * trade.amount).toFixed(2);
       const time = trade.timeAgo || 'recent';
       
-      const txData = { type, amount, value, time };
-      recentTransactions.push(txData);
-      
-      // Broadcast to all connected clients
-      broadcast({
-        type: 'tx',
-        tx: txData
-      });
+      txs.push({ type, amount, value, time });
     });
     
-    console.log(`[DexScreener] Loaded ${tradesToSend.length} recent transactions`);
-    initDone = true;
+    recentTransactions = txs;
+    console.log(`[DexScreener] Loaded ${txs.length} transactions (fallback)`);
+    
+    txs.forEach(tx => {
+      broadcast({ type: 'tx', tx: tx });
+    });
     
   } catch (err) {
-    console.error('[DexScreener] Failed to fetch recent transactions:', err.message);
+    console.error('[DexScreener] Fallback failed:', err.message);
   }
 }
 
-// Force fetch on startup with retry
-async function initRecentTransactions() {
-  console.log('[Init] Fetching recent transactions from DexScreener...');
-  await fetchRecentTransactions();
+// ═══════════════════════════════════════════
+// INITIALIZE TRANSACTIONS
+// ═══════════════════════════════════════════
+async function initTransactions() {
+  console.log('[Init] Fetching transaction history...');
   
+  // Try Helius first
+  await fetchTransactionHistory();
+  
+  // If no transactions found, try fallback
   if (recentTransactions.length === 0) {
-    console.log('[Init] No recent transactions found. Will retry in 10s...');
-    setTimeout(initRecentTransactions, 10000);
+    console.log('[Init] No transactions from Helius, trying DexScreener...');
+    await fetchRecentTransactionsFallback();
+  }
+  
+  if (recentTransactions.length > 0) {
+    console.log(`[Init] Successfully loaded ${recentTransactions.length} transactions`);
   } else {
-    console.log(`[Init] Successfully loaded ${recentTransactions.length} recent transactions`);
+    console.log('[Init] No transactions available. Will retry in 30s...');
+    setTimeout(initTransactions, 30000);
   }
 }
 
-// Start the init process
-initRecentTransactions();
+// Start transaction loading
+initTransactions();
 
-// Refresh recent transactions every 30 seconds
-setInterval(fetchRecentTransactions, 30000);
+// Refresh transactions every 60 seconds
+setInterval(async () => {
+  await fetchTransactionHistory();
+}, 60000);
 
 // ═══════════════════════════════════════════
 // HELIUS - FETCH REAL HOLDER COUNT
@@ -299,7 +382,6 @@ async function fetchHolders() {
   }
 }
 
-// Fetch holders every 5 minutes
 setInterval(fetchHolders, 300000);
 fetchHolders();
 
@@ -308,7 +390,7 @@ fetchHolders();
 // ═══════════════════════════════════════════
 function connectHelius() {
   if (!HELIUS_API_KEY) {
-    console.log('[Helius] No API key provided. Transactions will use DexScreener only.');
+    console.log('[Helius] No API key provided. Real-time transactions disabled.');
     return;
   }
   
@@ -379,6 +461,10 @@ function connectHelius() {
                 time: 'just now'
               };
               
+              // Add to recent transactions
+              recentTransactions.unshift(txData);
+              if (recentTransactions.length > 20) recentTransactions.pop();
+              
               broadcast({ type: 'tx', tx: txData });
               console.log(`[Helius] Real-time ${type.toUpperCase()}: ${parseInt(amount).toLocaleString()} INF - $${value}`);
             }
@@ -404,7 +490,6 @@ function connectHelius() {
 
 connectHelius();
 
-// Update lastRealTxTime periodically
 setInterval(() => { lastRealTxTime = Date.now(); }, 1000);
 
 // ═══════════════════════════════════════════
@@ -455,7 +540,6 @@ wss.on('connection', (ws, req) => {
   console.log(`[WS] Client connected. Total: ${clients.size}, Visitors: ${visitors.size}`);
   broadcast({ type: 'visitorCount', count: visitors.size });
 
-  // Send current price immediately
   if (lastPrice > 0) {
     send(ws, {
       type: 'price',
@@ -468,21 +552,20 @@ wss.on('connection', (ws, req) => {
     });
   }
   
-  // Send recent transactions to new client
+  // Send recent transactions
   if (recentTransactions.length > 0) {
-    console.log(`[WS] Sending ${recentTransactions.length} recent transactions to new client`);
+    console.log(`[WS] Sending ${recentTransactions.length} recent transactions to client`);
     recentTransactions.forEach(tx => {
       send(ws, { type: 'tx', tx: tx });
     });
   } else {
-    // Send a placeholder so client doesn't show empty
     send(ws, { 
       type: 'tx', 
       tx: { 
         type: 'info', 
-        amount: 'Loading transactions...', 
+        amount: 'No recent transactions', 
         value: '', 
-        time: 'recent' 
+        time: 'waiting for activity' 
       } 
     });
   }
@@ -539,7 +622,7 @@ const pingInterval = setInterval(() => {
 // ═══════════════════════════════════════════
 server.listen(PORT, () => {
   console.log('╔══════════════════════════════════════════╗');
-  console.log('║   Infinite Coin HQ WS Server v1.3.1     ║');
+  console.log('║   Infinite Coin HQ WS Server v1.4.0     ║');
   console.log('╠══════════════════════════════════════════╣');
   console.log(`║  Port:        ${PORT.toString().padEnd(27)} ║`);
   console.log(`║  Price Int:   ${PRICE_INTERVAL}ms${''.padEnd(18)} ║`);
