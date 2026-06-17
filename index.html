@@ -141,18 +141,22 @@ body.loaded{overflow:auto}
 
 body.loading .nav,
 body.loading .sec,
+body.loading .hero,
 body.loading .footer,
 body.loading .chw,
 body.loading .wsb,
-body.loading .divider{
+body.loading .divider,
+body.loading #txTickerBar{
   opacity:0;pointer-events:none;
 }
 body.loaded .nav,
 body.loaded .sec,
+body.loaded .hero,
 body.loaded .footer,
 body.loaded .chw,
 body.loaded .wsb,
-body.loaded .divider{
+body.loaded .divider,
+body.loaded #txTickerBar{
   opacity:1;pointer-events:auto;
   transition:opacity 1.5s ease 0.3s;
 }
@@ -318,10 +322,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 /* ═══════════════════════════════════════════
    DEX TRADING HQ
    ═══════════════════════════════════════════ */
-.dex-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:480px;margin:0 auto}
+.dex-grid{display:grid;grid-template-columns:1fr;gap:20px;max-width:800px;margin:0 auto;width:100%}
 .dex-frame{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);min-height:480px;background:rgba(8,12,28,0.15)}
 .dex-frame iframe{width:100%;height:480px;border:none;display:block}
-.dex-side{display:flex;flex-direction:column;gap:12px}
+.dex-side{display:flex;flex-direction:column;gap:14px;width:100%}
 .dlc{padding:16px}
 .dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .dh span{font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8ECAE6;display:flex;align-items:center;gap:6px}
@@ -404,7 +408,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 /* Transaction ticker strip */
 .tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.5);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:12px 0;position:relative;margin-top:16px;box-shadow:0 0 20px rgba(0,240,255,0.05)}
-.ttrack{display:inline-block;animation:tscroll 25s linear infinite}
+.ttrack{display:inline-block;animation:tscroll 50s linear infinite}
 .ti{display:inline-block;padding:0 32px;font-family:'Space Mono';font-size:11px;letter-spacing:.06em;font-weight:700}
 .ti.tbuy{color:#39FF14;text-shadow:0 0 8px rgba(57,255,20,0.4)}
 .ti.tsell{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,0.4)}
@@ -655,20 +659,15 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   border-radius:20px;
   overflow:hidden;
   border:2px solid rgba(0,240,255,0.15);
-  box-shadow:0 0 40px rgba(0,240,255,0.1),inset 0 0 60px rgba(0,240,255,0.03);
-  background:rgba(8,12,28,0.2);
+  box-shadow:0 0 40px rgba(0,240,255,0.1);
+  background:transparent;
   cursor:pointer;
   transition:all .4s ease;
 }
 .game-modal-bg:hover{
-  box-shadow:0 0 60px rgba(0,240,255,0.2),inset 0 0 80px rgba(0,240,255,0.05);
+  box-shadow:0 0 60px rgba(0,240,255,0.2);
   transform:translateY(-4px);
   border-color:rgba(0,240,255,0.3);
-}
-.game-modal-bg .gmb-scanlines{
-  position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.02) 2px,rgba(0,240,255,0.02) 4px);
-  pointer-events:none;z-index:1;
 }
 .game-modal-bg .gmb-content{
   position:relative;z-index:2;
@@ -720,7 +719,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 }
 .tx-ticker-track{
   display:inline-block;
-  animation:tickerScroll 35s linear infinite;
+  animation:tickerScroll 50s linear infinite;
   padding-left:100%;
 }
 .tx-ticker-bar:hover .tx-ticker-track{
@@ -849,7 +848,15 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 <!-- ═══════════════════════════════════════════
      SPLASH SCREEN OVERLAY
      ═══════════════════════════════════════════ -->
-<div class="splash-screen" id="splashScreen"></div>
+<div class="splash-screen" id="splashScreen">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:1">
+    <div class="splash-welcome">WELCOME TO INFINITECOIN HQ</div>
+    <h1 style="margin-bottom:20px;text-align:center">
+      <span class="hero-mom">INFINITE MOMENTUMS</span>
+      <span class="hero-opp">INFINITE OPPORTUNITIES</span>
+    </h1>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════
      NAVIGATION
@@ -980,13 +987,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
      ═══════════════════════════════════════════ -->
 <section class="hero" id="hero">
   <div class="hero-inner">
-    <!-- Splash-only welcome text -->
-    <div class="splash-welcome">WELCOME TO INFINITECOIN HQ</div>
-
     <!-- Permanent headlines -->
     <h1 style="margin-bottom:20px">
-      <span class="hero-mom">INFINITE MOMENTUMS</span>
-      <span class="hero-opp">INFINITE OPPORTUNITIES</span>
+      <span class="hero-mom-static">INFINITE MOMENTUMS</span>
+      <span class="hero-opp-static">INFINITE OPPORTUNITIES</span>
     </h1>
 
     <!-- Post-splash content slides up -->
@@ -1076,12 +1080,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
               <div class="tx-empty">Waiting for real transactions from WebSocket...</div>
             </div>
           </div>
-
-          <!-- REAL TRANSACTION TICKER -->
-          <div class="tstrip" id="txTicker">
-            <div class="ttrack" id="tTrackReal"></div>
-          </div>
         </div>
+      </div>
+
+      <!-- REAL TRANSACTION TICKER — FULL WIDTH AT BOTTOM OF TRADING HQ -->
+      <div class="tstrip" id="txTicker" style="margin-top:20px">
+        <div class="ttrack" id="tTrackReal"></div>
       </div>
     </div>
   </div>
@@ -1104,7 +1108,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
       <div style="max-width:560px;margin:0 auto 36px" onclick="openGameModal()">
         <div class="game-modal-bg">
-          <div class="gmb-scanlines"></div>
           <div class="gmb-content">
             <h3 style="font-family:'Press Start 2P',cursive;font-size:11px;color:#00F0FF;margin-bottom:12px;line-height:1.6;text-shadow:0 0 10px rgba(0,240,255,0.5)">INFINITE COIN GAMES</h3>
             <p style="font-size:14px;color:#8ECAE6;line-height:1.6;margin-bottom:16px;max-width:360px;margin-left:auto;margin-right:auto">Tap to play Infinite Jumper & Infinite Runners. Earn $INF while you play.</p>
@@ -1967,6 +1970,7 @@ function updatePrice(price,change,mcap,vol,liq){
   if(liqVal && !isNaN(liqVal) && liqVal>0){
     document.getElementById('sLiq').textContent='$'+(liqVal>=1e6?(liqVal/1e6).toFixed(1)+'M':liqVal.toLocaleString());
   }
+  document.getElementById('sHold').textContent=wsHolders;
 }
 
 // Real transaction ticker array
@@ -1986,11 +1990,11 @@ function addTx(tx){
 
   const row=document.createElement('div');
   row.className='tx-row '+type;
-  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+type+'">'+type.toUpperCase()+'</span><span style="color:#fff">'+amount+' INF</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:#8ECAE6">'+value+'</span><span style="color:#8ECAE6;font-size:9px">'+time+'</span></div>';
+  row.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span class="tx-tag '+type+'">'+type.toUpperCase()+'</span><span style="color:#fff">'+amount+' INFINITE</span></div><div style="display:flex;align-items:center;gap:10px"><span style="color:#8ECAE6">'+value+'</span><span style="color:#8ECAE6;font-size:9px">'+time+'</span></div>';
   list.insertBefore(row,list.firstChild);
   while(list.children.length>20)list.removeChild(list.lastChild);
 
-  const tickerText=(type==='buy'?'BUY ':'SELL ')+amount+' INF | '+value+' | '+time;
+  const tickerText=(type==='buy'?'BUY ':'SELL ')+amount+' INFINITE | '+value+' | '+time;
   txTickerData.unshift({t:type,tx:tickerText});
   if(txTickerData.length>MAX_TICKER_ITEMS)txTickerData.pop();
   updateTxTicker();
@@ -2108,9 +2112,9 @@ async function fetchJupiterFallback(){
       document.getElementById('dChange').style.color='#39FF14';
       document.getElementById('sMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M';
       document.getElementById('statMcap').textContent='$'+(mcap/1e6).toFixed(1)+'M+';
-      document.getElementById('sVol').textContent='$890K';
+      document.getElementById('sVol').textContent='---';
       document.getElementById('sHold').textContent=wsHolders;
-      document.getElementById('sLiq').textContent='$1.1M';
+      document.getElementById('sLiq').textContent='---';
       return;
     }catch(e){lastErr=e.name==='TimeoutError'?'Timeout':e.message}
   }
@@ -2433,6 +2437,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   document.body.classList.add('loading');
+  const bgv=document.getElementById('bgVideo');
+  if(bgv){bgv.play().catch(()=>{});}
   fetchDexScreener();
   setInterval(fetchDexScreener,15000);
   connectWS();
@@ -2457,7 +2463,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
     document.body.classList.remove('loading');
     document.body.classList.add('loaded');
-  },13000);
+  },12000);
 });
 
 // ═══════════════════════════════════════════
