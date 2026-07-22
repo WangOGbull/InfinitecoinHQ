@@ -69,6 +69,129 @@ body.loaded{overflow:auto}
 ::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.25);border-radius:2px}
 
 /* ═══════════════════════════════════════════
+   4D SPACE ANIME LOADING SCREEN
+   ═══════════════════════════════════════════ */
+.loader-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.8s ease;
+}
+.loader-screen.done{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* Star field background */
+.loader-stars{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;
+}
+.loader-star{
+  position:absolute;width:2px;height:2px;
+  background:#fff;border-radius:50%;
+  animation:starTwinkle 2s ease-in-out infinite;
+}
+@keyframes starTwinkle{
+  0%,100%{opacity:0.2;transform:scale(0.8)}
+  50%{opacity:1;transform:scale(1.2)}
+}
+
+/* 4D Infinity Symbol */
+.loader-infinity-wrap{
+  position:relative;width:120px;height:60px;
+  margin-bottom:32px;
+  perspective:800px;
+}
+.loader-infinity{
+  position:absolute;inset:0;
+  animation:infRotate3D 3s linear infinite;
+  transform-style:preserve-3d;
+}
+@keyframes infRotate3D{
+  0%{transform:rotateY(0deg) rotateX(10deg)}
+  100%{transform:rotateY(360deg) rotateX(10deg)}
+}
+
+.loader-infinity svg{
+  width:100%;height:100%;
+  filter:drop-shadow(0 0 15px rgba(0,240,255,0.6)) drop-shadow(0 0 30px rgba(188,19,254,0.4));
+}
+.loader-infinity path{
+  stroke:url(#infGrad);stroke-width:3;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;
+  animation:infDash 2s ease-in-out infinite;
+  stroke-dasharray:300;stroke-dashoffset:300;
+}
+@keyframes infDash{
+  0%{stroke-dashoffset:300}
+  50%{stroke-dashoffset:0}
+  100%{stroke-dashoffset:-300}
+}
+
+/* Neon ring pulse */
+.loader-ring{
+  position:absolute;top:50%;left:50%;
+  width:180px;height:180px;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(0,240,255,0.15);
+  border-radius:50%;
+  animation:ringPulse 2s ease-in-out infinite;
+}
+.loader-ring::before{
+  content:'';position:absolute;inset:-20px;
+  border:1px solid rgba(188,19,254,0.1);
+  border-radius:50%;
+  animation:ringPulse 2s ease-in-out infinite 0.5s;
+}
+.loader-ring::after{
+  content:'';position:absolute;inset:-40px;
+  border:1px solid rgba(0,240,255,0.05);
+  border-radius:50%;
+  animation:ringPulse 2s ease-in-out infinite 1s;
+}
+@keyframes ringPulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.15);opacity:0.5}
+}
+
+/* Loading text */
+.loader-text{
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.25em;
+  color:#00F0FF;
+  text-shadow:0 0 10px rgba(0,240,255,0.5);
+  position:relative;
+}
+.loader-text::after{
+  content:'';animation:loaderDots 1.5s steps(4,end) infinite;
+}
+@keyframes loaderDots{
+  0%{content:''}
+  25%{content:'.'}
+  50%{content:'..'}
+  75%{content:'...'}
+  100%{content:''}
+}
+
+/* Progress bar */
+.loader-progress{
+  width:200px;height:2px;
+  background:rgba(0,240,255,0.08);
+  border-radius:1px;
+  margin-top:20px;overflow:hidden;
+  position:relative;
+}
+.loader-progress-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#00F0FF,#BC13FE);
+  border-radius:1px;
+  transition:width 0.3s ease;
+  box-shadow:0 0 10px rgba(0,240,255,0.3);
+}
+
+/* ═══════════════════════════════════════════
    SPLASH SCREEN
    ═══════════════════════════════════════════ */
 .splash-screen{
@@ -81,8 +204,7 @@ body.loaded{overflow:auto}
 /* ═══════════════════════════════════════════
    VIDEO BACKGROUND — FULL QUALITY
    ═══════════════════════════════════════════ */
-#bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000;opacity:0;transition:opacity 1s ease}
-#bgVideo.ready{opacity:1}
+#bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000}
 #videoOverlay{position:fixed;inset:0;z-index:-1;background:var(--hero-grad);pointer-events:none}
 #videoFallback{position:fixed;inset:0;z-index:-3;background:url('images/infinity-glow.png') center/cover no-repeat #000}
 
@@ -2470,14 +2592,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Generate star field for loader
   const starsContainer=document.getElementById('loaderStars');
-  for(let i=0;i<60;i++){
-    const star=document.createElement('div');
-    star.className='loader-star';
-    star.style.left=Math.random()*100+'%';
-    star.style.top=Math.random()*100+'%';
-    star.style.animationDelay=Math.random()*2+'s';
-    star.style.animationDuration=(1.5+Math.random()*1)+'s';
-    starsContainer.appendChild(star);
+  if(starsContainer){
+    for(let i=0;i<60;i++){
+      const star=document.createElement('div');
+      star.className='loader-star';
+      star.style.left=Math.random()*100+'%';
+      star.style.top=Math.random()*100+'%';
+      star.style.animationDelay=Math.random()*2+'s';
+      star.style.animationDuration=(1.5+Math.random()*1)+'s';
+      starsContainer.appendChild(star);
+    }
   }
 
   const bgv=document.getElementById('bgVideo');
@@ -2489,103 +2613,68 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Progress bar animation
   const progressInterval=setInterval(()=>{
-    loadProgress+=2;
-    if(loadProgress>90)loadProgress=90;
-    loaderBar.style.width=loadProgress+'%';
-  },80);
+    loadProgress+=4;
+    if(loadProgress>95)loadProgress=95;
+    if(loaderBar)loaderBar.style.width=loadProgress+'%';
+  },50);
 
-  function onVideoReady(){
+  function startSplashSequence(){
     if(videoReady)return;
     videoReady=true;
     clearInterval(progressInterval);
-    loaderBar.style.width='100%';
+    if(loaderBar)loaderBar.style.width='100%';
 
-    // Fade out loader
+    // Fade out loader FIRST - this reveals the video + splash underneath
     setTimeout(()=>{
-      loaderScreen.classList.add('done');
-      bgv.classList.add('ready');
+      if(loaderScreen)loaderScreen.classList.add('done');
 
-      // Activate splash screen and start text sequence
+      // Start splash text sequence after loader is gone
       setTimeout(()=>{
-        splash.classList.add('active');
+        const sw=document.getElementById('splashWelcome');
+        const sm=document.getElementById('splashMom');
+        const so=document.getElementById('splashOpp');
 
         // 0s: WELCOME fades in
-        setTimeout(()=>{
-          document.getElementById('splashWelcome').classList.add('anim-in');
-        },300);
+        if(sw)sw.style.animation='splashFadeIn 1.2s ease forwards';
 
         // 1s: MOMENTUMS fades in
-        setTimeout(()=>{
-          document.getElementById('splashMom').classList.add('anim-in');
-        },1300);
+        setTimeout(()=>{if(sm)sm.style.animation='splashFadeIn 1.2s ease forwards';},1000);
 
         // 3s: OPPORTUNITIES fades in
-        setTimeout(()=>{
-          document.getElementById('splashOpp').classList.add('anim-in');
-        },3300);
+        setTimeout(()=>{if(so)so.style.animation='splashFadeIn 1.2s ease forwards';},3000);
 
         // 4s: WELCOME fades out
-        setTimeout(()=>{
-          document.getElementById('splashWelcome').classList.add('anim-out');
-        },4300);
+        setTimeout(()=>{if(sw)sw.style.animation='splashFadeOut 1s ease forwards';},4000);
 
         // 5s: splash overlay fades out, site reveals
         setTimeout(()=>{
-          splash.classList.add('done');
-          setTimeout(()=>splash.style.display='none',1500);
+          if(splash)splash.classList.add('done');
+          setTimeout(()=>{if(splash)splash.style.display='none';},1500);
           document.body.classList.remove('loading');
           document.body.classList.add('loaded');
-        },5300);
+        },5000);
 
-      },500);
+      },300);
 
-    },600);
+    },300);
   }
 
-  // Video readiness detection
+  // Video readiness detection - multiple fallbacks
   if(bgv){
-    // Try to play immediately
     bgv.play().catch(()=>{});
 
-    // Multiple checks for video readiness
-    function checkVideoReady(){
-      if(bgv.readyState>=3 && !bgv.paused){
-        onVideoReady();
-        return true;
-      }
-      return false;
-    }
+    const tryReady=()=>{if(!videoReady)startSplashSequence();};
 
-    bgv.addEventListener('canplaythrough',()=>{
-      if(!videoReady){
-        bgv.play().catch(()=>{});
-        setTimeout(()=>{
-          if(bgv.readyState>=3 && !bgv.paused) onVideoReady();
-        },200);
-      }
-    });
+    bgv.addEventListener('canplaythrough',tryReady);
+    bgv.addEventListener('playing',tryReady);
+    bgv.addEventListener('loadeddata',tryReady);
 
-    bgv.addEventListener('playing',()=>{
-      if(!videoReady) onVideoReady();
-    });
+    // Hard fallback: always proceed after 3 seconds max
+    setTimeout(tryReady,3000);
 
-    bgv.addEventListener('loadeddata',()=>{
-      if(bgv.readyState>=3 && !bgv.paused && !videoReady) onVideoReady();
-    });
-
-    // Fallback: if video takes too long, proceed anyway after 6 seconds
-    setTimeout(()=>{
-      if(!videoReady) onVideoReady();
-    },6000);
-
-    // Also check periodically
-    const checkInterval=setInterval(()=>{
-      if(videoReady){clearInterval(checkInterval);return;}
-      if(checkVideoReady()){clearInterval(checkInterval);}
-    },300);
   }else{
     // No video element, proceed immediately
-    onVideoReady();
+    setTimeout(startSplashSequence,300);
   }
 
   fetchDexScreener();
