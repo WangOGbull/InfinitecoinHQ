@@ -81,7 +81,8 @@ body.loaded{overflow:auto}
 /* ═══════════════════════════════════════════
    VIDEO BACKGROUND — FULL QUALITY
    ═══════════════════════════════════════════ */
-#bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000}
+#bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000;opacity:0;transition:opacity 1s ease}
+#bgVideo.ready{opacity:1}
 #videoOverlay{position:fixed;inset:0;z-index:-1;background:var(--hero-grad);pointer-events:none}
 #videoFallback{position:fixed;inset:0;z-index:-3;background:url('images/infinity-glow.png') center/cover no-repeat #000}
 
@@ -833,8 +834,35 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="loading">
+
+<!-- ═══════════════════════════════════════════
+     4D SPACE ANIME LOADING SCREEN
+     ═══════════════════════════════════════════ -->
+<div class="loader-screen" id="loaderScreen">
+  <div class="loader-stars" id="loaderStars"></div>
+  <div class="loader-ring"></div>
+  <div class="loader-infinity-wrap">
+    <div class="loader-infinity">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="infGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#00F0FF"/>
+            <stop offset="50%" style="stop-color:#BC13FE"/>
+            <stop offset="100%" style="stop-color:#00F0FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M30,30 C30,10 50,10 60,30 C70,50 90,50 90,30 C90,10 70,10 60,30 C50,50 30,50 30,30 Z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="loader-text">LOADING INFINITE</div>
+  <div class="loader-progress">
+    <div class="loader-progress-bar" id="loaderProgressBar"></div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════
      LAYER 1: BACKGROUND VIDEO — FULL QUALITY
@@ -850,10 +878,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
      ═══════════════════════════════════════════ -->
 <div class="splash-screen" id="splashScreen">
   <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:1">
-    <div class="splash-welcome">WELCOME TO INFINITECOIN HQ</div>
+    <div class="splash-welcome" id="splashWelcome">WELCOME TO INFINITECOIN HQ</div>
     <h1 style="margin-bottom:20px;text-align:center">
-      <span class="hero-mom">INFINITE MOMENTUMS</span>
-      <span class="hero-opp">INFINITE OPPORTUNITIES</span>
+      <span class="hero-mom" id="splashMom">INFINITE MOMENTUMS</span>
+      <span class="hero-opp" id="splashOpp">INFINITE OPPORTUNITIES</span>
     </h1>
   </div>
 </div>
@@ -989,8 +1017,8 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   <div class="hero-inner">
     <!-- Permanent headlines -->
     <h1 style="margin-bottom:20px">
-      <span class="hero-mom-static">INFINITE MOMENTUMS</span>
-      <span class="hero-opp-static">INFINITE OPPORTUNITIES</span>
+      <span class="hero-mom" style="opacity:1;animation:none">INFINITE MOMENTUMS</span>
+      <span class="hero-opp" style="opacity:1;animation:none">INFINITE OPPORTUNITIES</span>
     </h1>
 
     <!-- Post-splash content slides up -->
@@ -1142,7 +1170,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:14px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
           <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-bottom:10px;line-height:1.6">INFINITE JUMPER</h3>
           <p style="font-size:12px;color:#8ECAE6;margin-bottom:16px;line-height:1.5">Jump to the moon. Earn $INFINITE per level.</p>
-          <a href="https://infinitecoinjumper-v2.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
+          <a href="https://infinitecoin-jumper.pages.dev/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
         </div>
       </div>
     </div>
@@ -2439,8 +2467,127 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   document.body.classList.add('loading');
+
+  // Generate star field for loader
+  const starsContainer=document.getElementById('loaderStars');
+  for(let i=0;i<60;i++){
+    const star=document.createElement('div');
+    star.className='loader-star';
+    star.style.left=Math.random()*100+'%';
+    star.style.top=Math.random()*100+'%';
+    star.style.animationDelay=Math.random()*2+'s';
+    star.style.animationDuration=(1.5+Math.random()*1)+'s';
+    starsContainer.appendChild(star);
+  }
+
   const bgv=document.getElementById('bgVideo');
-  if(bgv){bgv.play().catch(()=>{});}
+  const loaderScreen=document.getElementById('loaderScreen');
+  const loaderBar=document.getElementById('loaderProgressBar');
+  const splash=document.getElementById('splashScreen');
+  let videoReady=false;
+  let loadProgress=0;
+
+  // Progress bar animation
+  const progressInterval=setInterval(()=>{
+    loadProgress+=2;
+    if(loadProgress>90)loadProgress=90;
+    loaderBar.style.width=loadProgress+'%';
+  },80);
+
+  function onVideoReady(){
+    if(videoReady)return;
+    videoReady=true;
+    clearInterval(progressInterval);
+    loaderBar.style.width='100%';
+
+    // Fade out loader
+    setTimeout(()=>{
+      loaderScreen.classList.add('done');
+      bgv.classList.add('ready');
+
+      // Activate splash screen and start text sequence
+      setTimeout(()=>{
+        splash.classList.add('active');
+
+        // 0s: WELCOME fades in
+        setTimeout(()=>{
+          document.getElementById('splashWelcome').classList.add('anim-in');
+        },300);
+
+        // 1s: MOMENTUMS fades in
+        setTimeout(()=>{
+          document.getElementById('splashMom').classList.add('anim-in');
+        },1300);
+
+        // 3s: OPPORTUNITIES fades in
+        setTimeout(()=>{
+          document.getElementById('splashOpp').classList.add('anim-in');
+        },3300);
+
+        // 4s: WELCOME fades out
+        setTimeout(()=>{
+          document.getElementById('splashWelcome').classList.add('anim-out');
+        },4300);
+
+        // 5s: splash overlay fades out, site reveals
+        setTimeout(()=>{
+          splash.classList.add('done');
+          setTimeout(()=>splash.style.display='none',1500);
+          document.body.classList.remove('loading');
+          document.body.classList.add('loaded');
+        },5300);
+
+      },500);
+
+    },600);
+  }
+
+  // Video readiness detection
+  if(bgv){
+    // Try to play immediately
+    bgv.play().catch(()=>{});
+
+    // Multiple checks for video readiness
+    function checkVideoReady(){
+      if(bgv.readyState>=3 && !bgv.paused){
+        onVideoReady();
+        return true;
+      }
+      return false;
+    }
+
+    bgv.addEventListener('canplaythrough',()=>{
+      if(!videoReady){
+        bgv.play().catch(()=>{});
+        setTimeout(()=>{
+          if(bgv.readyState>=3 && !bgv.paused) onVideoReady();
+        },200);
+      }
+    });
+
+    bgv.addEventListener('playing',()=>{
+      if(!videoReady) onVideoReady();
+    });
+
+    bgv.addEventListener('loadeddata',()=>{
+      if(bgv.readyState>=3 && !bgv.paused && !videoReady) onVideoReady();
+    });
+
+    // Fallback: if video takes too long, proceed anyway after 6 seconds
+    setTimeout(()=>{
+      if(!videoReady) onVideoReady();
+    },6000);
+
+    // Also check periodically
+    const checkInterval=setInterval(()=>{
+      if(videoReady){clearInterval(checkInterval);return;}
+      if(checkVideoReady()){clearInterval(checkInterval);}
+    },300);
+  }else{
+    // No video element, proceed immediately
+    onVideoReady();
+  }
+
   fetchDexScreener();
   setInterval(fetchDexScreener,15000);
   connectWS();
@@ -2448,24 +2595,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
     if(img.complete)img.classList.add('loaded');
   });
-
-  // Splash timing:
-  // 0-8s: video only
-  // 8s: WELCOME fades in
-  // 9s: MOMENTUMS fades in
-  // 11s: OPPORTUNITIES fades in
-  // 12s: WELCOME fades out
-  // 13s: splash overlay fades out, site reveals, post-splash content slides up
-
-  setTimeout(()=>{
-    const splash=document.getElementById('splashScreen');
-    if(splash){
-      splash.classList.add('done');
-      setTimeout(()=>splash.style.display='none',1500);
-    }
-    document.body.classList.remove('loading');
-    document.body.classList.add('loaded');
-  },12000);
 });
 
 // ═══════════════════════════════════════════
