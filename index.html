@@ -69,129 +69,6 @@ body.loaded{overflow:auto}
 ::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.25);border-radius:2px}
 
 /* ═══════════════════════════════════════════
-   4D SPACE ANIME LOADING SCREEN
-   ═══════════════════════════════════════════ */
-.loader-screen{
-  position:fixed;inset:0;z-index:9999;
-  background:#000;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  transition:opacity 0.8s ease;
-}
-.loader-screen.done{
-  opacity:0;
-  pointer-events:none;
-}
-
-/* Star field background */
-.loader-stars{
-  position:absolute;inset:0;overflow:hidden;pointer-events:none;
-}
-.loader-star{
-  position:absolute;width:2px;height:2px;
-  background:#fff;border-radius:50%;
-  animation:starTwinkle 2s ease-in-out infinite;
-}
-@keyframes starTwinkle{
-  0%,100%{opacity:0.2;transform:scale(0.8)}
-  50%{opacity:1;transform:scale(1.2)}
-}
-
-/* 4D Infinity Symbol */
-.loader-infinity-wrap{
-  position:relative;width:120px;height:60px;
-  margin-bottom:32px;
-  perspective:800px;
-}
-.loader-infinity{
-  position:absolute;inset:0;
-  animation:infRotate3D 3s linear infinite;
-  transform-style:preserve-3d;
-}
-@keyframes infRotate3D{
-  0%{transform:rotateY(0deg) rotateX(10deg)}
-  100%{transform:rotateY(360deg) rotateX(10deg)}
-}
-
-.loader-infinity svg{
-  width:100%;height:100%;
-  filter:drop-shadow(0 0 15px rgba(0,240,255,0.6)) drop-shadow(0 0 30px rgba(188,19,254,0.4));
-}
-.loader-infinity path{
-  stroke:url(#infGrad);stroke-width:3;fill:none;
-  stroke-linecap:round;stroke-linejoin:round;
-  animation:infDash 2s ease-in-out infinite;
-  stroke-dasharray:300;stroke-dashoffset:300;
-}
-@keyframes infDash{
-  0%{stroke-dashoffset:300}
-  50%{stroke-dashoffset:0}
-  100%{stroke-dashoffset:-300}
-}
-
-/* Neon ring pulse */
-.loader-ring{
-  position:absolute;top:50%;left:50%;
-  width:180px;height:180px;
-  transform:translate(-50%,-50%);
-  border:1px solid rgba(0,240,255,0.15);
-  border-radius:50%;
-  animation:ringPulse 2s ease-in-out infinite;
-}
-.loader-ring::before{
-  content:'';position:absolute;inset:-20px;
-  border:1px solid rgba(188,19,254,0.1);
-  border-radius:50%;
-  animation:ringPulse 2s ease-in-out infinite 0.5s;
-}
-.loader-ring::after{
-  content:'';position:absolute;inset:-40px;
-  border:1px solid rgba(0,240,255,0.05);
-  border-radius:50%;
-  animation:ringPulse 2s ease-in-out infinite 1s;
-}
-@keyframes ringPulse{
-  0%,100%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.15);opacity:0.5}
-}
-
-/* Loading text */
-.loader-text{
-  font-family:'Orbitron',sans-serif;
-  font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:0.25em;
-  color:#00F0FF;
-  text-shadow:0 0 10px rgba(0,240,255,0.5);
-  position:relative;
-}
-.loader-text::after{
-  content:'';animation:loaderDots 1.5s steps(4,end) infinite;
-}
-@keyframes loaderDots{
-  0%{content:''}
-  25%{content:'.'}
-  50%{content:'..'}
-  75%{content:'...'}
-  100%{content:''}
-}
-
-/* Progress bar */
-.loader-progress{
-  width:200px;height:2px;
-  background:rgba(0,240,255,0.08);
-  border-radius:1px;
-  margin-top:20px;overflow:hidden;
-  position:relative;
-}
-.loader-progress-bar{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,#00F0FF,#BC13FE);
-  border-radius:1px;
-  transition:width 0.3s ease;
-  box-shadow:0 0 10px rgba(0,240,255,0.3);
-}
-
-/* ═══════════════════════════════════════════
    SPLASH SCREEN
    ═══════════════════════════════════════════ */
 .splash-screen{
@@ -961,32 +838,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 <body class="loading">
 
 <!-- ═══════════════════════════════════════════
-     4D SPACE ANIME LOADING SCREEN
-     ═══════════════════════════════════════════ -->
-<div class="loader-screen" id="loaderScreen">
-  <div class="loader-stars" id="loaderStars"></div>
-  <div class="loader-ring"></div>
-  <div class="loader-infinity-wrap">
-    <div class="loader-infinity">
-      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="infGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:#00F0FF"/>
-            <stop offset="50%" style="stop-color:#BC13FE"/>
-            <stop offset="100%" style="stop-color:#00F0FF"/>
-          </linearGradient>
-        </defs>
-        <path d="M30,30 C30,10 50,10 60,30 C70,50 90,50 90,30 C90,10 70,10 60,30 C50,50 30,50 30,30 Z"/>
-      </svg>
-    </div>
-  </div>
-  <div class="loader-text">LOADING INFINITE</div>
-  <div class="loader-progress">
-    <div class="loader-progress-bar" id="loaderProgressBar"></div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
      LAYER 1: BACKGROUND VIDEO — FULL QUALITY
      ═══════════════════════════════════════════ -->
 <video id="bgVideo" autoplay muted loop playsinline poster="images/infinity-glow.png" preload="auto" onerror="this.style.display='none'">
@@ -1000,10 +851,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
      ═══════════════════════════════════════════ -->
 <div class="splash-screen" id="splashScreen">
   <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:1">
-    <div class="splash-welcome" id="splashWelcome">WELCOME TO INFINITECOIN HQ</div>
+    <div class="splash-welcome">WELCOME TO INFINITECOIN HQ</div>
     <h1 style="margin-bottom:20px;text-align:center">
-      <span class="hero-mom" id="splashMom">INFINITE MOMENTUMS</span>
-      <span class="hero-opp" id="splashOpp">INFINITE OPPORTUNITIES</span>
+      <span class="hero-mom">INFINITE MOMENTUMS</span>
+      <span class="hero-opp">INFINITE OPPORTUNITIES</span>
     </h1>
   </div>
 </div>
@@ -1139,8 +990,8 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   <div class="hero-inner">
     <!-- Permanent headlines -->
     <h1 style="margin-bottom:20px">
-      <span class="hero-mom" style="opacity:1;animation:none">INFINITE MOMENTUMS</span>
-      <span class="hero-opp" style="opacity:1;animation:none">INFINITE OPPORTUNITIES</span>
+      <span class="hero-mom-static">INFINITE MOMENTUMS</span>
+      <span class="hero-opp-static">INFINITE OPPORTUNITIES</span>
     </h1>
 
     <!-- Post-splash content slides up -->
@@ -2589,94 +2440,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   document.body.classList.add('loading');
-
-  // Generate star field for loader
-  const starsContainer=document.getElementById('loaderStars');
-  if(starsContainer){
-    for(let i=0;i<60;i++){
-      const star=document.createElement('div');
-      star.className='loader-star';
-      star.style.left=Math.random()*100+'%';
-      star.style.top=Math.random()*100+'%';
-      star.style.animationDelay=Math.random()*2+'s';
-      star.style.animationDuration=(1.5+Math.random()*1)+'s';
-      starsContainer.appendChild(star);
-    }
-  }
-
   const bgv=document.getElementById('bgVideo');
-  const loaderScreen=document.getElementById('loaderScreen');
-  const loaderBar=document.getElementById('loaderProgressBar');
-  const splash=document.getElementById('splashScreen');
-  let videoReady=false;
-  let loadProgress=0;
-
-  // Progress bar animation
-  const progressInterval=setInterval(()=>{
-    loadProgress+=4;
-    if(loadProgress>95)loadProgress=95;
-    if(loaderBar)loaderBar.style.width=loadProgress+'%';
-  },50);
-
-  function startSplashSequence(){
-    if(videoReady)return;
-    videoReady=true;
-    clearInterval(progressInterval);
-    if(loaderBar)loaderBar.style.width='100%';
-
-    // Fade out loader FIRST - this reveals the video + splash underneath
-    setTimeout(()=>{
-      if(loaderScreen)loaderScreen.classList.add('done');
-
-      // Start splash text sequence after loader is gone
-      setTimeout(()=>{
-        const sw=document.getElementById('splashWelcome');
-        const sm=document.getElementById('splashMom');
-        const so=document.getElementById('splashOpp');
-
-        // 0s: WELCOME fades in
-        if(sw)sw.style.animation='splashFadeIn 1.2s ease forwards';
-
-        // 1s: MOMENTUMS fades in
-        setTimeout(()=>{if(sm)sm.style.animation='splashFadeIn 1.2s ease forwards';},1000);
-
-        // 3s: OPPORTUNITIES fades in
-        setTimeout(()=>{if(so)so.style.animation='splashFadeIn 1.2s ease forwards';},3000);
-
-        // 4s: WELCOME fades out
-        setTimeout(()=>{if(sw)sw.style.animation='splashFadeOut 1s ease forwards';},4000);
-
-        // 5s: splash overlay fades out, site reveals
-        setTimeout(()=>{
-          if(splash)splash.classList.add('done');
-          setTimeout(()=>{if(splash)splash.style.display='none';},1500);
-          document.body.classList.remove('loading');
-          document.body.classList.add('loaded');
-        },5000);
-
-      },300);
-
-    },300);
-  }
-
-  // Video readiness detection - multiple fallbacks
-  if(bgv){
-    bgv.play().catch(()=>{});
-
-    const tryReady=()=>{if(!videoReady)startSplashSequence();};
-
-    bgv.addEventListener('canplaythrough',tryReady);
-    bgv.addEventListener('playing',tryReady);
-    bgv.addEventListener('loadeddata',tryReady);
-
-    // Hard fallback: always proceed after 3 seconds max
-    setTimeout(tryReady,3000);
-
-  }else{
-    // No video element, proceed immediately
-    setTimeout(startSplashSequence,300);
-  }
-
+  if(bgv){bgv.play().catch(()=>{});}
   fetchDexScreener();
   setInterval(fetchDexScreener,15000);
   connectWS();
@@ -2684,6 +2449,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
     if(img.complete)img.classList.add('loaded');
   });
+
+  // Splash timing:
+  // 0-8s: video only
+  // 8s: WELCOME fades in
+  // 9s: MOMENTUMS fades in
+  // 11s: OPPORTUNITIES fades in
+  // 12s: WELCOME fades out
+  // 13s: splash overlay fades out, site reveals, post-splash content slides up
+
+  setTimeout(()=>{
+    const splash=document.getElementById('splashScreen');
+    if(splash){
+      splash.classList.add('done');
+      setTimeout(()=>splash.style.display='none',1500);
+    }
+    document.body.classList.remove('loading');
+    document.body.classList.add('loaded');
+  },12000);
 });
 
 // ═══════════════════════════════════════════
