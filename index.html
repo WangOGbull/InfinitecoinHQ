@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<meta name="description" content="Infinite Coin HQ — The next generation memecoin ecosystem on Solana. Live price, WebSocket trading data, P2E games, NFTs, staking & community governance.">
-<meta name="keywords" content="Infinite Coin, INFINITE, memecoin, Solana, cryptocurrency, WebSocket, Jupiter DEX, staking, P2E, NFT, pump.fun">
+<meta name="description" content="Infinite Coin HQ — The next generation memecoin ecosystem on Solana. Live price, trading data, P2E games, NFTs, staking & community governance.">
+<meta name="keywords" content="Infinite Coin, INFINITE, memecoin, Solana, cryptocurrency, Jupiter DEX, staking, P2E, NFT, pump.fun">
 <meta name="author" content="Infinite Coin HQ">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#00F0FF">
@@ -14,7 +14,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://infinitecoinhq.com">
-<meta property="og:title" content="Infinite Coin HQ — WebSocket Command Center">
+<meta property="og:title" content="Infinite Coin HQ — Command Center">
 <meta property="og:description" content="Live price, real-time transactions, P2E games, staking & NFTs. The infinite memecoin ecosystem on Solana.">
 <meta property="og:image" content="https://infinitecoinhq.com/images/og-banner.jpg">
 <meta property="og:image:width" content="1200">
@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@infinitecoinhq">
 <meta name="twitter:creator" content="@infinitecoinhq">
-<meta name="twitter:title" content="Infinite Coin HQ — WebSocket Command Center">
+<meta name="twitter:title" content="Infinite Coin HQ — Command Center">
 <meta name="twitter:description" content="Live price, real-time transactions, P2E games, staking & NFTs on Solana.">
 <meta name="twitter:image" content="https://infinitecoinhq.com/images/og-banner.jpg">
 
@@ -38,9 +38,10 @@
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/image23.png">
 <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/infinity-glow.png">
 
-<title>Infinite Coin HQ — WebSocket Command Center</title>
+<title>Infinite Coin HQ — Command Center</title>
 <link rel="icon" href="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
 /* ═══════════════════════════════════════════
@@ -51,7 +52,6 @@
   --glass:rgba(8,12,28,0.7);--glass-border:rgba(0,240,255,0.06);
   --glass-p-border:rgba(188,19,254,0.06);--neon:#00F0FF;--neon-p:#BC13FE;
   --success:#39FF14;--danger:#ff4466;--muted:#4A5568;--nav-bg:rgba(0,0,0,0.85);
-  --wsb-bg:rgba(0,0,0,0.9);
   --hero-grad:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.4) 50%,rgba(0,0,0,0.7) 100%);
   --vid-shadow:0 0 30px rgba(0,240,255,0.08);--input-bg:rgba(0,240,255,0.02);
   --skeleton-base:rgba(0,240,255,0.04);--skeleton-highlight:rgba(0,240,255,0.1);
@@ -144,7 +144,6 @@ body.loading .sec,
 body.loading .hero,
 body.loading .footer,
 body.loading .chw,
-body.loading .wsb,
 body.loading .divider,
 body.loading #txTickerBar{
   opacity:0;pointer-events:none;
@@ -154,7 +153,6 @@ body.loaded .sec,
 body.loaded .hero,
 body.loaded .footer,
 body.loaded .chw,
-body.loaded .wsb,
 body.loaded .divider,
 body.loaded #txTickerBar{
   opacity:1;pointer-events:auto;
@@ -295,12 +293,38 @@ img.loaded{animation:none;background:none}
 .hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .hero-inner{position:relative;z-index:10;text-align:center;max-width:860px;padding:100px 24px 60px;width:100%}
 
-.contract-box{display:inline-flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px;margin-bottom:20px}
-.contract-box label{font-family:'Space Mono';font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.1em}
+.contract-box{
+  display:inline-flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 22px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(0,240,255,0.15);
+  box-shadow:0 0 20px rgba(0,240,255,0.05),inset 0 0 20px rgba(0,240,255,0.02);
+}
+.contract-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#00F0FF,transparent);opacity:.6;
+}
+.contract-box label{
+  font-family:'Space Mono';font-size:8px;color:#8ECAE6;
+  text-transform:uppercase;letter-spacing:.12em;
+  display:flex;align-items:center;gap:6px;
+}
 .crow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
 .crow code{font-family:'Space Mono';font-size:11px;color:#00F0FF;background:rgba(0,240,255,0.04);padding:6px 12px;border-radius:6px;border:1px solid rgba(0,240,255,0.1)}
-.cpbtn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;cursor:pointer;transition:.2s;flex-shrink:0}
-.cpbtn:active{background:rgba(0,240,255,0.15)}
+.cpbtn{
+  width:36px;height:36px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(0,240,255,0.1),rgba(0,240,255,0.02));
+  border:1px solid rgba(0,240,255,0.2);color:#00F0FF;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+}
+.cpbtn:hover{
+  background:rgba(0,240,255,0.15);border-color:rgba(0,240,255,0.4);
+  box-shadow:0 0 15px rgba(0,240,255,0.1);
+}
+.cpbtn:active{
+  background:rgba(0,240,255,0.2);transform:scale(0.95);
+}
 .hero-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .hero-price{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:8px;margin-top:8px}
 .hp-loading{font-family:'Space Mono';font-size:10px;color:#8ECAE6;margin-top:12px;letter-spacing:.05em}
@@ -408,11 +432,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 /* Transaction ticker strip */
 .tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.5);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:12px 0;position:relative;margin-top:16px;box-shadow:0 0 20px rgba(0,240,255,0.05)}
-.ttrack{display:inline-block;animation:tscroll 200s linear infinite}
+.ttrack{display:inline-block;white-space:nowrap;will-change:transform}
 .ti{display:inline-block;padding:0 32px;font-family:'Space Mono';font-size:11px;letter-spacing:.06em;font-weight:700}
 .ti.tbuy{color:#39FF14;text-shadow:0 0 8px rgba(57,255,20,0.4)}
 .ti.tsell{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,0.4)}
-@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ═══════════════════════════════════════════
    FLOW BANNER
@@ -535,7 +558,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
    FOOTER
    ═══════════════════════════════════════════ */
 .footer{background:rgba(8,12,28,0.2);position:relative;border-top:1px solid rgba(0,240,255,0.05);backdrop-filter:blur(10px)}
-.fg{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;padding:48px 0}
+.fg{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:36px;padding:48px 0}
 .fb img{width:32px;height:32px;border-radius:50%;margin-bottom:10px}
 .fb h4{font-family:'Orbitron';font-size:12px;color:#fff;margin-bottom:6px}
 .fb p{font-size:11px;color:#8ECAE6;line-height:1.6}
@@ -569,15 +592,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .ci input:focus{border-color:rgba(0,240,255,0.2)}
 .ci input::placeholder{color:#8ECAE6;font-size:11px}
 .ci button{width:34px;height:34px;border-radius:8px;background:#00F0FF;color:#000;display:flex;align-items:center;justify-content:center;font-size:14px;border:none;cursor:pointer;flex-shrink:0}
-
-/* ═══════════════════════════════════════════
-   WEBSOCKET STATUS BAR
-   ═══════════════════════════════════════════ */
-.wsb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--wsb-bg);border-top:1px solid rgba(0,240,255,0.08);z-index:999;display:flex;align-items:center;justify-content:center;gap:16px;font-family:'Space Mono';font-size:9px;text-transform:uppercase;letter-spacing:.08em;backdrop-filter:blur(10px);transition:background .3s}
-.wsb .wsd{width:5px;height:5px;border-radius:50%;background:#39FF14;box-shadow:0 0 4px #39FF14}
-.wsb .wsd.off{background:#ff4466;box-shadow:0 0 4px #ff4466}
-.wsb .wsl{color:#8ECAE6}
-.wsb .wsv{color:#00F0FF}
 
 /* ═══════════════════════════════════════════
    TOAST NOTIFICATIONS
@@ -717,11 +731,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 }
 .tx-ticker-track{
   display:inline-block;
-  animation:tickerScroll 400s linear infinite;
+  white-space:nowrap;
+  will-change:transform;
   padding-left:100%;
-}
-.tx-ticker-bar:hover .tx-ticker-track{
-  animation-play-state:paused;
 }
 .txi{
   display:inline-block;padding:0 40px;
@@ -731,10 +743,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .txi.tbuy{color:#39FF14;text-shadow:0 0 10px rgba(57,255,20,0.5)}
 .txi.tsell{color:#ff4466;text-shadow:0 0 10px rgba(255,68,102,0.5)}
 .txi .tsep{color:rgba(0,240,255,0.3);margin:0 8px}
-@keyframes tickerScroll{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-100%)}
-}
 
 /* ═══════════════════════════════════════════
    SOCIAL ACTION MODAL
@@ -767,6 +775,40 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 }
 .sp-btn:hover{background:rgba(0,240,255,0.1);border-color:rgba(0,240,255,0.3)}
 .sp-btn svg{width:14px;height:14px}
+
+/* ═══════════════════════════════════════════
+   FEATURED X POST
+   ═══════════════════════════════════════════ */
+.x-featured{
+  display:none;
+  max-width:600px;margin:0 auto 24px;
+  background:rgba(8,12,28,0.3);
+  border:1px solid rgba(0,240,255,0.1);
+  border-radius:12px;padding:20px;
+  position:relative;overflow:hidden;
+}
+.x-featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#00F0FF,transparent);opacity:.5;
+}
+.x-featured .xf-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.x-featured .xf-badge{
+  margin-left:auto;font-family:'Space Mono';font-size:9px;color:#39FF14;
+  background:rgba(57,255,20,0.08);padding:3px 8px;border-radius:4px;
+  border:1px solid rgba(57,255,20,0.15);
+}
+.x-featured .xf-body{
+  font-size:13px;color:#8ECAE6;line-height:1.6;margin-bottom:14px;
+}
+.x-featured .xf-meta{
+  display:flex;align-items:center;gap:16px;margin-bottom:14px;
+}
+.x-featured .xf-meta div{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Space Mono';font-size:11px;color:#8ECAE6;
+}
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -807,7 +849,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .sh h2{font-size:clamp(18px,5vw,28px)}
   .modal-box{max-height:90vh}
   .chwin{width:calc(100vw - 40px);right:-10px}
-  .wsb{gap:8px;font-size:8px}
   .cd-grid{grid-template-columns:repeat(4,1fr);gap:8px}
   .cd-item{padding:12px 8px}
   .ud-drawer{width:100%;left:0;transform:translateY(100%);border-left:none;border-top:1px solid rgba(0,240,255,0.1);border-radius:20px 20px 0 0;top:auto;height:85vh}
@@ -829,8 +870,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .game-hero .gh-body h3{font-size:8px}
 }
 </style>
-<base target="_blank">
-<base target="_blank">
 <base target="_blank">
 </head>
 <body class="loading">
@@ -894,7 +933,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
      ═══════════════════════════════════════════ -->
 <div class="tx-ticker-bar" id="txTickerBar">
   <div class="tx-ticker-track" id="txTickerTrack">
-    <span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>
+    <span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions... &#9654;</span>
   </div>
 </div>
 
@@ -995,17 +1034,20 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
     <!-- Post-splash content slides up -->
     <div class="hero-post-splash">
       <div class="contract-box glass">
-        <label>$INFINITE Contract Address</label>
+        <label>
+          <span class="material-icons" style="font-size:12px;color:#00F0FF;">verified</span>
+          $INFINITE Contract Address
+        </label>
         <div class="crow">
           <code id="caCode">C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump</code>
           <button type="button" class="cpbtn" onclick="copyCA()" aria-label="Copy">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
         </div>
       </div>
 
       <div class="hero-btns">
-        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITEINITE</a>
+        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITE</a>
         <a href="https://phantom.com/tokens/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump?referralId=7251y54emqp" target="_blank" rel="noopener noreferrer" class="btn-g2">VIEW ON PHANTOM</a>
         <a href="https://dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-g2">LIVE CHART</a>
       </div>
@@ -1080,12 +1122,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           <div class="tx-box glass">
             <h4><span class="dot-b"></span> LIVE TRANSACTIONS</h4>
             <div class="tx-ws-note">
-              <span class="ws-status"><span class="dot-g" id="txDot"></span> <span id="txWsText">WebSocket: Connecting...</span></span>
+              <span class="ws-status"><span class="dot-g" id="txDot"></span> <span id="txWsText">Live Feed: Connecting...</span></span>
               <span style="color:#8ECAE6;margin-left:8px">|</span>
               <span style="color:#8ECAE6;margin-left:8px">Visitors: <span id="vCounter" style="color:#00F0FF">--</span></span>
             </div>
             <div class="tx-list" id="txList">
-              <div class="tx-empty">Waiting for real transactions from WebSocket...</div>
+              <div class="tx-empty">Waiting for real transactions...</div>
             </div>
           </div>
         </div>
@@ -1111,7 +1153,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <div class="sh">
         <span class="badge">PLAY TO EARN</span>
         <h2 class="neon-blue">INFINITE GAMES</h2>
-        
       </div>
 
       <div style="max-width:560px;margin:0 auto 36px" onclick="openGameModal()">
@@ -1192,7 +1233,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
     <div class="cw">
       <div class="sh">
         <span class="badge"><span class="dot-p"></span> MEME ZONE</span>
-        <h2 class="neon-purple">MEMEFUN GALLERY</h2>
+        <h2 class="neon-purple">COMMUNITY MEMES</h2>
         <p>Click any meme to view full size. Submit yours. Earn $INFINITE.</p>
       </div>
 
@@ -1225,7 +1266,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       </div>
 
       <div style="text-align:center;margin-top:32px">
-        <button type="button" class="btn-p" onclick="showComingSoon('Meme Upload','MemeFun upload coming Q3 2026. Connect wallet to submit your meme and earn $INFINITE!')">SUBMIT YOUR MEME</button>
+        <button type="button" class="btn-p" onclick="showComingSoon('Meme Upload','Meme upload coming Q3 2026. Connect wallet to submit your meme and earn $INFINITE!')">SUBMIT YOUR MEME</button>
       </div>
     </div>
   </div>
@@ -1380,7 +1421,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <div class="cta-box">
         <h3>READY TO GO INFINITE?</h3>
         <p>Join thousands building the future of memecoins.</p>
-        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITEINITE NOW</a>
+        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITE NOW</a>
       </div>
     </div>
   </div>
@@ -1400,6 +1441,31 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <p>Real-time posts from the Infinite Coin HQ community.</p>
       </div>
 
+      <!-- FEATURED X POST (shows only if tweet hits 15+ likes & 15+ reposts) -->
+      <div class="x-featured" id="xFeaturedCard">
+        <div class="xf-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <div>
+            <div style="font-family:Orbitron;font-size:12px;color:#fff">@InfiniteCoinHQ</div>
+            <div style="font-size:10px;color:#8ECAE6">Featured Post</div>
+          </div>
+          <div class="xf-badge">15+ Likes & Reposts</div>
+        </div>
+        <div class="xf-body" id="xFeaturedBody">Loading latest post...</div>
+        <div class="xf-meta">
+          <div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="xFeaturedLikes">0</span>
+          </div>
+          <div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span id="xFeaturedReposts">0</span>
+          </div>
+          <span style="margin-left:auto;font-family:Space Mono;font-size:9px;color:#8ECAE6" id="xFeaturedTime"></span>
+        </div>
+        <a id="xFeaturedLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-g2" style="width:100%;justify-content:center">View on X</a>
+      </div>
+
       <!-- ROW 1: X + TikTok -->
       <div class="embed-row">
         <!-- X / Twitter Profile -->
@@ -1413,7 +1479,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:10px">
-              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#0077ff);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#0077ff);display:flex;align-items:center;justify-content:center;">
+                <span class="material-icons" style="font-size:28px;color:#fff;">account_circle</span>
+              </div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">INFINITE COIN &#8734;</div>
                 <div style="font-size:11px;color:#8ECAE6;margin-top:2px">@InfiniteCoinHQ</div>
@@ -1467,7 +1535,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:10px">
-              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#BC13FE);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#BC13FE);display:flex;align-items:center;justify-content:center;">
+                <span class="material-icons" style="font-size:28px;color:#fff;">account_circle</span>
+              </div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">@infinitecoinhq</div>
                 <div style="font-size:11px;color:#8ECAE6;margin-top:2px">Infinite Coin HQ Official</div>
@@ -1525,7 +1595,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,68,102,0.03);border:1px solid rgba(255,68,102,0.08);border-radius:10px">
-              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff4466,#cc0000);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff4466,#cc0000);display:flex;align-items:center;justify-content:center;">
+                <span class="material-icons" style="font-size:28px;color:#fff;">account_circle</span>
+              </div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">Infinite Coin HQ</div>
                 <div style="font-size:11px;color:#8ECAE6;margin-top:2px">@InfiniteCoinHQ</div>
@@ -1579,7 +1651,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
           <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
             <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(188,19,254,0.03);border:1px solid rgba(188,19,254,0.08);border-radius:10px">
-              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#BC13FE,#ff4466);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#BC13FE,#ff4466);display:flex;align-items:center;justify-content:center;">
+                <span class="material-icons" style="font-size:28px;color:#fff;">account_circle</span>
+              </div>
               <div>
                 <div style="font-family:Orbitron;font-size:13px;color:#fff">infinitecoinhq</div>
                 <div style="font-size:11px;color:#8ECAE6;margin-top:2px">Infinite Coin HQ Official</div>
@@ -1675,7 +1749,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <a href="#trade">Trading</a>
         <a href="#games">Games</a>
         <a href="#pump">Pump.fun</a>
-        <a href="#memes">MemeFun</a>
+        <a href="#memes">Memes</a>
       </div>
       <div class="fc">
         <h5>Community</h5>
@@ -1683,13 +1757,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <a href="https://www.tiktok.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer">TikTok</a>
         <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer">YouTube</a>
         <a href="https://www.instagram.com/infinitecoinhq" target="_blank" rel="noopener noreferrer">Instagram</a>
-      </div>
-      <div class="fc">
-        <h5>WebSocket API</h5>
-        <a href="#" onclick="showComingSoon('WebSocket API','API docs coming soon. Endpoint: wss://ws.infinitecoinhq.com/v1')">wss://ws.infinitecoinhq.com/v1</a>
-        <a href="#" onclick="showComingSoon('Price Feed','Price feed documentation coming soon.')">Price Feed</a>
-        <a href="#" onclick="showComingSoon('TX Stream','Transaction stream docs coming soon.')">TX Stream</a>
-        <a href="#" onclick="showComingSoon('AI Bots','AI bot integration docs coming soon.')">AI Bots</a>
       </div>
     </div>
     <div class="fbt">
@@ -1731,24 +1798,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 </div>
 
 <!-- ═══════════════════════════════════════════
-     WEBSOCKET STATUS BAR
-     ═══════════════════════════════════════════ -->
-<div class="wsb" id="wsBar">
-  <span class="wsd" id="wsDot"></span>
-  <span class="wsl">WS:</span>
-  <span class="wsv" id="wsStatus">CONNECTING</span>
-  <span style="color:#333">|</span>
-  <span class="wsl">API:</span>
-  <span class="wsv">JUPITER V6</span>
-  <span style="color:#333">|</span>
-  <span class="wsl">CHAIN:</span>
-  <span class="wsv">SOLANA</span>
-  <span style="color:#333">|</span>
-  <span class="wsl">VISITORS:</span>
-  <span class="wsv" id="wsVisitors">--</span>
-</div>
-
-<!-- ═══════════════════════════════════════════
      COMING SOON MODAL
      ═══════════════════════════════════════════ -->
 <div class="modal-overlay" id="csModal" onclick="if(event.target===this)closeCsModal()">
@@ -1783,8 +1832,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
      ═══════════════════════════════════════════ -->
 <div class="toast-wrap" id="toastWrap"></div>
 
-
-
 <!-- JAVASCRIPT -->
 <script>
 // ═══════════════════════════════════════════
@@ -1797,6 +1844,77 @@ let ws=null,wsReconnectDelay=2000,wsMaxDelay=30000,wsConnected=false;
 let wsAttempts=0;
 const WS_MAX_SILENT=3;
 let wsHolders='---';
+
+// ═══════════════════════════════════════════
+// JS TICKER — SMOOTH MARQUEE (NO RESET ON UPDATE)
+// ═══════════════════════════════════════════
+class Ticker {
+  constructor(trackId, speed){
+    this.track = document.getElementById(trackId);
+    if(!this.track) return;
+    this.speed = speed || 0.7;
+    this.pos = 0;
+    this.items = [];
+    this.init();
+  }
+  init(){
+    this.track.innerHTML = '';
+    this.track.style.display = 'inline-block';
+    this.track.style.whiteSpace = 'nowrap';
+    this.track.style.willChange = 'transform';
+    for(let i=0;i<10;i++){
+      const span = document.createElement('span');
+      span.style.display = 'inline-block';
+      span.style.padding = '0 40px';
+      span.style.fontFamily = "'Space Mono',monospace";
+      span.style.fontSize = '12px';
+      span.style.letterSpacing = '0.06em';
+      span.style.fontWeight = '700';
+      span.textContent = '\u25B6 Loading... \u25B6';
+      this.track.appendChild(span);
+      this.items.push(span);
+    }
+    this.items.forEach(item => {
+      this.track.appendChild(item.cloneNode(true));
+    });
+    this.animate();
+  }
+  update(texts){
+    if(!this.items.length) return;
+    const n = this.items.length;
+    for(let i=0;i<n;i++){
+      const text = texts[i % texts.length] || '';
+      const span = this.items[i];
+      span.textContent = '\u25B6 ' + text + ' \u25B6';
+      if(text.toUpperCase().includes('BUY')){
+        span.style.color = '#39FF14';
+        span.style.textShadow = '0 0 10px rgba(57,255,20,0.5)';
+      } else if(text.toUpperCase().includes('SELL')){
+        span.style.color = '#ff4466';
+        span.style.textShadow = '0 0 10px rgba(255,68,102,0.5)';
+      } else {
+        span.style.color = '#8ECAE6';
+        span.style.textShadow = 'none';
+      }
+    }
+    const clones = Array.from(this.track.children).slice(n);
+    clones.forEach((clone, i) => {
+      clone.textContent = this.items[i].textContent;
+      clone.style.color = this.items[i].style.color;
+      clone.style.textShadow = this.items[i].style.textShadow;
+    });
+  }
+  animate(){
+    if(!this.track) return;
+    const halfWidth = this.track.scrollWidth / 2;
+    this.pos -= this.speed;
+    if(Math.abs(this.pos) >= halfWidth){
+      this.pos += halfWidth;
+    }
+    this.track.style.transform = `translateX(${this.pos}px)`;
+    requestAnimationFrame(() => this.animate());
+  }
+}
 
 // ═══════════════════════════════════════════
 // IMAGE LOADING & FALLBACKS
@@ -1913,7 +2031,7 @@ function refreshData(){
   fetchPrice();
   if(ws&&ws.readyState===1){ws.close();}
   setTimeout(connectWS,500);
-  showToast('Refreshing','Price data and WebSocket refreshed','success');
+  showToast('Refreshing','Price data refreshed','success');
 }
 
 let notifEnabled=localStorage.getItem('infinite_notifs')!=='false';
@@ -1940,11 +2058,11 @@ function connectWS(){
       wsReconnectDelay=2000;
       wsAttempts=0;
       updateWSStatus('LIVE',true);
-      document.getElementById('txWsText').textContent='WebSocket: Connected';
+      document.getElementById('txWsText').textContent='Live Feed: Connected';
       document.getElementById('txDot').classList.remove('off');
       document.getElementById('txDot').style.background='#39FF14';
       document.getElementById('txDot').style.boxShadow='0 0 6px #39FF14';
-      showToast('WebSocket Connected','Real-time data feed active','success');
+      showToast('Connected','Real-time data feed active','success');
     };
     ws.onmessage=function(e){
       try{
@@ -1956,7 +2074,6 @@ function connectWS(){
         else if(d.type==='tx') addTx(d.tx);
         else if(d.type==='visitorCount'){
           document.getElementById('vCounter').textContent=d.count;
-          document.getElementById('wsVisitors').textContent=d.count;
           localStorage.setItem('infinite_visitors',d.count);
         }
         else if(d.type==='priceAlert'){
@@ -1973,7 +2090,7 @@ function connectWS(){
         updateWSStatus('RECONNECTING',false);
       }else{
         updateWSStatus('OFFLINE',false);
-        document.getElementById('txWsText').textContent='WebSocket: Offline (Jupiter fallback active)';
+        document.getElementById('txWsText').textContent='Live Feed: Offline (Jupiter fallback active)';
       }
       document.getElementById('txDot').classList.add('off');
       wsAttempts++;
@@ -1984,7 +2101,7 @@ function connectWS(){
       wsConnected=false;
       if(wsAttempts>=WS_MAX_SILENT){
         updateWSStatus('OFFLINE',false);
-        document.getElementById('txWsText').textContent='WebSocket: Offline (Jupiter fallback active)';
+        document.getElementById('txWsText').textContent='Live Feed: Offline (Jupiter fallback active)';
       }
       ws.close();
     };
@@ -1998,7 +2115,7 @@ function updatePrice(price,change,mcap,vol,liq){
   if(hb)hb.style.display='inline-flex';
   const pVal=parseFloat(price)||0;
   const cVal=parseFloat(change)||0;
-  document.getElementById('hPriceVal').textContent='$'+pVal.toFixed(6);
+  document.getElementById('hPriceUsd').textContent='$'+pVal.toFixed(6);
   document.getElementById('hPriceChg').textContent=(cVal>=0?'+':'')+cVal.toFixed(2)+'%';
   document.getElementById('hPriceChg').style.color=cVal>=0?'#39FF14':'#ff4466';
   document.getElementById('dPrice').textContent='$'+pVal.toFixed(6);
@@ -2021,8 +2138,6 @@ function updatePrice(price,change,mcap,vol,liq){
     document.getElementById('sLiq').textContent='$'+(liqVal>=1e6?(liqVal/1e6).toFixed(1)+'M':liqVal.toLocaleString());
   }
   document.getElementById('sHold').textContent=wsHolders;
-      document.getElementById('statHolders').textContent=wsHolders;
-    document.getElementById('statHolders').textContent=wsHolders;
   document.getElementById('statHolders').textContent=wsHolders;
 }
 
@@ -2054,21 +2169,16 @@ function addTx(tx){
 }
 
 function updateTxTicker(){
-  // Update both the trading card ticker and the fixed bar
   const trackCard=document.getElementById('tTrackReal');
   const trackBar=document.getElementById('txTickerTrack');
-
-  let content='';
+  let content=[];
   if(txTickerData.length===0){
-    content='<span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions from WebSocket... &#9654;</span>';
+    content=['Waiting for live $INFINITE transactions...'];
   }else{
-    const doubled=txTickerData.concat(txTickerData).concat(txTickerData).concat(txTickerData);
-    content=doubled.map(f=>
-      '<span class="txi '+(f.t==='buy'?'tbuy':'tsell')+'">&#9654; '+f.tx+' &#9654;</span>'
-    ).join('<span class="tsep">|</span>');
+    content=txTickerData.map(f=>f.tx);
   }
-  if(trackCard)trackCard.innerHTML=content.replace(/txi/g,'ti').replace(/tsep/g,'tsep');
-  if(trackBar)trackBar.innerHTML=content;
+  if(window.tradeTicker) window.tradeTicker.update(content);
+  if(window.topTicker) window.topTicker.update(content);
 }
 
 function showPriceAlert(dir,pct,price){
@@ -2078,6 +2188,7 @@ function showPriceAlert(dir,pct,price){
 function updateWSStatus(status,online){
   const dot=document.getElementById('wsDot');
   const txt=document.getElementById('wsStatus');
+  if(!dot || !txt) return;
   txt.textContent=status;
   if(online){
     dot.classList.remove('off');
@@ -2094,12 +2205,10 @@ function updateWSStatus(status,online){
 // VISITOR COUNTER FALLBACK
 // ═══════════════════════════════════════════
 function updateVisitorDisplay(){
-  const el=document.getElementById('wsVisitors');
   const vEl=document.getElementById('vCounter');
   if(!wsConnected){
     const cached=localStorage.getItem('infinite_visitors');
     const display=cached||'18,420+';
-    if(el)el.textContent=display;
     if(vEl)vEl.textContent=display;
   }
 }
@@ -2149,20 +2258,18 @@ async function fetchDexScreener(){
     if(liq>0)document.getElementById('sLiq').textContent='$'+(liq>=1e6?(liq/1e6).toFixed(1)+'M':liq.toLocaleString());
     document.getElementById('sHold').textContent=wsHolders;
 
-    // Ticker with real data
-    const tickerTrack=document.getElementById('txTickerTrack');
-    if(tickerTrack){
-      const items=[
-        `<span class="txi tbuy">&#9654; BUY ${buys} TXNS | 24h</span>`,
-        `<span class="txi tsell">&#9654; SELL ${sells} TXNS | 24h</span>`,
-        `<span class="txi">&#9654; VOL $${vol.toLocaleString()} | 24h</span>`,
-        `<span class="txi">&#9654; LIQ $${liq.toLocaleString()}</span>`,
-        `<span class="txi">&#9654; MCAP $${(mcap/1e3).toFixed(1)}K</span>`,
-        `<span class="txi">&#9654; PRICE $${usd}</span>`,
-        `<span class="txi">&#9654; SOL ${sol}</span>`
-      ];
-      tickerTrack.innerHTML=items.join('');
-    }
+    // Update JS tickers
+    const tickerTexts=[
+      `BUY ${buys} TXNS | 24h`,
+      `SELL ${sells} TXNS | 24h`,
+      `VOL $${vol.toLocaleString()} | 24h`,
+      `LIQ $${liq.toLocaleString()}`,
+      `MCAP $${(mcap/1e3).toFixed(1)}K`,
+      `PRICE $${usd}`,
+      `SOL ${sol}`
+    ];
+    if(window.topTicker) window.topTicker.update(tickerTexts);
+    if(window.tradeTicker) window.tradeTicker.update(tickerTexts);
 
     // Live transactions
     const txList=document.getElementById('txList');
@@ -2191,7 +2298,7 @@ async function fetchJupiterFallback(){
       if(!price || isNaN(price)){lastErr='No price';continue}
       document.getElementById('hPriceLoad').style.display='none';
       document.getElementById('hPriceBox').style.display='inline-flex';
-      document.getElementById('hPriceVal').textContent='$'+price.toFixed(6);
+      document.getElementById('hPriceUsd').textContent='$'+price.toFixed(6);
       document.getElementById('hPriceChg').textContent='LIVE';
       document.getElementById('hPriceChg').style.color='#39FF14';
       document.getElementById('dPrice').textContent='$'+price.toFixed(6);
@@ -2206,12 +2313,35 @@ async function fetchJupiterFallback(){
     }catch(e){lastErr=e.name==='TimeoutError'?'Timeout':e.message}
   }
   const pl=document.getElementById('hPriceLoad');
-  if(pl){pl.textContent='Price API offline. Connect WebSocket backend for live data.';pl.classList.add('hp-error')}
+  if(pl){pl.textContent='Price API offline. Connect backend for live data.';pl.classList.add('hp-error')}
   document.getElementById('dChange').textContent='API OFFLINE';
   document.getElementById('dChange').style.color='#ff4466';
 }
 
 async function fetchPrice(){await fetchDexScreener();}
+
+// ═══════════════════════════════════════════
+// X FEATURED POST FETCH
+// ═══════════════════════════════════════════
+// NOTE: X API requires a backend proxy due to CORS + Bearer token requirements.
+// Set PROXY_URL to your endpoint that returns: { text, likes, reposts, url, created_at }
+async function fetchXFeatured(){
+  const PROXY_URL = ''; // e.g., 'https://yourdomain.com/api/x/featured'
+  if(!PROXY_URL) return;
+  try{
+    const r = await fetch(PROXY_URL, { signal: AbortSignal.timeout(8000) });
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d.likes >= 15 && d.reposts >= 15){
+      document.getElementById('xFeaturedBody').textContent = d.text;
+      document.getElementById('xFeaturedLikes').textContent = d.likes;
+      document.getElementById('xFeaturedReposts').textContent = d.reposts;
+      document.getElementById('xFeaturedTime').textContent = new Date(d.created_at).toLocaleDateString();
+      document.getElementById('xFeaturedLink').href = d.url;
+      document.getElementById('xFeaturedCard').style.display = 'block';
+    }
+  }catch(e){}
+}
 
 // ═══════════════════════════════════════════
 // COUNTDOWN TIMER
@@ -2239,42 +2369,6 @@ async function fetchPrice(){await fetchDexScreener();}
   }
   updateCountdown();
   setInterval(updateCountdown,1000);
-})();
-
-// ═══════════════════════════════════════════
-// SOCIAL EMBEDS
-// ═══════════════════════════════════════════
-(function loadXFeed(){
-  const container=document.getElementById('xFeedContainer');
-  const fallback=document.getElementById('xFallback');
-  if(!container)return;
-  // Load X widgets script
-  const script=document.createElement('script');
-  script.src='https://platform.twitter.com/widgets.js';
-  script.charset='utf-8';
-  script.async=true;
-  let loaded=false;
-  script.onload=function(){
-    loaded=true;
-    if(fallback)fallback.style.display='none';
-    // Force timeline render
-    if(window.twttr&&window.twttr.widgets){
-      window.twttr.widgets.load(container);
-    }
-  };
-  script.onerror=function(){
-    if(fallback){
-      fallback.style.display='flex';
-      container.innerHTML='';
-      container.appendChild(fallback);
-    }
-  };
-  setTimeout(function(){
-    if(!loaded&&fallback){
-      fallback.style.display='flex';
-    }
-  },10000);
-  document.head.appendChild(script);
 })();
 
 // ═══════════════════════════════════════════
@@ -2434,7 +2528,7 @@ const FAQ_ENGINE={
   'security':'Contract audited. LP locked. No mint authority. Renowned ownership.',
   'audit':'Smart contract audited by leading security firms. Report published on our X.',
   'roadmap':'Q2 2026: Website + WS live. Q3 2026: Staking + P2E Games. Q4 2026: NFT Genesis + DAO. 2027: Mobile app + CEX listing.',
-  'q3':'Q3 2026: Staking platform (32% APY), P2E Games (Runner/Jumper/Puzzle), MemeFun upload.',
+  'q3':'Q3 2026: Staking platform (32% APY), P2E Games (Runner/Jumper/Puzzle), Meme upload.',
   'q4':'Q4 2026: Genesis NFT mint, DAO governance, major partnerships, CEX discussions.',
   'cex':'CEX listing discussions ongoing. Targeting Q4 2026 / Q1 2027.',
   'mobile':'Mobile app planned for 2027. iOS + Android with wallet + games + staking.',
@@ -2447,7 +2541,7 @@ const FAQ_ENGINE={
   'wagmi':'WAGMI! Diamond hands always!',
   'gm':'GM! Another day closer to the moon!',
   'gn':'GN! Rest well, holder! See you on the moon tomorrow!',
-  'price':'Check the live price in the Trading Headquarters section above! Updated in real-time via WebSocket.',
+  'price':'Check the live price in the Trading Headquarters section above! Updated in real-time.',
   'chart':'Live chart embedded from DexScreener in the Trading HQ section. Updated every block.',
   'dexscreener':'Track $INFINITE at dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
   'pump':'Launched on Pump.fun! Join: join.pump.fun/HSag/kuu4214i',
@@ -2526,21 +2620,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.body.classList.add('loading');
   const bgv=document.getElementById('bgVideo');
   if(bgv){bgv.play().catch(()=>{});}
+
+  // Init smooth JS tickers
+  window.topTicker = new Ticker('txTickerTrack', 0.8);
+  window.tradeTicker = new Ticker('tTrackReal', 0.6);
+
   fetchDexScreener();
   setInterval(fetchDexScreener,15000);
   connectWS();
+  fetchXFeatured();
 
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
     if(img.complete)img.classList.add('loaded');
   });
-
-  // Splash timing:
-  // 0-8s: video only
-  // 8s: WELCOME fades in
-  // 9s: MOMENTUMS fades in
-  // 11s: OPPORTUNITIES fades in
-  // 12s: WELCOME fades out
-  // 13s: splash overlay fades out, site reveals, post-splash content slides up
 
   setTimeout(()=>{
     const splash=document.getElementById('splashScreen');
