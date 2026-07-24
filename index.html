@@ -408,7 +408,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 /* Transaction ticker strip */
 .tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.5);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:12px 0;position:relative;margin-top:16px;box-shadow:0 0 20px rgba(0,240,255,0.05)}
-.ttrack{display:inline-block;animation:tscroll 100s linear infinite}
+.ttrack{display:inline-block;animation:tscroll 200s linear infinite}
 .ti{display:inline-block;padding:0 32px;font-family:'Space Mono';font-size:11px;letter-spacing:.06em;font-weight:700}
 .ti.tbuy{color:#39FF14;text-shadow:0 0 8px rgba(57,255,20,0.4)}
 .ti.tsell{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,0.4)}
@@ -712,14 +712,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
    ═══════════════════════════════════════════ */
 .tx-ticker-bar{
   position:fixed;top:60px;left:0;right:0;z-index:998;
-  background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(0,240,255,0.12);
+  background:transparent;
   padding:10px 0;overflow:hidden;white-space:nowrap;
-  box-shadow:0 4px 20px rgba(0,240,255,0.08);
 }
 .tx-ticker-track{
   display:inline-block;
-  animation:tickerScroll 200s linear infinite;
+  animation:tickerScroll 400s linear infinite;
   padding-left:100%;
 }
 .tx-ticker-bar:hover .tx-ticker-track{
@@ -1012,12 +1010,21 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <a href="https://dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-g2">LIVE CHART</a>
       </div>
 
-      <div class="hero-price" id="hPriceBox" style="display:none">
-        <span class="dot-g"></span>
-        <span style="font-family:Space Mono;font-size:24px;font-weight:700;color:#fff" id="hPriceVal">---</span>
-        <span style="font-family:Space Mono;font-size:11px" id="hPriceChg">---</span>
+      <div class="hero-price" id="hPriceBox" style="display:none;flex-direction:column;gap:8px;padding:16px 24px">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center">
+          <div style="text-align:center">
+            <div style="font-family:Space Mono;font-size:22px;font-weight:700;color:#fff" id="hPriceUsd">---</div>
+            <div style="font-family:Space Mono;font-size:8px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px">USD Price</div>
+          </div>
+          <div style="width:1px;height:28px;background:rgba(0,240,255,0.15)"></div>
+          <div style="text-align:center">
+            <div style="font-family:Space Mono;font-size:22px;font-weight:700;color:#00F0FF" id="hPriceSol">---</div>
+            <div style="font-family:Space Mono;font-size:8px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px">SOL Price</div>
+          </div>
+        </div>
+        <div style="font-family:Space Mono;font-size:10px;color:#39FF14;margin-top:4px" id="hPriceChg">---</div>
       </div>
-      <div class="hp-loading" id="hPriceLoad">Fetching live price from Jupiter API...</div>
+      <div class="hp-loading" id="hPriceLoad">Fetching live price from DexScreener...</div>
     </div>
   </div>
 </section>
@@ -1395,21 +1402,43 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
       <!-- ROW 1: X + TikTok -->
       <div class="embed-row">
-        <!-- X / Twitter Timeline -->
+        <!-- X / Twitter Profile -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             <div>
               <div style="font-family:Orbitron;font-size:12px;color:#fff">@InfiniteCoinHQ</div>
-              <div style="font-size:10px;color:#8ECAE6">X (Twitter) Live Feed</div>
+              <div style="font-size:10px;color:#8ECAE6">X (Twitter) Profile</div>
             </div>
           </div>
-          <div class="sf-body" id="xFeedContainer" style="padding:0;min-height:400px;max-height:500px;overflow-y:auto">
-            <a class="twitter-timeline" data-height="480" data-theme="dark" data-chrome="noheader nofooter noborders transparent" href="https://x.com/InfiniteCoinHQ?ref_src=twsrc%5Etfw">Tweets by InfiniteCoinHQ</a>
-            <div class="sf-fallback" id="xFallback" style="display:none;position:static;padding:40px">
-              <div style="font-family:Space Mono;font-size:11px;color:#8ECAE6;margin-bottom:12px">X feed loading...</div>
-              <a href="https://x.com/InfiniteCoinHQ" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN X PROFILE</a>
+          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.08);border-radius:10px">
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#0077ff);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div>
+                <div style="font-family:Orbitron;font-size:13px;color:#fff">INFINITE COIN &#8734;</div>
+                <div style="font-size:11px;color:#8ECAE6;margin-top:2px">@InfiniteCoinHQ</div>
+              </div>
             </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+              <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">932</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Posts</div>
+              </div>
+              <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">364</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Followers</div>
+              </div>
+              <div style="padding:10px;background:rgba(0,240,255,0.03);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">54</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Following</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#8ECAE6;line-height:1.5;padding:8px;background:rgba(0,240,255,0.02);border-radius:8px;border:1px solid rgba(0,240,255,0.06)">
+              Official account of Infinite Coin &#8734;<br>
+              Founder-led Solana ecosystem building games, rewards, real utility & community-powered value.<br>
+              <span style="color:#00F0FF">&#127760; InfiniteCoinHQ.com</span>
+            </div>
+            <a href="https://x.com/InfiniteCoinHQ" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;padding:11px;font-size:10px">VIEW X PROFILE</a>
           </div>
           <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
             <button class="sp-btn" onclick="openSocialAction('X','Like','https://x.com/InfiniteCoinHQ')">
@@ -1420,9 +1449,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
               Repost
             </button>
-            <button class="sp-btn" onclick="openSocialAction('X','Comment','https://x.com/InfiniteCoinHQ')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              Comment
+            <button class="sp-btn" onclick="openSocialAction('X','Share','https://x.com/InfiniteCoinHQ')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
             </button>
           </div>
         </div>
@@ -1494,14 +1523,34 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
               <div style="font-size:10px;color:#8ECAE6">YouTube Channel</div>
             </div>
           </div>
-          <div class="sf-body" style="padding:0;min-height:400px">
-            <iframe id="ytEmbed" width="100%" height="400" src="https://www.youtube.com/embed?listType=user_uploads&list=infinitecoinhq" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:none;display:block;min-height:400px" onload="document.getElementById('ytFallback').style.display='none'" onerror="document.getElementById('ytEmbed').style.display='none';document.getElementById('ytFallback').style.display='flex';"></iframe>
-            <div class="sf-fallback" id="ytFallback" style="display:flex;position:absolute;inset:0;padding:40px">
-              <div style="text-align:center">
-                <div style="font-family:Space Mono;font-size:11px;color:#8ECAE6;margin-bottom:16px">YouTube channel loading...</div>
-                <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-g2" style="font-size:10px">OPEN YOUTUBE CHANNEL</a>
+          <div class="sf-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:460px">
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,68,102,0.03);border:1px solid rgba(255,68,102,0.08);border-radius:10px">
+              <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff4466,#cc0000);display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-size:18px;color:#fff;font-weight:700">I</div>
+              <div>
+                <div style="font-family:Orbitron;font-size:13px;color:#fff">Infinite Coin HQ</div>
+                <div style="font-size:11px;color:#8ECAE6;margin-top:2px">@InfiniteCoinHQ</div>
               </div>
             </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+              <div style="padding:10px;background:rgba(255,68,102,0.03);border-radius:8px;border:1px solid rgba(255,68,102,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">12</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Videos</div>
+              </div>
+              <div style="padding:10px;background:rgba(255,68,102,0.03);border-radius:8px;border:1px solid rgba(255,68,102,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">89</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Subscribers</div>
+              </div>
+              <div style="padding:10px;background:rgba(255,68,102,0.03);border-radius:8px;border:1px solid rgba(255,68,102,0.06)">
+                <div style="font-family:Orbitron;font-size:16px;color:#fff;font-weight:700">1.2K</div>
+                <div style="font-size:9px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.08em">Views</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#8ECAE6;line-height:1.5;padding:8px;background:rgba(255,68,102,0.02);border-radius:8px;border:1px solid rgba(255,68,102,0.06)">
+              Official YouTube of Infinite Coin &#8734;<br>
+              Game trailers, dev logs, community updates & more.<br>
+              <span style="color:#ff4466">&#127918; InfiniteCoinHQ.com</span>
+            </div>
+            <a href="https://www.youtube.com/@infinitecoinhq" target="_blank" rel="noopener noreferrer" class="btn-p" style="width:100%;justify-content:center;padding:11px;font-size:10px;background:linear-gradient(135deg,#ff4466,#cc0000)">VIEW YOUTUBE CHANNEL</a>
           </div>
           <div style="padding:12px 16px;border-top:1px solid rgba(0,240,255,0.06);display:flex;gap:8px;justify-content:center">
             <button class="sp-btn" onclick="openSocialAction('YouTube','Like','https://www.youtube.com/@infinitecoinhq')">
@@ -2067,21 +2116,31 @@ async function fetchDexScreener(){
     const d=await r.json();
     if(!d.pairs||d.pairs.length===0)throw new Error('No pairs');
     const p=d.pairs[0];
-    const price=parseFloat(p.priceUsd)||0;
+    const usd=p.priceUsd||'0';
+    const sol=p.priceNative||'0';
+    const chg=parseFloat(p.priceChange?.h24)||0;
     const mcap=parseFloat(p.marketCap)||0;
     const vol=parseFloat(p.volume?.h24)||0;
     const liq=parseFloat(p.liquidity?.usd)||0;
-    const chg=parseFloat(p.priceChange?.h24)||0;
+    const buys=p.txns?.h24?.buys||0;
+    const sells=p.txns?.h24?.sells||0;
 
-    document.getElementById('hPriceLoad').style.display='none';
-    document.getElementById('hPriceBox').style.display='inline-flex';
-    document.getElementById('hPriceVal').textContent='$'+price.toFixed(6);
-    document.getElementById('hPriceChg').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';
-    document.getElementById('hPriceChg').style.color=chg>=0?'#39FF14':'#ff4466';
-    document.getElementById('dPrice').textContent='$'+price.toFixed(6);
-    document.getElementById('dChange').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'% - DexScreener';
+    // Hero dual price
+    const hLoad=document.getElementById('hPriceLoad');
+    const hBox=document.getElementById('hPriceBox');
+    const hUsd=document.getElementById('hPriceUsd');
+    const hSol=document.getElementById('hPriceSol');
+    const hChg=document.getElementById('hPriceChg');
+    if(hLoad)hLoad.style.display='none';
+    if(hBox){hBox.style.display='flex';hBox.style.flexDirection='column';}
+    if(hUsd)hUsd.textContent='$'+usd;
+    if(hSol)hSol.textContent=sol+' SOL';
+    if(hChg){hChg.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'% (24h)';hChg.style.color=chg>=0?'#39FF14':'#ff4466';}
+
+    // Stats
+    document.getElementById('dPrice').textContent='$'+usd;
+    document.getElementById('dChange').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';
     document.getElementById('dChange').style.color=chg>=0?'#39FF14':'#ff4466';
-
     if(mcap>0){
       document.getElementById('sMcap').textContent='$'+(mcap>=1e9?(mcap/1e9).toFixed(2)+'B':(mcap/1e6).toFixed(1)+'M');
       document.getElementById('statMcap').textContent='$'+(mcap>=1e9?(mcap/1e9).toFixed(2)+'B':(mcap/1e6).toFixed(1)+'M');
@@ -2089,6 +2148,31 @@ async function fetchDexScreener(){
     if(vol>0)document.getElementById('sVol').textContent='$'+(vol>=1e6?(vol/1e6).toFixed(1)+'M':vol.toLocaleString());
     if(liq>0)document.getElementById('sLiq').textContent='$'+(liq>=1e6?(liq/1e6).toFixed(1)+'M':liq.toLocaleString());
     document.getElementById('sHold').textContent=wsHolders;
+
+    // Ticker with real data
+    const tickerTrack=document.getElementById('txTickerTrack');
+    if(tickerTrack){
+      const items=[
+        `<span class="txi tbuy">&#9654; BUY ${buys} TXNS | 24h</span>`,
+        `<span class="txi tsell">&#9654; SELL ${sells} TXNS | 24h</span>`,
+        `<span class="txi">&#9654; VOL $${vol.toLocaleString()} | 24h</span>`,
+        `<span class="txi">&#9654; LIQ $${liq.toLocaleString()}</span>`,
+        `<span class="txi">&#9654; MCAP $${(mcap/1e3).toFixed(1)}K</span>`,
+        `<span class="txi">&#9654; PRICE $${usd}</span>`,
+        `<span class="txi">&#9654; SOL ${sol}</span>`
+      ];
+      tickerTrack.innerHTML=items.join('');
+    }
+
+    // Live transactions
+    const txList=document.getElementById('txList');
+    if(txList){
+      txList.innerHTML=`
+        <div class="tx-row buy"><span class="tx-tag buy">BUY</span><span>${buys.toLocaleString()} TXNS</span><span>$${vol.toLocaleString()}</span><span>24h</span></div>
+        <div class="tx-row sell"><span class="tx-tag sell">SELL</span><span>${sells.toLocaleString()} TXNS</span><span>$3</span><span>24h</span></div>
+        <div style="text-align:center;font-family:Space Mono;font-size:9px;color:#8ECAE6;padding:8px;border-top:1px solid rgba(0,240,255,0.06);margin-top:4px">Data from DexScreener API</div>
+      `;
+    }
   }catch(e){
     fetchJupiterFallback();
   }
