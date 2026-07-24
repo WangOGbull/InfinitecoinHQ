@@ -777,40 +777,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .sp-btn svg{width:14px;height:14px}
 
 /* ═══════════════════════════════════════════
-   FEATURED X POST
-   ═══════════════════════════════════════════ */
-.x-featured{
-  display:none;
-  max-width:600px;margin:0 auto 24px;
-  background:rgba(8,12,28,0.3);
-  border:1px solid rgba(0,240,255,0.1);
-  border-radius:12px;padding:20px;
-  position:relative;overflow:hidden;
-}
-.x-featured::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,#00F0FF,transparent);opacity:.5;
-}
-.x-featured .xf-head{
-  display:flex;align-items:center;gap:10px;margin-bottom:12px;
-}
-.x-featured .xf-badge{
-  margin-left:auto;font-family:'Space Mono';font-size:9px;color:#39FF14;
-  background:rgba(57,255,20,0.08);padding:3px 8px;border-radius:4px;
-  border:1px solid rgba(57,255,20,0.15);
-}
-.x-featured .xf-body{
-  font-size:13px;color:#8ECAE6;line-height:1.6;margin-bottom:14px;
-}
-.x-featured .xf-meta{
-  display:flex;align-items:center;gap:16px;margin-bottom:14px;
-}
-.x-featured .xf-meta div{
-  display:flex;align-items:center;gap:5px;
-  font-family:'Space Mono';font-size:11px;color:#8ECAE6;
-}
-
-/* ═══════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════ */
 @media(max-width:1024px){
@@ -1439,31 +1405,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <span class="badge"><span class="dot-g"></span> LIVE FEEDS</span>
         <h2 class="neon-blue">SOCIAL HEADQUARTERS</h2>
         <p>Real-time posts from the Infinite Coin HQ community.</p>
-      </div>
-
-      <!-- FEATURED X POST (shows only if tweet hits 15+ likes & 15+ reposts) -->
-      <div class="x-featured" id="xFeaturedCard">
-        <div class="xf-head">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          <div>
-            <div style="font-family:Orbitron;font-size:12px;color:#fff">@InfiniteCoinHQ</div>
-            <div style="font-size:10px;color:#8ECAE6">Featured Post</div>
-          </div>
-          <div class="xf-badge">15+ Likes & Reposts</div>
-        </div>
-        <div class="xf-body" id="xFeaturedBody">Loading latest post...</div>
-        <div class="xf-meta">
-          <div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span id="xFeaturedLikes">0</span>
-          </div>
-          <div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-            <span id="xFeaturedReposts">0</span>
-          </div>
-          <span style="margin-left:auto;font-family:Space Mono;font-size:9px;color:#8ECAE6" id="xFeaturedTime"></span>
-        </div>
-        <a id="xFeaturedLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-g2" style="width:100%;justify-content:center">View on X</a>
       </div>
 
       <!-- ROW 1: X + TikTok -->
@@ -2321,29 +2262,6 @@ async function fetchJupiterFallback(){
 async function fetchPrice(){await fetchDexScreener();}
 
 // ═══════════════════════════════════════════
-// X FEATURED POST FETCH
-// ═══════════════════════════════════════════
-// NOTE: X API requires a backend proxy due to CORS + Bearer token requirements.
-// Set PROXY_URL to your endpoint that returns: { text, likes, reposts, url, created_at }
-async function fetchXFeatured(){
-  const PROXY_URL = ''; // e.g., 'https://yourdomain.com/api/x/featured'
-  if(!PROXY_URL) return;
-  try{
-    const r = await fetch(PROXY_URL, { signal: AbortSignal.timeout(8000) });
-    if(!r.ok) return;
-    const d = await r.json();
-    if(d.likes >= 15 && d.reposts >= 15){
-      document.getElementById('xFeaturedBody').textContent = d.text;
-      document.getElementById('xFeaturedLikes').textContent = d.likes;
-      document.getElementById('xFeaturedReposts').textContent = d.reposts;
-      document.getElementById('xFeaturedTime').textContent = new Date(d.created_at).toLocaleDateString();
-      document.getElementById('xFeaturedLink').href = d.url;
-      document.getElementById('xFeaturedCard').style.display = 'block';
-    }
-  }catch(e){}
-}
-
-// ═══════════════════════════════════════════
 // COUNTDOWN TIMER
 // ═══════════════════════════════════════════
 (function(){
@@ -2628,7 +2546,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   fetchDexScreener();
   setInterval(fetchDexScreener,15000);
   connectWS();
-  fetchXFeatured();
 
   document.querySelectorAll('img[loading="eager"]').forEach(img=>{
     if(img.complete)img.classList.add('loaded');
