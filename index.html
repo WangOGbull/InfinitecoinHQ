@@ -42,6 +42,7 @@
 <link rel="icon" href="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════
@@ -79,7 +80,7 @@ body.loaded{overflow:auto}
 .splash-screen.done{opacity:0}
 
 /* ═══════════════════════════════════════════
-   VIDEO BACKGROUND — FULL QUALITY
+   VIDEO BACKGROUND
    ═══════════════════════════════════════════ */
 #bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000}
 #videoOverlay{position:fixed;inset:0;z-index:-1;background:var(--hero-grad);pointer-events:none}
@@ -93,9 +94,6 @@ body.loaded{overflow:auto}
 .neon-cyan{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#8ECAE6;text-shadow:0 0 5px #8ECAE6,0 0 10px rgba(142,202,230,0.4),0 2px 4px rgba(0,0,0,0.8)}
 .neon-mixed{font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.06em;background:linear-gradient(90deg,#00F0FF,#BC13FE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 8px rgba(0,240,255,0.3))}
 
-/* ═══════════════════════════════════════════
-   SPLASH / HERO TEXT ANIMATIONS
-   ═══════════════════════════════════════════ */
 @keyframes splashFadeIn{
   from{opacity:0;transform:translateY(30px) scale(0.95)}
   to{opacity:1;transform:translateY(0) scale(1)}
@@ -159,9 +157,6 @@ body.loaded #txTickerBar{
   transition:opacity 1.5s ease 0.3s;
 }
 
-/* ═══════════════════════════════════════════
-   SKELETON LOADING
-   ═══════════════════════════════════════════ */
 @keyframes skeleton-pulse{
   0%{background-position:200% 0}
   100%{background-position:-200% 0}
@@ -187,9 +182,6 @@ img.loaded{animation:none;background:none}
   text-align:center;padding:20px;
 }
 
-/* ═══════════════════════════════════════════
-   3-LAYER SECTION SYSTEM
-   ═══════════════════════════════════════════ */
 .sec{position:relative;overflow:hidden}
 .sec .bg-img{
   position:absolute;inset:0;z-index:0;
@@ -198,35 +190,18 @@ img.loaded{animation:none;background:none}
 }
 .sec .sec-inner{position:relative;z-index:2}
 
-/* ═══════════════════════════════════════════
-   GLASS CARDS
-   ═══════════════════════════════════════════ */
 .glass{background:rgba(8,12,28,0.3);border:1px solid var(--glass-border);border-radius:10px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:all .3s ease}
 .glass:hover{border-color:rgba(0,240,255,0.15);box-shadow:0 0 30px rgba(0,240,255,0.06)}
 .glass-p{background:rgba(8,12,28,0.3);border:1px solid var(--glass-p-border);border-radius:10px;backdrop-filter:blur(24px);transition:all .3s ease}
 .glass-p:hover{border-color:rgba(188,19,254,0.15);box-shadow:0 0 30px rgba(188,19,254,0.06)}
 
-/* ═══════════════════════════════════════════
-   BUTTONS
-   ═══════════════════════════════════════════ */
 .btn-b{background:linear-gradient(135deg,#00F0FF,#0077ff);color:#000;font-family:'Orbitron';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;padding:13px 28px;border-radius:8px;border:none;box-shadow:0 0 25px rgba(0,240,255,0.25),inset 0 1px 0 rgba(255,255,255,0.2);transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-b:hover{box-shadow:0 0 45px rgba(0,240,255,0.45);transform:translateY(-2px)}
 .btn-p{background:linear-gradient(135deg,#BC13FE,#5500aa);color:#fff;font-family:'Orbitron';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;padding:13px 28px;border-radius:8px;border:none;box-shadow:0 0 25px rgba(188,19,254,0.25),inset 0 1px 0 rgba(255,255,255,0.1);transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-p:hover{box-shadow:0 0 45px rgba(188,19,254,0.45);transform:translateY(-2px)}
 .btn-g2{color:#00F0FF;font-family:'Orbitron';font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 22px;border-radius:8px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.03);transition:all .25s;text-decoration:none;cursor:pointer;white-space:nowrap}
 .btn-g2:hover{background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.4);box-shadow:0 0 15px rgba(0,240,255,0.1)}
-.btn-wallet-icon{
-  width:40px;height:40px;border-radius:8px;
-  background:linear-gradient(135deg,#00F0FF,#0077ff);
-  border:none;color:#000;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 0 15px rgba(0,240,255,0.25);
-  transition:all .25s;
-}
-.btn-wallet-icon:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(0,240,255,0.4)}
 
-/* ═══════════════════════════════════════════
-   BADGES & DOTS
-   ═══════════════════════════════════════════ */
 .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;font-family:'Inter';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:5px 12px;border-radius:6px}
 .dot-g{width:7px;height:7px;border-radius:50%;background:#39FF14;box-shadow:0 0 6px #39FF14;animation:pulse 2s ease-in-out infinite}
 .dot-b{width:7px;height:7px;border-radius:50%;background:#00F0FF;box-shadow:0 0 6px #00F0FF;animation:pulse 2s ease-in-out infinite}
@@ -249,8 +224,39 @@ img.loaded{animation:none;background:none}
 .nmb{display:none;flex-direction:column;gap:4px;padding:8px;background:none;border:none;cursor:pointer}
 .nmb span{display:block;width:20px;height:2px;background:#00F0FF;border-radius:1px;transition:.3s}
 
+/* WALLET INFO (post-connection) */
+.wallet-info{
+  display:none;align-items:center;gap:8px;
+}
+.wallet-badge{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,240,255,0.06);
+  border:1px solid rgba(0,240,255,0.15);
+  border-radius:8px;padding:8px 14px;
+  cursor:pointer;transition:all .2s;
+}
+.wallet-badge:hover{
+  background:rgba(0,240,255,0.1);
+  border-color:rgba(0,240,255,0.3);
+}
+.wallet-addr{
+  font-family:'Space Mono';font-size:10px;color:#fff;font-weight:700;
+}
+.wallet-bal{
+  font-family:'Space Mono';font-size:9px;color:#8ECAE6;
+}
+.wallet-bal span{color:#39FF14;}
+.wallet-bal .inf-bal{color:#00F0FF;}
+.wallet-disc{
+  width:26px;height:26px;border-radius:6px;
+  background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.15);
+  color:#ff4466;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:12px;transition:.2s;
+}
+.wallet-disc:hover{background:rgba(255,68,102,0.15);}
+
 /* ═══════════════════════════════════════════
-   UTILITY DRAWER (3-dot menu — MOBILE ONLY)
+   UTILITY DRAWER
    ═══════════════════════════════════════════ */
 .ud-overlay{position:fixed;inset:0;z-index:4999;background:rgba(8,12,28,0.15);backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .3s}
 .ud-overlay.active{display:block;opacity:1}
@@ -270,7 +276,7 @@ img.loaded{animation:none;background:none}
 .ud-footer{padding:16px 20px;border-top:1px solid rgba(0,240,255,0.06);font-family:'Space Mono';font-size:9px;color:#8ECAE6;text-align:center}
 
 /* ═══════════════════════════════════════════
-   WALLET CONNECT MODAL — 5D ANIME ICONS
+   WALLET CONNECT MODAL — PHANTOM ONLY
    ═══════════════════════════════════════════ */
 .wm-overlay{position:fixed;inset:0;z-index:5002;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
 .wm-overlay.active{display:flex;opacity:1}
@@ -333,9 +339,6 @@ img.loaded{animation:none;background:none}
 .hero-post-splash{opacity:0;transform:translateY(30px)}
 body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
-/* ═══════════════════════════════════════════
-   SECTION UTILITIES
-   ═══════════════════════════════════════════ */
 .cw{max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
 .sp{padding:clamp(60px,10vh,140px) 0}
 .sh{text-align:center;margin-bottom:44px;position:relative;z-index:2}
@@ -343,9 +346,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .sh h2{font-family:'Orbitron';font-size:clamp(22px,3vw,38px);font-weight:800;text-transform:uppercase;letter-spacing:.05em;line-height:1.15}
 .sh p{font-family:'Rajdhani';font-size:clamp(14px,1.4vw,17px);color:#8ECAE6;margin-top:10px;max-width:480px;margin-left:auto;margin-right:auto;opacity:.85}
 
-/* ═══════════════════════════════════════════
-   DEX TRADING HQ
-   ═══════════════════════════════════════════ */
 .dex-grid{display:grid;grid-template-columns:1fr;gap:20px;max-width:800px;margin:0 auto;width:100%}
 .dex-frame{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);min-height:480px;background:rgba(8,12,28,0.15)}
 .dex-frame iframe{width:100%;height:480px;border:none;display:block}
@@ -416,7 +416,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   color:#00F0FF;font-size:16px;
 }
 
-/* Transactions */
 .tx-box{padding:16px}
 .tx-box h4{font-family:'Orbitron';font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#8ECAE6;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .tx-ws-note{font-family:'Space Mono';font-size:9px;color:#8ECAE6;margin-bottom:10px;padding:6px 8px;background:rgba(57,255,20,0.03);border:1px solid rgba(57,255,20,0.08);border-radius:6px}
@@ -430,25 +429,18 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .tx-tag.sell{color:#ff4466;background:rgba(255,68,102,0.1)}
 .tx-empty{text-align:center;font-family:'Space Mono';font-size:10px;color:#8ECAE6;padding:20px}
 
-/* Transaction ticker strip */
 .tstrip{overflow:hidden;white-space:nowrap;background:rgba(8,12,28,0.5);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:12px 0;position:relative;margin-top:16px;box-shadow:0 0 20px rgba(0,240,255,0.05)}
 .ttrack{display:inline-block;white-space:nowrap;will-change:transform}
 .ti{display:inline-block;padding:0 32px;font-family:'Space Mono';font-size:11px;letter-spacing:.06em;font-weight:700}
 .ti.tbuy{color:#39FF14;text-shadow:0 0 8px rgba(57,255,20,0.4)}
 .ti.tsell{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,0.4)}
 
-/* ═══════════════════════════════════════════
-   FLOW BANNER
-   ═══════════════════════════════════════════ */
 .flow{background:transparent;border-top:1px solid rgba(0,240,255,0.05);border-bottom:1px solid rgba(0,240,255,0.05);padding:36px 0;position:relative;z-index:2}
 .flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:8px}
 .flow-item svg{width:32px;height:32px;color:#00F0FF;opacity:.8}
 .flow-item span{font-family:'Orbitron';font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#8ECAE6}
 
-/* ═══════════════════════════════════════════
-   GAMES
-   ═══════════════════════════════════════════ */
 .game-hero{cursor:pointer;transition:all .3s;overflow:hidden;border-radius:4px;border:2px solid #00F0FF;border-image:repeating-linear-gradient(0deg,#00F0FF 0,#00F0FF 3px,transparent 3px,transparent 6px) 2;box-shadow:inset 0 0 30px rgba(0,240,255,0.05),0 0 20px rgba(0,240,255,0.1);position:relative}
 .game-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.03) 2px,rgba(0,240,255,0.03) 4px);pointer-events:none;z-index:1}
 .game-hero:hover{box-shadow:inset 0 0 40px rgba(0,240,255,0.1),0 0 30px rgba(0,240,255,0.15);transform:translateY(-3px)}
@@ -457,9 +449,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .game-hero .gh-body h3{font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6}
 .game-hero .gh-body p{font-size:12px;color:#8ECAE6;line-height:1.5;margin-bottom:12px}
 
-/* ═══════════════════════════════════════════
-   PUMP.FUN
-   ═══════════════════════════════════════════ */
 .pump-terminal{display:block;text-decoration:none;border-radius:6px;overflow:hidden;border:1px solid rgba(57,255,20,0.15);box-shadow:0 0 20px rgba(57,255,20,0.05);transition:all .3s;position:relative;background:rgba(8,12,28,0.2)}
 .pump-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#39FF14,transparent);opacity:.15}
 .pump-terminal:hover{border-color:rgba(57,255,20,0.3);box-shadow:0 0 30px rgba(57,255,20,0.1);transform:translateY(-3px)}
@@ -468,9 +457,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .pump-body h3{font-family:'Orbitron';font-size:18px;color:#39FF14;margin-bottom:8px;text-shadow:0 0 10px rgba(57,255,20,0.3)}
 .pump-body p{font-size:13px;color:#8ECAE6;margin-bottom:16px}
 
-/* ═══════════════════════════════════════════
-   MEMES
-   ═══════════════════════════════════════════ */
 .meme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .meme-item{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,68,102,0.12);transition:all .3s;cursor:pointer;background:rgba(8,12,28,0.2)}
 .meme-item:hover{border-color:rgba(255,68,102,0.3);box-shadow:0 0 30px rgba(255,68,102,0.1);transform:translateY(-3px)}
@@ -484,26 +470,17 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .meme-feat{grid-column:span 2;grid-row:span 2}
 .meme-feat img{height:100%;min-height:420px}
 
-/* ═══════════════════════════════════════════
-   VIDEO SECTION
-   ═══════════════════════════════════════════ */
 .vid-box{border-radius:10px;overflow:hidden;border:1px solid rgba(0,240,255,0.08);background:rgba(8,12,28,0.15);box-shadow:var(--vid-shadow);position:relative}
 .vid-box video{width:100%;display:block;border:none;max-height:540px}
 .vid-ctrl{position:absolute;bottom:8px;right:8px;display:flex;gap:6px;z-index:5}
 .vid-ctrl button{width:28px;height:28px;border-radius:6px;background:rgba(8,12,28,0.15);border:1px solid rgba(0,240,255,0.12);color:#00F0FF;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
 .vid-ctrl button:hover{background:rgba(0,240,255,0.12)}
 
-/* ═══════════════════════════════════════════
-   COUNTDOWN TIMER
-   ═══════════════════════════════════════════ */
 .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:500px;margin:28px auto 0}
 .cd-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:18px 12px;text-align:center;backdrop-filter:blur(10px)}
 .cd-item .cd-num{font-family:'Orbitron';font-size:clamp(22px,3vw,36px);font-weight:800;color:#00F0FF;line-height:1;text-shadow:0 0 10px rgba(0,240,255,0.3)}
 .cd-item .cd-label{font-family:'Rajdhani';font-size:10px;color:#8ECAE6;text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
 
-/* ═══════════════════════════════════════════
-   MODALS
-   ═══════════════════════════════════════════ */
 .modal-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(15px);opacity:0;transition:opacity .3s}
 .modal-overlay.active{display:flex;opacity:1}
 .modal-box{background:rgba(8,12,28,0.85);border:1px solid rgba(0,240,255,0.12);border-radius:12px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;position:relative;transform:translateY(20px);transition:transform .3s}
@@ -524,9 +501,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .meme-overlay.active img{transform:scale(1)}
 .meme-overlay .mm-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,68,102,0.1);border:1px solid rgba(255,68,102,0.2);color:#ff4466;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-/* ═══════════════════════════════════════════
-   CARDS / STATS / CTA
-   ═══════════════════════════════════════════ */
 .c3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .card-inner{padding:24px}
 .card-inner img{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;opacity:.6}
@@ -540,23 +514,14 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .cta-box h3{font-family:'Orbitron';font-size:clamp(18px,2.2vw,28px);font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:linear-gradient(90deg,#00F0FF,#BC13FE);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .cta-box p{font-family:'Rajdhani';font-size:14px;color:#8ECAE6;margin-top:8px;margin-bottom:20px;opacity:.8}
 
-/* ═══════════════════════════════════════════
-   COMMUNITY
-   ═══════════════════════════════════════════ */
 .cg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .ccard{padding:22px;text-align:center;text-decoration:none;display:block;transition:.3s}
 .ccard svg{width:26px;height:26px;margin-bottom:10px}
 .ccard h4{font-family:'Orbitron';font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
 .ccard p{font-size:11px;color:#8ECAE6;line-height:1.45;opacity:.8}
 
-/* ═══════════════════════════════════════════
-   SOCIAL EMBEDS
-   ═══════════════════════════════════════════ */
 .embed-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
 
-/* ═══════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════ */
 .footer{background:rgba(8,12,28,0.2);position:relative;border-top:1px solid rgba(0,240,255,0.05);backdrop-filter:blur(10px)}
 .fg{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:36px;padding:48px 0}
 .fb img{width:32px;height:32px;border-radius:50%;margin-bottom:10px}
@@ -568,9 +533,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .fc a:hover{color:#00F0FF}
 .fbt{padding:18px 0;border-top:1px solid rgba(0,240,255,0.05);display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#8ECAE6;flex-wrap:wrap;gap:10px}
 
-/* ═══════════════════════════════════════════
-   CHATBOT
-   ═══════════════════════════════════════════ */
 .chw{position:fixed;bottom:20px;right:20px;z-index:2000}
 .cht{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#00F0FF,#0077ff);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(0,240,255,0.35);transition:.3s;color:#000;border:none;cursor:pointer;flex-shrink:0}
 .cht:active{box-shadow:0 0 40px rgba(0,240,255,0.5);transform:scale(0.95)}
@@ -593,9 +555,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .ci input::placeholder{color:#8ECAE6;font-size:11px}
 .ci button{width:34px;height:34px;border-radius:8px;background:#00F0FF;color:#000;display:flex;align-items:center;justify-content:center;font-size:14px;border:none;cursor:pointer;flex-shrink:0}
 
-/* ═══════════════════════════════════════════
-   TOAST NOTIFICATIONS
-   ═══════════════════════════════════════════ */
 .toast-wrap{position:fixed;top:80px;right:20px;z-index:6000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .toast{pointer-events:auto;background:rgba(8,12,28,0.85);border:1px solid rgba(0,240,255,0.15);border-left:4px solid #00F0FF;border-radius:8px;padding:12px 16px;max-width:320px;backdrop-filter:blur(10px);transform:translateX(120%);transition:transform .4s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 .toast.show{transform:translateX(0)}
@@ -606,158 +565,51 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .toast-body{font-size:11px;color:#8ECAE6;line-height:1.4}
 .toast-time{font-family:'Space Mono';font-size:9px;color:#8ECAE6;margin-top:4px}
 
-/* ═══════════════════════════════════════════
-   DIVIDER
-   ═══════════════════════════════════════════ */
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,240,255,0.2),transparent)}
 
-/* ═══════════════════════════════════════════
-   WORLD CUP 2026
-   ═══════════════════════════════════════════ */
 .wc-hero-main{position:relative;border-radius:16px;overflow:hidden;min-height:320px;background:rgba(8,12,28,0.2);border:1px solid rgba(0,240,255,0.1);cursor:pointer;transition:all .3s ease;display:block;max-width:800px;margin:0 auto}
 .wc-hero-main:hover{border-color:rgba(0,240,255,0.2);box-shadow:0 10px 40px rgba(0,240,255,0.1);transform:translateY(-2px)}
-
 .wc-hero-main .wc-content{position:absolute;bottom:0;left:0;right:0;padding:28px;z-index:2}
 .wc-hero-main .wc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,68,102,0.15);border:1px solid rgba(255,68,102,0.3);color:#ff4466;font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.12em;padding:5px 12px;border-radius:6px;margin-bottom:12px}
 .wc-hero-main .wc-badge .live-dot{width:6px;height:6px;border-radius:50%;background:#ff4466;box-shadow:0 0 6px #ff4466;animation:pulse 1.5s ease-in-out infinite}
 .wc-hero-main h3{font-family:'Orbitron';font-size:clamp(16px,2vw,24px);font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px}
 .wc-hero-main p{font-size:13px;color:#8ECAE6;opacity:.8;line-height:1.5}
 
-/* ═══════════════════════════════════════════
-   TOKENOMICS / NFT CARDS
-   ═══════════════════════════════════════════ */
-.nft-card{
-  background:rgba(8,12,28,0.2);
-  border:1px solid rgba(188,19,254,0.2);
-  border-radius:12px;
-  perspective:1000px;
-  overflow:hidden;
-  position:relative;
-  transition:all .4s ease;
-}
+.nft-card{background:rgba(8,12,28,0.2);border:1px solid rgba(188,19,254,0.2);border-radius:12px;perspective:1000px;overflow:hidden;position:relative;transition:all .4s ease}
 .nft-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(188,19,254,0.15)}
 .nft-card .nft-img-wrap{position:relative;overflow:hidden;border-radius:8px;margin-bottom:14px}
 .nft-card .nft-img-wrap img{transition:transform .6s ease;width:100%;display:block}
 .nft-card:hover .nft-img-wrap img{transform:scale(1.08)}
-.nft-card .nft-rarity{
-  position:absolute;top:8px;right:8px;
-  background:rgba(188,19,254,0.9);color:#fff;
-  font-family:'Orbitron',sans-serif;font-size:8px;
-  padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;
-}
+.nft-card .nft-rarity{position:absolute;top:8px;right:8px;background:rgba(188,19,254,0.9);color:#fff;font-family:'Orbitron',sans-serif;font-size:8px;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em}
 .nft-card .nft-title{font-family:'Orbitron',sans-serif;font-size:14px;color:#fff;margin-bottom:6px}
 
-.defi-card{
-  background:rgba(8,12,28,0.2);
-  border:1px solid rgba(57,255,20,0.15);
-  border-radius:6px;
-  box-shadow:0 0 20px rgba(57,255,20,0.05),inset 0 1px 0 rgba(57,255,20,0.05);
-  font-family:'Space Mono',monospace;
-  position:relative;
-  overflow:hidden;
-}
-.defi-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,#39FF14,transparent);
-  opacity:.4;
-}
+.defi-card{background:rgba(8,12,28,0.2);border:1px solid rgba(57,255,20,0.15);border-radius:6px;box-shadow:0 0 20px rgba(57,255,20,0.05),inset 0 1px 0 rgba(57,255,20,0.05);font-family:'Space Mono',monospace;position:relative;overflow:hidden}
+.defi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#39FF14,transparent);opacity:.4}
 .defi-card .df-title{font-family:'Orbitron',sans-serif;font-size:13px;color:#39FF14;letter-spacing:.06em}
 .defi-card .df-stat{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:#fff}
 .defi-card .df-label{font-family:'Space Mono',monospace;font-size:9px;color:rgba(57,255,20,0.6);text-transform:uppercase;letter-spacing:.1em}
 
-/* ═══════════════════════════════════════════
-   GAME MODAL BACKGROUND
-   ═══════════════════════════════════════════ */
-.game-modal-bg{
-  position:relative;
-  border-radius:20px;
-  overflow:hidden;
-  border:2px solid rgba(0,240,255,0.15);
-  box-shadow:0 0 40px rgba(0,240,255,0.1);
-  background:transparent;
-  cursor:pointer;
-  transition:all .4s ease;
-}
-.game-modal-bg:hover{
-  box-shadow:0 0 60px rgba(0,240,255,0.2);
-  transform:translateY(-4px);
-  border-color:rgba(0,240,255,0.3);
-}
-.game-modal-bg .gmb-content{
-  position:relative;z-index:2;
-  padding:48px 32px;
-  text-align:center;
-}
+.game-modal-bg{position:relative;border-radius:20px;overflow:hidden;border:2px solid rgba(0,240,255,0.15);box-shadow:0 0 40px rgba(0,240,255,0.1);background:transparent;cursor:pointer;transition:all .4s ease}
+.game-modal-bg:hover{box-shadow:0 0 60px rgba(0,240,255,0.2);transform:translateY(-4px);border-color:rgba(0,240,255,0.3)}
+.game-modal-bg .gmb-content{position:relative;z-index:2;padding:48px 32px;text-align:center}
 
-/* ═══════════════════════════════════════════
-   SOCIAL FEED CARDS
-   ═══════════════════════════════════════════ */
-.social-feed-card{
-  background:var(--glass);
-  border:1px solid var(--glass-border);
-  border-radius:12px;
-  overflow:hidden;
-  min-height:480px;
-  display:flex;
-  flex-direction:column;
-}
-.social-feed-card .sf-header{
-  padding:14px 16px;
-  border-bottom:1px solid rgba(0,240,255,0.06);
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.social-feed-card .sf-body{
-  flex:1;
-  position:relative;
-  min-height:400px;
-}
-.social-feed-card .sf-fallback{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:12px;padding:40px 20px;
-  text-align:center;
-}
+.social-feed-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;min-height:480px;display:flex;flex-direction:column}
+.social-feed-card .sf-header{padding:14px 16px;border-bottom:1px solid rgba(0,240,255,0.06);display:flex;align-items:center;gap:10px}
+.social-feed-card .sf-body{flex:1;position:relative;min-height:400px}
+.social-feed-card .sf-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 20px;text-align:center}
 
-/* ═══════════════════════════════════════════
-   FIXED TICKER BAR (below navbar)
-   ═══════════════════════════════════════════ */
-.tx-ticker-bar{
-  position:fixed;top:60px;left:0;right:0;z-index:998;
-  background:transparent;
-  padding:10px 0;overflow:hidden;white-space:nowrap;
-}
-.tx-ticker-track{
-  display:inline-block;
-  white-space:nowrap;
-  will-change:transform;
-  padding-left:100%;
-}
-.txi{
-  display:inline-block;padding:0 40px;
-  font-family:'Space Mono',monospace;font-size:12px;
-  letter-spacing:.06em;font-weight:700;
-}
+.tx-ticker-bar{position:fixed;top:60px;left:0;right:0;z-index:998;background:transparent;padding:10px 0;overflow:hidden;white-space:nowrap}
+.tx-ticker-track{display:inline-block;white-space:nowrap;will-change:transform;padding-left:100%}
+.txi{display:inline-block;padding:0 40px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;font-weight:700}
 .txi.tbuy{color:#39FF14;text-shadow:0 0 10px rgba(57,255,20,0.5)}
 .txi.tsell{color:#ff4466;text-shadow:0 0 10px rgba(255,68,102,0.5)}
 .txi .tsep{color:rgba(0,240,255,0.3);margin:0 8px}
 
-/* ═══════════════════════════════════════════
-   SOCIAL ACTION MODAL
-   ═══════════════════════════════════════════ */
 .sa-modal p{font-size:13px;color:#8ECAE6;line-height:1.6;margin-bottom:20px;text-align:center}
 .sa-modal .btn-b{margin:0 auto 10px;display:flex;justify-content:center;width:100%}
 .sa-modal .btn-g2{margin:0 auto;display:flex;justify-content:center;width:100%}
 
-/* Social post cards */
-.sp-card{
-  background:rgba(8,12,28,0.3);
-  border:1px solid rgba(0,240,255,0.08);
-  border-radius:12px;padding:16px;
-  margin-bottom:12px;transition:all .3s;
-}
+.sp-card{background:rgba(8,12,28,0.3);border:1px solid rgba(0,240,255,0.08);border-radius:12px;padding:16px;margin-bottom:12px;transition:all .3s}
 .sp-card:hover{border-color:rgba(0,240,255,0.2);box-shadow:0 0 20px rgba(0,240,255,0.06)}
 .sp-card .sp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .sp-card .sp-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover}
@@ -765,20 +617,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .sp-card .sp-handle{font-size:10px;color:#8ECAE6}
 .sp-card .sp-body{font-size:12px;color:#8ECAE6;line-height:1.5;margin-bottom:12px}
 .sp-card .sp-actions{display:flex;gap:8px;flex-wrap:wrap}
-.sp-btn{
-  padding:6px 12px;border-radius:6px;
-  background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.1);
-  color:#00F0FF;font-family:'Orbitron';font-size:9px;
-  text-transform:uppercase;letter-spacing:.08em;
-  cursor:pointer;transition:all .2s;display:inline-flex;
-  align-items:center;gap:5px;text-decoration:none;
-}
+.sp-btn{padding:6px 12px;border-radius:6px;background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.1);color:#00F0FF;font-family:'Orbitron';font-size:9px;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
 .sp-btn:hover{background:rgba(0,240,255,0.1);border-color:rgba(0,240,255,0.3)}
 .sp-btn svg{width:14px;height:14px}
 
-/* ═══════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════ */
 @media(max-width:1024px){
   .dex-grid{grid-template-columns:1fr}
   .dex-frame{min-height:400px}
@@ -824,6 +666,9 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .wm-overlay.active .wm-box{transform:translateY(0)}
   .card-inner img{height:auto;min-height:120px}
   .market-actions{grid-template-columns:1fr}
+  .wallet-badge{padding:6px 10px}
+  .wallet-addr{font-size:9px}
+  .wallet-bal{font-size:8px}
 }
 @media(max-width:480px){
   .hero-inner{padding:90px 16px 40px}
@@ -837,21 +682,16 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="loading">
 
-<!-- ═══════════════════════════════════════════
-     LAYER 1: BACKGROUND VIDEO — FULL QUALITY
-     ═══════════════════════════════════════════ -->
 <video id="bgVideo" autoplay muted loop playsinline poster="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/infinity-glow.png" preload="auto" onerror="this.style.display='none'">
   <source src="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/bg-anime-space.mp4" type="video/mp4">
 </video>
 <div id="videoOverlay"></div>
 <div id="videoFallback"></div>
 
-<!-- ═══════════════════════════════════════════
-     SPLASH SCREEN OVERLAY
-     ═══════════════════════════════════════════ -->
 <div class="splash-screen" id="splashScreen">
   <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:1">
     <div class="splash-welcome">WELCOME TO INFINITECOIN HQ</div>
@@ -862,9 +702,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     NAVIGATION
-     ═══════════════════════════════════════════ -->
 <nav class="nav" id="mainNav">
   <div class="ni">
     <a href="#" class="nb">
@@ -880,13 +717,24 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <li><a href="#social">Social</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:10px">
+      <!-- CONNECT BUTTON -->
       <button type="button" class="btn-b" style="padding:9px 18px;font-size:10px" id="walletBtnDesktop" onclick="openWalletModal()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
         <span id="wt">CONNECT WALLET</span>
       </button>
-      <button type="button" class="btn-wallet-icon" id="walletBtnMobile" onclick="openWalletModal()" style="display:none">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
-      </button>
+      <!-- WALLET INFO (shown when connected) -->
+      <div class="wallet-info" id="walletInfo">
+        <div class="wallet-badge" onclick="refreshBalances()" title="Click to refresh balances">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
+          <div>
+            <div class="wallet-addr" id="walletAddr">--</div>
+            <div class="wallet-bal">
+              <span id="balSol">--</span> SOL | <span class="inf-bal" id="balInf">--</span> INFINITE
+            </div>
+          </div>
+        </div>
+        <button type="button" class="wallet-disc" onclick="disconnectWallet()" title="Disconnect">&#10005;</button>
+      </div>
       <button type="button" class="nmb" onclick="toggleUtilityDrawer()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -894,18 +742,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </nav>
 
-<!-- ═══════════════════════════════════════════
-     FIXED LIVE TRANSACTION TICKER BAR
-     ═══════════════════════════════════════════ -->
 <div class="tx-ticker-bar" id="txTickerBar">
   <div class="tx-ticker-track" id="txTickerTrack">
     <span class="txi" style="color:#8ECAE6">&#9654; Waiting for live $INFINITE transactions... &#9654;</span>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     UTILITY DRAWER (3-dot menu — MOBILE ONLY)
-     ═══════════════════════════════════════════ -->
 <div class="ud-overlay" id="udOverlay" onclick="toggleUtilityDrawer()"></div>
 <div class="ud-drawer" id="udDrawer">
   <div class="ud-header">
@@ -949,15 +791,13 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     WALLET CONNECT MODAL — 5D ANIME ICONS
-     ═══════════════════════════════════════════ -->
+<!-- WALLET MODAL — PHANTOM ONLY -->
 <div class="wm-overlay" id="wmOverlay" onclick="if(event.target===this)closeWalletModal()">
   <div class="wm-box">
     <button type="button" class="wm-close" onclick="closeWalletModal()">&times;</button>
     <div class="wm-body">
       <h2>CONNECT WALLET</h2>
-      <p>Choose your preferred Solana wallet</p>
+      <p>Connect your Phantom wallet to buy, track balances & more.</p>
       <button class="wm-option" onclick="connectPhantom()">
         <img src="https://i.postimg.cc/pLwtZkK2/logo1-ghost-5d-anime.png" alt="Phantom" width="40" height="40" style="border-radius:10px">
         <div class="wm-info">
@@ -966,38 +806,20 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
-      <button class="wm-option" onclick="connectSolflare()">
-        <img src="https://i.postimg.cc/ZRJ27QRQ/logo2-sphere-5d-anime.png" alt="Solflare" width="40" height="40" style="border-radius:10px">
-        <div class="wm-info">
-          <div class="wm-name">SOLFLARE</div>
-          <div class="wm-desc">Secure Solana wallet</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="wm-option" onclick="connectJupiter()">
-        <img src="https://i.postimg.cc/9QKckc5s/logo3-s-5d-anime.png" alt="Jupiter" width="40" height="40" style="border-radius:10px">
-        <div class="wm-info">
-          <div class="wm-name">JUPITER</div>
-          <div class="wm-desc">DEX + Wallet integration</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      <div style="text-align:center;margin-top:16px">
+        <a href="https://phantom.app/" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8ECAE6;text-decoration:none">Don't have Phantom? Get it here</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     HERO — PERMANENT AFTER SPLASH
-     ═══════════════════════════════════════════ -->
 <section class="hero" id="hero">
   <div class="hero-inner">
-    <!-- Permanent headlines -->
     <h1 style="margin-bottom:20px">
       <span class="hero-mom-static">INFINITE MOMENTUMS</span>
       <span class="hero-opp-static">INFINITE OPPORTUNITIES</span>
     </h1>
 
-    <!-- Post-splash content slides up -->
     <div class="hero-post-splash">
       <div class="contract-box glass">
         <label>
@@ -1013,7 +835,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       </div>
 
       <div class="hero-btns">
-        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITE</a>
+        <button type="button" class="btn-b" onclick="buyInfinite()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          BUY $INFINITE
+        </button>
         <a href="https://phantom.com/tokens/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump?referralId=7251y54emqp" target="_blank" rel="noopener noreferrer" class="btn-g2">VIEW ON PHANTOM</a>
         <a href="https://dexscreener.com/solana/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-g2">LIVE CHART</a>
       </div>
@@ -1037,9 +862,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     DEX TRADING HQ
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="trade">
   <div class="sec-inner">
     <div class="cw">
@@ -1068,14 +890,14 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           <div class="market-panel">
             <h4><span class="dot-b"></span> QUICK TRADE</h4>
             <div class="market-actions">
-              <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="market-btn buy">
+              <button type="button" class="market-btn buy" onclick="buyInfinite()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                 BUY $INFINITE
-              </a>
-              <a href="https://jup.ag/swap/C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump-SOL" target="_blank" rel="noopener noreferrer" class="market-btn sell">
+              </button>
+              <button type="button" class="market-btn sell" onclick="sellInfinite()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
                 SELL $INFINITE
-              </a>
+              </button>
             </div>
             <div class="market-swap">
               <span>SOL</span>
@@ -1099,7 +921,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         </div>
       </div>
 
-      <!-- REAL TRANSACTION TICKER — FULL WIDTH AT BOTTOM OF TRADING HQ -->
       <div class="tstrip" id="txTicker" style="margin-top:20px">
         <div class="ttrack" id="tTrackReal"></div>
       </div>
@@ -1109,9 +930,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     GAMES — ONE .bg-img ONLY
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="games">
   <div class="bg-img" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/game-controller.png');opacity:.5"></div>
   <div class="sec-inner">
@@ -1140,7 +958,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- GAME MODAL -->
 <div class="modal-overlay" id="gameModal" onclick="if(event.target===this)closeGameModal()">
   <div class="modal-box">
     <button type="button" class="modal-close" onclick="closeGameModal()">&times;</button>
@@ -1164,9 +981,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PUMP.FUN
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="pump">
   <div class="sec-inner">
     <div class="cw">
@@ -1191,9 +1005,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     MEMES
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="memes">
   <div class="sec-inner">
     <div class="cw">
@@ -1238,15 +1049,11 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- MEME FULL-SCREEN MODAL -->
 <div class="meme-overlay" id="memeOverlay" onclick="if(event.target===this)closeMemeModal()">
   <button type="button" class="mm-close" onclick="closeMemeModal()">&times;</button>
   <img src="" alt="Meme" id="memeFullImg" loading="eager">
 </div>
 
-<!-- ═══════════════════════════════════════════
-     VIDEO
-     ═══════════════════════════════════════════ -->
 <section class="sp">
   <div class="cw">
     <div class="sh">
@@ -1267,9 +1074,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     STAKING
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="staking">
   <div class="bg-img" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/bg-moon-mission.png');opacity:.5"></div>
   <div class="sec-inner">
@@ -1305,9 +1109,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     WORLD CUP 2026 — ONE .bg-img ONLY
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="worldcup">
   <div class="bg-img" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/arena.png');opacity:.5"></div>
   <div class="sec-inner">
@@ -1331,9 +1132,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     TOKENOMICS / NFTs
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="ecosystem">
   <div class="sec-inner">
     <div class="cw">
@@ -1372,9 +1170,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     STATS + CTA
-     ═══════════════════════════════════════════ -->
 <section class="sec sp">
   <div class="sec-inner">
     <div class="cw">
@@ -1387,7 +1182,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       <div class="cta-box">
         <h3>READY TO GO INFINITE?</h3>
         <p>Join thousands building the future of memecoins.</p>
-        <a href="https://jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump" target="_blank" rel="noopener noreferrer" class="btn-b">BUY $INFINITE NOW</a>
+        <button type="button" class="btn-b" onclick="buyInfinite()">BUY $INFINITE NOW</button>
       </div>
     </div>
   </div>
@@ -1395,9 +1190,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════
-     SOCIAL
-     ═══════════════════════════════════════════ -->
 <section class="sec sp" id="social">
   <div class="sec-inner">
     <div class="cw">
@@ -1407,9 +1199,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         <p>Real-time posts from the Infinite Coin HQ community.</p>
       </div>
 
-      <!-- ROW 1: X + TikTok -->
       <div class="embed-row">
-        <!-- X / Twitter Profile -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26L22 21.75h-6.63l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -1465,7 +1255,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
         </div>
 
-        <!-- TikTok -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69A4.83 4.83 0 0 1 15.82 2.44V2h-3.45v16a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V8.78a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.83 1.54V6.83a4.85 4.85 0 0 1-1.07-.14z"/></svg>
@@ -1523,9 +1312,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
         </div>
       </div>
 
-      <!-- ROW 2: YouTube + Instagram -->
       <div class="embed-row" style="margin-top:16px">
-        <!-- YouTube -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -1581,7 +1368,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
         </div>
 
-        <!-- Instagram -->
         <div class="social-feed-card">
           <div class="sf-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -1641,9 +1427,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     FOOTER
-     ═══════════════════════════════════════════ -->
 <div class="divider"></div>
 <section class="sec" id="flow">
   <div class="sec-inner">
@@ -1707,9 +1490,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════
-     CHATBOT
-     ═══════════════════════════════════════════ -->
 <div class="chw">
   <div class="chwin" id="cWin">
     <div class="chh">
@@ -1738,9 +1518,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     COMING SOON MODAL
-     ═══════════════════════════════════════════ -->
 <div class="modal-overlay" id="csModal" onclick="if(event.target===this)closeCsModal()">
   <div class="modal-box cs-modal">
     <button type="button" class="modal-close" onclick="closeCsModal()">&times;</button>
@@ -1753,9 +1530,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SOCIAL ACTION MODAL
-     ═══════════════════════════════════════════ -->
 <div class="modal-overlay" id="saModal" onclick="if(event.target===this)closeSocialActionModal()">
   <div class="modal-box sa-modal">
     <button type="button" class="modal-close" onclick="closeSocialActionModal()">&times;</button>
@@ -1768,12 +1542,8 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TOAST CONTAINER
-     ═══════════════════════════════════════════ -->
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- JAVASCRIPT -->
 <script>
 // ═══════════════════════════════════════════
 // CONFIG
@@ -1786,8 +1556,18 @@ let wsAttempts=0;
 const WS_MAX_SILENT=3;
 let wsHolders='---';
 
+// Wallet state
+let walletPublicKey=null;
+let walletSignature=null;
+let balanceInterval=null;
+const SOLANA_RPC='https://api.mainnet-beta.solana.com';
+let solanaConnection=null;
+if(window.solanaWeb3){
+  solanaConnection=new window.solanaWeb3.Connection(SOLANA_RPC);
+}
+
 // ═══════════════════════════════════════════
-// JS TICKER — SMOOTH MARQUEE (NO RESET ON UPDATE)
+// JS TICKER — SMOOTH MARQUEE
 // ═══════════════════════════════════════════
 class Ticker {
   constructor(trackId, speed){
@@ -1858,6 +1638,137 @@ class Ticker {
 }
 
 // ═══════════════════════════════════════════
+// WALLET FUNCTIONS
+// ═══════════════════════════════════════════
+function openWalletModal(){
+  document.getElementById('wmOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeWalletModal(){
+  document.getElementById('wmOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+async function connectPhantom(){
+  if(!window.phantom?.solana?.isPhantom){
+    window.open('https://phantom.app/','_blank');
+    return;
+  }
+  try{
+    const resp=await window.phantom.solana.connect();
+    walletPublicKey=resp.publicKey;
+
+    // Request signature
+    const message=`Verify ownership for Infinite Coin HQ\nWallet: ${walletPublicKey.toString()}\nTimestamp: ${Date.now()}`;
+    const encodedMsg=new TextEncoder().encode(message);
+    showToast('Signature Required','Please sign the verification message in Phantom','warn');
+    const sigResp=await window.phantom.solana.signMessage(encodedMsg,'utf8');
+    walletSignature=sigResp.signature;
+
+    // Fetch balances
+    await refreshBalances();
+
+    // Update UI
+    updateWalletUI();
+    closeWalletModal();
+    showToast('Wallet Connected','Signature verified. Balances loaded.','success');
+
+    // Auto-refresh balances every 30s
+    if(balanceInterval)clearInterval(balanceInterval);
+    balanceInterval=setInterval(refreshBalances,30000);
+
+    // Listen for disconnect
+    window.phantom.solana.on('disconnect',()=>{
+      disconnectWallet();
+    });
+  }catch(err){
+    showToast('Connection Failed',err?.message||'User rejected','error');
+    walletPublicKey=null;
+    walletSignature=null;
+  }
+}
+
+function disconnectWallet(){
+  if(window.phantom?.solana?.disconnect){
+    window.phantom.solana.disconnect().catch(()=>{});
+  }
+  walletPublicKey=null;
+  walletSignature=null;
+  if(balanceInterval){clearInterval(balanceInterval);balanceInterval=null;}
+  document.getElementById('walletBtnDesktop').style.display='inline-flex';
+  document.getElementById('walletInfo').style.display='none';
+  showToast('Disconnected','Wallet disconnected','success');
+}
+
+function updateWalletUI(){
+  if(!walletPublicKey)return;
+  const addr=walletPublicKey.toString();
+  const shortAddr=addr.slice(0,4)+'...'+addr.slice(-4);
+  document.getElementById('walletAddr').textContent=shortAddr;
+  document.getElementById('walletBtnDesktop').style.display='none';
+  document.getElementById('walletInfo').style.display='flex';
+}
+
+async function refreshBalances(){
+  if(!walletPublicKey||!solanaConnection)return;
+  try{
+    // SOL balance
+    const solLamports=await solanaConnection.getBalance(walletPublicKey);
+    const solBal=(solLamports/1e9).toFixed(4);
+
+    // INFINITE token balance
+    let infBal='0';
+    try{
+      const tokenAccounts=await solanaConnection.getTokenAccountsByOwner(
+        walletPublicKey,
+        {mint:new window.solanaWeb3.PublicKey(CA)},
+        'jsonParsed'
+      );
+      if(tokenAccounts.value.length>0){
+        const parsed=tokenAccounts.value[0].account.data.parsed;
+        infBal=parsed.info.tokenAmount.uiAmountString||'0';
+      }
+    }catch(e){}
+
+    document.getElementById('balSol').textContent=solBal;
+    document.getElementById('balInf').textContent=infBal;
+  }catch(e){
+    console.error('Balance fetch error:',e);
+  }
+}
+
+function isWalletConnected(){
+  return !!walletPublicKey;
+}
+
+// ═══════════════════════════════════════════
+// BUY / SELL — PHANTOM SWAP DEEP LINK
+// ═══════════════════════════════════════════
+function buyInfinite(){
+  if(!isWalletConnected()){
+    openWalletModal();
+    return;
+  }
+  const inputMint='So11111111111111111111111111111111111111112';
+  const outputMint=CA;
+  const slippage=100;
+  const phantomUrl=`https://phantom.app/ul/v1/swap?inputMint=${inputMint}&outputMint=${outputMint}&slippageBps=${slippage}`;
+  window.open(phantomUrl,'_blank');
+}
+
+function sellInfinite(){
+  if(!isWalletConnected()){
+    openWalletModal();
+    return;
+  }
+  const inputMint=CA;
+  const outputMint='So11111111111111111111111111111111111111112';
+  const slippage=100;
+  const phantomUrl=`https://phantom.app/ul/v1/swap?inputMint=${inputMint}&outputMint=${outputMint}&slippageBps=${slippage}`;
+  window.open(phantomUrl,'_blank');
+}
+
+// ═══════════════════════════════════════════
 // IMAGE LOADING & FALLBACKS
 // ═══════════════════════════════════════════
 function handleImgError(img,title){
@@ -1882,64 +1793,6 @@ const lazyObserver=new IntersectionObserver((entries)=>{
 },{rootMargin:'100px'});
 
 document.querySelectorAll('img[data-lazy]').forEach(img=>lazyObserver.observe(img));
-
-// ═══════════════════════════════════════════
-// MOBILE DETECTION
-// ═══════════════════════════════════════════
-function checkMobile(){
-  const isMobile=window.innerWidth<=768;
-  const desktopBtn=document.getElementById('walletBtnDesktop');
-  const mobileBtn=document.getElementById('walletBtnMobile');
-  if(desktopBtn&&mobileBtn){
-    desktopBtn.style.display=isMobile?'none':'inline-flex';
-    mobileBtn.style.display=isMobile?'flex':'none';
-  }
-}
-checkMobile();
-window.addEventListener('resize',checkMobile);
-
-// ═══════════════════════════════════════════
-// WALLET MODAL
-// ═══════════════════════════════════════════
-function openWalletModal(){
-  document.getElementById('wmOverlay').classList.add('active');
-  document.body.style.overflow='hidden';
-}
-function closeWalletModal(){
-  document.getElementById('wmOverlay').classList.remove('active');
-  document.body.style.overflow='';
-}
-
-function connectPhantom(){
-  if(window.phantom?.solana?.isPhantom){
-    window.phantom.solana.connect().then(()=>{
-      showToast('Phantom Connected','Wallet connected successfully','success');
-      closeWalletModal();
-    }).catch(()=>{
-      showToast('Phantom Error','Connection rejected','error');
-    });
-  }else{
-    window.open('https://phantom.app/ul/v1/connect','_blank');
-    closeWalletModal();
-  }
-}
-function connectSolflare(){
-  if(window.solflare?.isSolflare){
-    window.solflare.connect().then(()=>{
-      showToast('Solflare Connected','Wallet connected successfully','success');
-      closeWalletModal();
-    }).catch(()=>{
-      showToast('Solflare Error','Connection rejected','error');
-    });
-  }else{
-    window.open('https://solflare.com/ul/v1/connect','_blank');
-    closeWalletModal();
-  }
-}
-function connectJupiter(){
-  window.open('https://jup.ag','_blank');
-  closeWalletModal();
-}
 
 // ═══════════════════════════════════════════
 // UTILITY DRAWER
@@ -1972,6 +1825,7 @@ function refreshData(){
   fetchPrice();
   if(ws&&ws.readyState===1){ws.close();}
   setTimeout(connectWS,500);
+  if(isWalletConnected())refreshBalances();
   showToast('Refreshing','Price data refreshed','success');
 }
 
@@ -1989,7 +1843,7 @@ function toggleNotifications(){
 })();
 
 // ═══════════════════════════════════════════
-// WEBSOCKET CLIENT — REAL DATA
+// WEBSOCKET CLIENT
 // ═══════════════════════════════════════════
 function connectWS(){
   try{
@@ -2082,7 +1936,6 @@ function updatePrice(price,change,mcap,vol,liq){
   document.getElementById('statHolders').textContent=wsHolders;
 }
 
-// Real transaction ticker array
 let txTickerData=[];
 const MAX_TICKER_ITEMS=20;
 
@@ -2142,9 +1995,6 @@ function updateWSStatus(status,online){
   }
 }
 
-// ═══════════════════════════════════════════
-// VISITOR COUNTER FALLBACK
-// ═══════════════════════════════════════════
 function updateVisitorDisplay(){
   const vEl=document.getElementById('vCounter');
   if(!wsConnected){
@@ -2175,7 +2025,6 @@ async function fetchDexScreener(){
     const buys=p.txns?.h24?.buys||0;
     const sells=p.txns?.h24?.sells||0;
 
-    // Hero dual price
     const hLoad=document.getElementById('hPriceLoad');
     const hBox=document.getElementById('hPriceBox');
     const hUsd=document.getElementById('hPriceUsd');
@@ -2187,7 +2036,6 @@ async function fetchDexScreener(){
     if(hSol)hSol.textContent=sol+' SOL';
     if(hChg){hChg.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'% (24h)';hChg.style.color=chg>=0?'#39FF14':'#ff4466';}
 
-    // Stats
     document.getElementById('dPrice').textContent='$'+usd;
     document.getElementById('dChange').textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';
     document.getElementById('dChange').style.color=chg>=0?'#39FF14':'#ff4466';
@@ -2199,7 +2047,6 @@ async function fetchDexScreener(){
     if(liq>0)document.getElementById('sLiq').textContent='$'+(liq>=1e6?(liq/1e6).toFixed(1)+'M':liq.toLocaleString());
     document.getElementById('sHold').textContent=wsHolders;
 
-    // Update JS tickers
     const tickerTexts=[
       `BUY ${buys} TXNS | 24h`,
       `SELL ${sells} TXNS | 24h`,
@@ -2212,7 +2059,6 @@ async function fetchDexScreener(){
     if(window.topTicker) window.topTicker.update(tickerTexts);
     if(window.tradeTicker) window.tradeTicker.update(tickerTexts);
 
-    // Live transactions
     const txList=document.getElementById('txList');
     if(txList){
       txList.innerHTML=`
@@ -2398,15 +2244,15 @@ const FAQ_ENGINE={
   'token':'$INFINITE is a Solana SPL token. CA: C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump',
   'what is infinite':'Infinite Coin ($INFINITE) is a next-gen memecoin on Solana with P2E games, NFTs, staking (32% APY) and DAO governance.',
   'what is infinite coin':'Infinite Coin is a community-driven memecoin ecosystem on Solana. Live price, games, staking, NFTs and more.',
-  'buy':'Buy on Jupiter: jup.ag/swap/SOL-C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump. Connect Phantom, swap SOL for $INFINITE. Use 1-2% slippage.',
-  'swap':'Go to jup.ag and swap SOL -> $INFINITE. Set 1-2% slippage. Make sure you have SOL for gas.',
-  'how to buy':'1) Get Phantom wallet 2) Buy SOL 3) Go to jup.ag 4) Swap SOL -> $INFINITE 5) Confirm transaction',
-  'purchase':'Use Jupiter DEX: jup.ag. Connect wallet, swap SOL for $INFINITE with 1-2% slippage.',
-  'where to buy':'Buy on Jupiter DEX (jup.ag) or via Phantom wallet. You can also track on DexScreener.',
-  'jupiter':'Jupiter is the leading DEX aggregator on Solana. Use jup.ag/swap/SOL-$INFINITE to buy.',
-  'phantom':'Phantom is the #1 Solana wallet. Download at phantom.app, fund with SOL, then swap for $INFINITE on Jupiter.',
-  'wallet':'We recommend Phantom (phantom.app) or Solflare. Both support $INFINITE and all Solana dApps.',
-  'solflare':'Solflare is a great Solana wallet. Download at solflare.com and swap for $INFINITE on Jupiter.',
+  'buy':'Click the BUY $INFINITE button. Connect your Phantom wallet, confirm the signature, then click Buy to swap SOL for $INFINITE directly in Phantom.',
+  'swap':'Use the BUY $INFINITE button. It opens Phantom\'s built-in swap with SOL -> $INFINITE pre-selected.',
+  'how to buy':'1) Click CONNECT WALLET 2) Select Phantom & sign 3) Click BUY $INFINITE 4) Confirm swap in Phantom',
+  'purchase':'Click BUY $INFINITE. If your wallet is connected, it opens Phantom swap. If not, connect first.',
+  'where to buy':'Buy directly through the site using the BUY $INFINITE button with Phantom wallet.',
+  'jupiter':'Jupiter powers the price data. Actual swaps happen through Phantom\'s integrated swap UI.',
+  'phantom':'Phantom is the #1 Solana wallet. Download at phantom.app, fund with SOL, then use the BUY button on this site.',
+  'wallet':'We use Phantom exclusively. Download at phantom.app, connect, sign, and trade.',
+  'solflare':'We only support Phantom wallet for the best experience.',
   'stake':'32% APY staking coming Q3 2026. Auto-compounding daily. Early stakers get bonus rewards.',
   'staking':'32% APY. Auto-compounding. Launching Q3 2026. Connect wallet on the staking page to get notified.',
   'apy':'32% APY on staked $INFINITE. Rewards auto-compound daily. No lock-up period planned.',
@@ -2539,7 +2385,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   const bgv=document.getElementById('bgVideo');
   if(bgv){bgv.play().catch(()=>{});}
 
-  // Init smooth JS tickers
   window.topTicker = new Ticker('txTickerTrack', 0.8);
   window.tradeTicker = new Ticker('tTrackReal', 0.6);
 
