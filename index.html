@@ -810,10 +810,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .trade-details strong{display:block;margin-top:4px;color:#b8ddeb;font-size:8px}
 .trade-review{width:100%;height:45px;border:1px solid rgba(0,240,255,.6);border-radius:7px;background:linear-gradient(90deg,#00d9e9,#168fff);color:#00111c;font:700 10px 'Orbitron';letter-spacing:.14em;cursor:pointer;box-shadow:0 0 24px rgba(0,240,255,.18)}
 
-.games-art-section{min-height:720px;padding:0!important;position:relative;overflow:hidden}
-.games-art-bg{opacity:1!important;background-size:cover!important;background-position:center!important}
-.games-art-inner{min-height:720px;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
-.games-art-open{margin-top:245px;display:flex;align-items:center;gap:10px;padding:14px 24px;border:1px solid rgba(0,240,255,.76);border-radius:8px;background:rgba(2,9,23,.58);backdrop-filter:blur(4px);color:#fff;font:700 11px 'Orbitron';letter-spacing:.16em;box-shadow:0 0 28px rgba(0,240,255,.24);cursor:pointer}
+.games-art-section{height:clamp(420px,58vw,620px);min-height:0;padding:0!important;position:relative;overflow:hidden}
+.games-art-bg{opacity:1!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
+.games-art-inner{height:100%;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
+.games-art-open{position:absolute;left:50%;top:74%;transform:translate(-50%,-50%);margin:0;display:flex;align-items:center;gap:10px;padding:13px 22px;border:1px solid rgba(0,240,255,.76);border-radius:8px;background:rgba(2,9,23,.58);backdrop-filter:blur(4px);color:#fff;font:700 10px 'Orbitron';letter-spacing:.16em;box-shadow:0 0 28px rgba(0,240,255,.24);cursor:pointer;white-space:nowrap}
 .games-art-open svg{width:16px;height:16px;stroke:#e7c361;stroke-width:2}
 .games-modal-box{width:min(94vw,850px)!important;max-width:850px!important}
 .games-modal-body{padding:30px!important}
@@ -821,9 +821,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 .game-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .game-choice-card{overflow:hidden;border:1px solid rgba(0,240,255,.28);border-radius:12px;background:#061024}
 .game-choice-card.jumper{border-color:rgba(188,19,254,.3)}
-.game-preview{height:260px;overflow:hidden;position:relative;background:#080a20}
-.game-preview img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 30%}
-.game-preview iframe{position:absolute;width:480px;height:700px;left:50%;top:0;transform:translateX(-50%) scale(.55);transform-origin:top center;border:0;pointer-events:none}
+.game-preview{height:300px;overflow:hidden;position:relative;background:#080a20}
+.game-preview>img{width:100%;height:100%;display:block;object-fit:contain;object-position:center;background:#040713}
+.jumper-poster{position:absolute;inset:0;overflow:hidden;background:#07051a}
+.jumper-poster .jumper-bg{width:100%;height:100%;object-fit:cover;opacity:.72}
+.jumper-poster .jumper-character{position:absolute;left:50%;bottom:4%;width:58%;height:auto;max-height:72%;object-fit:contain;transform:translateX(-50%);filter:drop-shadow(0 0 18px rgba(190,65,255,.8))}
+.jumper-poster strong{position:absolute;left:0;right:0;top:10%;text-align:center;color:#e75cff;font:700 14px 'Press Start 2P';line-height:1.5;text-shadow:0 0 12px #7216bd}
 .game-choice-copy{padding:15px;text-align:center}
 .game-choice-copy h3{font:700 11px 'Press Start 2P';line-height:1.5;color:#00F0FF}
 .game-choice-card.jumper h3{color:#d65cff}
@@ -837,26 +840,28 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .wallet-account-button .wallet-addr{max-width:72px;overflow:hidden;text-overflow:ellipsis}
   .trade-composer{width:calc(100% - 2px);padding:14px!important}
   .trade-details{grid-template-columns:1fr 1fr 1fr}
-  .games-art-section,.games-art-inner{min-height:640px}
-  .games-art-bg{background-size:cover!important}
-  .games-art-open{margin-top:210px}
+  .games-art-section{height:500px}
+  .games-art-inner{height:100%;min-height:0}
+  .games-art-bg{background-size:contain!important}
+  .games-art-open{top:74%;padding:11px 17px;font-size:9px}
   .games-modal-overlay{align-items:center!important;padding:14px!important}
   .games-modal-box{width:100%!important;max-height:calc(100dvh - 28px)!important;overflow-y:auto!important;border-radius:15px!important}
   .games-modal-body{padding:50px 14px 18px!important}
   .games-modal-body>h2{font-size:15px;margin:0 30px 16px}
   .game-choice-grid{grid-template-columns:1fr;gap:14px}
-  .game-preview{height:190px}
-  .game-choice-card{display:grid;grid-template-columns:42% 58%;min-height:190px}
-  .game-choice-copy{display:flex;flex-direction:column;justify-content:center;padding:13px 11px}
+  .game-preview{height:260px}
+  .game-choice-card{display:block;min-height:0}
+  .game-choice-copy{padding:13px 11px}
   .game-choice-copy h3{font-size:8px}.game-choice-copy p{font-size:10px}
 }
 @media(max-width:420px){
   .trade-amount-row input{font-size:21px}
   .trade-details span{font-size:6px}
-  .games-art-section,.games-art-inner{min-height:600px}
-  .games-art-open{margin-top:190px;padding:12px 18px;font-size:9px}
-  .game-preview{height:170px}
-  .game-choice-card{min-height:170px}
+  .games-art-section{height:430px}
+  .games-art-inner{height:100%;min-height:0}
+  .games-art-open{top:74%;padding:10px 15px;font-size:8px}
+  .game-preview{height:240px}
+  .game-choice-card{min-height:0}
 }
 
 #walletSignState[hidden],#walletBalanceState[hidden],#walletConnectView[hidden],#walletAccountView[hidden]{display:none!important}
@@ -867,7 +872,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 <body class="loading">
 
 <video id="bgVideo" autoplay muted loop playsinline poster="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/infinity-glow.png" preload="auto" onerror="this.style.display='none'">
-  <source src="https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/bg-anime-space.mp4" type="video/mp4">
+  <source src="./images/bg-anime-space.mp4" type="video/mp4">
 </video>
 <div id="videoOverlay"></div>
 <div id="videoFallback"></div>
@@ -1130,7 +1135,7 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 <div class="divider"></div>
 
 <section class="sec sp games-art-section" id="games">
-  <div class="bg-img games-art-bg" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/game-controller.png')"></div>
+  <div class="bg-img games-art-bg" style="background-image:url('./images/game-controller.png')"></div>
   <div class="sec-inner games-art-inner">
     <button type="button" class="games-art-open" onclick="openGameModal()">
       <span>OPEN GAMES</span>
@@ -1156,8 +1161,12 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
           </div>
         </article>
         <article class="game-choice-card jumper">
-          <div class="game-preview live-preview" aria-label="Infinite Jumper front page preview">
-            <iframe src="https://infinitecoin-jumper.pages.dev/" title="Infinite Jumper front page" loading="lazy" tabindex="-1"></iframe>
+          <div class="game-preview" aria-label="Infinite Jumper front page preview">
+            <div class="jumper-poster">
+              <img class="jumper-bg" src="https://i.postimg.cc/PrG8sJBr/5976645751045558267.jpg" alt="" loading="lazy">
+              <img class="jumper-character" src="https://i.postimg.cc/KjykLvS0/Adobe-Express-file.png" alt="Infinite Jumper character" loading="lazy">
+              <strong>INFINITE<br>JUMPER</strong>
+            </div>
           </div>
           <div class="game-choice-copy">
             <h3>INFINITE JUMPER</h3>
@@ -1738,7 +1747,6 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 // CONFIG
 // ═══════════════════════════════════════════
 const CA='C8KsvkMBuqmvX416MWTJGKW9S9MpKiUjmpnj1fhzpump';
-const JUPITER_ENDPOINTS=['https://api.jup.ag/price/v2?ids=','https://price.jup.ag/v6/price?ids=','https://api.jup.ag/price?ids='];
 const WS_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'ws://localhost:3001' : 'wss://infinitecoinhq-production.up.railway.app';
 let ws=null,wsReconnectDelay=2000,wsMaxDelay=30000,wsConnected=false;
 let wsAttempts=0;
@@ -1998,11 +2006,18 @@ async function verifyWalletOwnership(){
   const provider=window.phantom?.solana;
   if(provider?.signMessage){
     try{
-      const result=await provider.signMessage(new TextEncoder().encode(message),'utf8');
+      const messageBytes=new TextEncoder().encode(message);
+      const result=await provider.signMessage(messageBytes,'utf8');
       const signature=result?.signature||result;
-      const sigBytes=signature instanceof Uint8Array?signature:new Uint8Array(signature||[]);
-      const valid=sigBytes.length===64&&nacl.sign.detached.verify(new TextEncoder().encode(message),sigBytes,base58Decode(walletAddress()));
-      if(!valid)throw new Error('Signature could not be verified');
+      const sigBytes=signature instanceof Uint8Array
+        ? signature
+        : (typeof signature==='string' ? base58Decode(signature) : new Uint8Array(signature?.buffer||signature||[]));
+      const providerKey=provider.publicKey?.toBytes?.();
+      const publicKey=providerKey instanceof Uint8Array?providerKey:base58Decode(walletAddress());
+      if(sigBytes.length!==64||publicKey.length!==32)throw new Error('Phantom returned an invalid signature');
+      if(window.nacl?.sign?.detached?.verify&&!window.nacl.sign.detached.verify(messageBytes,sigBytes,publicKey)){
+        throw new Error('Signature could not be verified');
+      }
       walletSignature=sigBytes;
       localStorage.setItem(PHANTOM_STORE.verified,walletAddress());
       renderWalletModal();updateTradePreview();
@@ -2430,38 +2445,11 @@ async function fetchDexScreener(){
 }
 
 async function fetchJupiterFallback(){
-  let lastErr='';
-  for(let i=0;i<JUPITER_ENDPOINTS.length;i++){
-    try{
-      const r=await fetch(JUPITER_ENDPOINTS[i]+CA,{cache:'no-store',signal:AbortSignal.timeout(8000)});
-      if(!r.ok){lastErr='HTTP '+r.status;continue}
-      const d=await r.json();
-      let price=null;
-      if(d.data?.[CA]?.price) price=parseFloat(d.data[CA].price);
-      else if(d[CA]?.price) price=parseFloat(d[CA].price);
-      if(!price || isNaN(price)){lastErr='No price';continue}
-      document.getElementById('hPriceLoad').style.display='none';
-      document.getElementById('hPriceBox').style.display='inline-flex';
-      document.getElementById('hPriceUsd').textContent='$'+price.toFixed(6);
-      document.getElementById('hPriceChg').textContent='LIVE';
-      document.getElementById('hPriceChg').style.color='#39FF14';
-      document.getElementById('dPrice').textContent='$'+price.toFixed(6);
-      document.getElementById('dChange').textContent='LIVE - Jupiter API';
-      document.getElementById('dChange').style.color='#39FF14';
-      document.getElementById('sMcap').textContent='---';
-      document.getElementById('statMcap').textContent='---';
-      document.getElementById('sVol').textContent='---';
-      document.getElementById('sHold').textContent=wsHolders;
-      document.getElementById('sLiq').textContent='---';
-      return;
-    }catch(e){lastErr=e.name==='TimeoutError'?'Timeout':e.message}
-  }
   const pl=document.getElementById('hPriceLoad');
-  if(pl){pl.textContent='Price API offline. Connect backend for live data.';pl.classList.add('hp-error')}
-  document.getElementById('dChange').textContent='API OFFLINE';
-  document.getElementById('dChange').style.color='#ff4466';
+  if(pl){pl.textContent='Live price temporarily unavailable.';pl.classList.add('hp-error')}
+  const change=document.getElementById('dChange');
+  if(change){change.textContent='DATA UNAVAILABLE';change.style.color='#ff4466'}
 }
-
 async function fetchPrice(){await fetchDexScreener();}
 
 // ═══════════════════════════════════════════
@@ -2777,15 +2765,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(phantomResume)finishEntry();else setTimeout(finishEntry,12000);
 });
 
-// ═══════════════════════════════════════════
-// PWA SERVICE WORKER
-// ═══════════════════════════════════════════
-if('serviceWorker'in navigator){
-  const swCode=`self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});`;
-  const swBlob=new Blob([swCode],{type:'application/javascript'});
-  const swUrl=URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(()=>{});
-}
 </script>
 </body>
 </html>
