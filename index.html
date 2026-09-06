@@ -43,6 +43,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════
@@ -857,6 +858,8 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .game-preview{height:170px}
   .game-choice-card{min-height:170px}
 }
+
+#walletSignState[hidden],#walletBalanceState[hidden],#walletConnectView[hidden],#walletAccountView[hidden]{display:none!important}
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -1835,12 +1838,52 @@ function closeWalletModal(){
   document.getElementById('wmOverlay').classList.remove('active');
   document.body.style.overflow='';
 }
-function walletAddress(){
-  return walletPublicKey ? walletPublicKey.toString() : '';
+const PHANTOM_STORE={
+  dappPublic:'infinite_phantom_dapp_public',
+  dappSecret:'infinite_phantom_dapp_secret',
+  shared:'infinite_phantom_shared',
+  session:'infinite_phantom_session',
+  address:'infinite_connected_wallet',
+  verified:'infinite_verified_wallet',
+  pendingMessage:'infinite_phantom_pending_message'
+};
+const BASE58_ALPHABET='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function base58Encode(source){
+  const bytes=source instanceof Uint8Array?source:new Uint8Array(source);
+  if(!bytes.length)return '';
+  const digits=[0];
+  for(const byte of bytes){
+    let carry=byte;
+    for(let j=0;j<digits.length;j++){carry+=digits[j]<<8;digits[j]=carry%58;carry=(carry/58)|0}
+    while(carry){digits.push(carry%58);carry=(carry/58)|0}
+  }
+  let out='';
+  for(let i=0;i<bytes.length&&bytes[i]===0;i++)out+='1';
+  for(let i=digits.length-1;i>=0;i--)out+=BASE58_ALPHABET[digits[i]];
+  return out;
 }
-function walletIsVerified(){
-  const address=walletAddress();
-  return !!address && localStorage.getItem('infinite_verified_wallet')===address;
+function base58Decode(text){
+  if(!text)return new Uint8Array();
+  const bytes=[0];
+  for(const char of text){
+    const value=BASE58_ALPHABET.indexOf(char);
+    if(value<0)throw new Error('Invalid base58 value');
+    let carry=value;
+    for(let j=0;j<bytes.length;j++){carry+=bytes[j]*58;bytes[j]=carry&255;carry>>=8}
+    while(carry){bytes.push(carry&255);carry>>=8}
+  }
+  for(let i=0;i<text.length&&text[i]==='1';i++)bytes.push(0);
+  return new Uint8Array(bytes.reverse());
+}
+function storeBytes(key,bytes){localStorage.setItem(key,JSON.stringify(Array.from(bytes)))}
+function loadBytes(key){try{return new Uint8Array(JSON.parse(localStorage.getItem(key)||'[]'))}catch(_){return new Uint8Array()}}
+function walletAddress(){return walletPublicKey?walletPublicKey.toString():''}
+function walletIsVerified(){const a=walletAddress();return !!a&&localStorage.getItem(PHANTOM_STORE.verified)===a}
+function setWalletAddress(address){
+  if(!address)return false;
+  walletPublicKey=new window.solanaWeb3.PublicKey(address);
+  localStorage.setItem(PHANTOM_STORE.address,address);
+  return true;
 }
 function renderWalletModal(){
   const connected=!!walletPublicKey;
@@ -1849,88 +1892,150 @@ function renderWalletModal(){
   if(connectView)connectView.hidden=connected;
   if(accountView)accountView.hidden=!connected;
   if(!connected)return;
-  const address=walletAddress();
-  const shortAddr=address.slice(0,5)+'...'+address.slice(-5);
+  const address=walletAddress(),shortAddr=address.slice(0,5)+'...'+address.slice(-5);
   document.getElementById('walletModalAddr').textContent=shortAddr;
   const verified=walletIsVerified();
   document.getElementById('walletSignState').hidden=verified;
   document.getElementById('walletBalanceState').hidden=!verified;
   if(verified)refreshBalances();
 }
-function cleanWalletResumeUrl(){
+function walletReturnUrl(action){
+  const url=new URL(window.location.origin+window.location.pathname);
+  url.searchParams.set('phantomCallback',action);
+  url.searchParams.set('resumeScroll',String(Math.round(window.scrollY)));
+  return url.toString();
+}
+function cleanWalletCallbackUrl(){
   const url=new URL(window.location.href);
-  url.searchParams.delete('phantomResume');
-  url.searchParams.delete('resumeScroll');
+  ['phantomCallback','resumeScroll','phantom_encryption_public_key','nonce','data','errorCode','errorMessage','phantomResume'].forEach(k=>url.searchParams.delete(k));
   history.replaceState({},'',url.pathname+url.search+url.hash);
 }
-async function connectPhantom(autoResume=false){
+function decryptPhantomPayload(dataText,nonceText,shared){
+  const opened=nacl.box.open.after(base58Decode(dataText),base58Decode(nonceText),shared);
+  if(!opened)throw new Error('Phantom response could not be verified');
+  return JSON.parse(new TextDecoder().decode(opened));
+}
+function createConnectDeepLink(){
+  if(!window.nacl)throw new Error('Secure wallet library is still loading');
+  const pair=nacl.box.keyPair();
+  storeBytes(PHANTOM_STORE.dappPublic,pair.publicKey);
+  storeBytes(PHANTOM_STORE.dappSecret,pair.secretKey);
+  const params=new URLSearchParams({
+    app_url:window.location.origin,
+    dapp_encryption_public_key:base58Encode(pair.publicKey),
+    redirect_link:walletReturnUrl('connect'),
+    cluster:'mainnet-beta'
+  });
+  return 'https://phantom.app/ul/v1/connect?'+params.toString();
+}
+async function connectPhantom(){
   const provider=window.phantom?.solana;
-  if(!provider?.isPhantom){
-    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-      const resumeUrl=new URL(window.location.href);
-      resumeUrl.searchParams.set('phantomResume','1');
-      resumeUrl.searchParams.set('resumeScroll',String(Math.round(window.scrollY)));
-      const browseUrl=encodeURIComponent(resumeUrl.toString());
-      const ref=encodeURIComponent(window.location.origin);
-      window.location.assign(`https://phantom.app/ul/browse/${browseUrl}?ref=${ref}`);
-    }else{
-      window.open('https://phantom.com/download','_blank','noopener,noreferrer');
+  if(provider?.isPhantom){
+    try{
+      const resp=await provider.connect();
+      setWalletAddress(resp.publicKey.toString());
+      updateWalletUI();closeWalletModal();
+      showToast('Wallet Connected','Tap your wallet to verify.','success');
+    }catch(err){showToast('Connection Failed',err?.message||'Connection cancelled','error')}
+    return;
+  }
+  try{window.location.assign(createConnectDeepLink())}
+  catch(err){showToast('Connection Failed',err.message,'error')}
+}
+async function handlePhantomCallback(){
+  const params=new URLSearchParams(location.search);
+  const action=params.get('phantomCallback');
+  if(!action)return false;
+  const scroll=parseInt(params.get('resumeScroll')||'0',10)||0;
+  try{
+    if(params.get('errorCode'))throw new Error(params.get('errorMessage')||'Wallet request cancelled');
+    if(!window.nacl)throw new Error('Secure wallet library did not load');
+    if(action==='connect'){
+      const phantomPublic=base58Decode(params.get('phantom_encryption_public_key')||'');
+      const secret=loadBytes(PHANTOM_STORE.dappSecret);
+      if(phantomPublic.length!==32||secret.length!==32)throw new Error('Wallet connection expired. Please connect again.');
+      const shared=nacl.box.before(phantomPublic,secret);
+      const payload=decryptPhantomPayload(params.get('data')||'',params.get('nonce')||'',shared);
+      storeBytes(PHANTOM_STORE.shared,shared);
+      localStorage.setItem(PHANTOM_STORE.session,payload.session);
+      setWalletAddress(payload.public_key);
+      updateWalletUI();
+      showToast('Wallet Connected','Tap your wallet to verify.','success');
+    }else if(action==='sign'){
+      const shared=loadBytes(PHANTOM_STORE.shared);
+      if(shared.length!==32)throw new Error('Wallet session expired. Please reconnect.');
+      const payload=decryptPhantomPayload(params.get('data')||'',params.get('nonce')||'',shared);
+      const message=localStorage.getItem(PHANTOM_STORE.pendingMessage)||'';
+      const publicKey=base58Decode(walletAddress());
+      const signature=base58Decode(payload.signature||'');
+      const valid=message&&signature.length===64&&publicKey.length===32&&nacl.sign.detached.verify(new TextEncoder().encode(message),signature,publicKey);
+      if(!valid)throw new Error('Wallet signature could not be verified');
+      walletSignature=signature;
+      localStorage.setItem(PHANTOM_STORE.verified,walletAddress());
+      localStorage.removeItem(PHANTOM_STORE.pendingMessage);
+      updateWalletUI();openWalletModal();
+      showToast('Wallet Verified','Balances are now available.','success');
     }
+  }catch(err){
+    showToast('Wallet Error',err.message||'Wallet request failed','error');
+    openWalletModal();
+  }finally{
+    cleanWalletCallbackUrl();
+    requestAnimationFrame(()=>window.scrollTo(0,scroll));
+  }
+  return true;
+}
+async function restoreTrustedWallet(){
+  const stored=localStorage.getItem(PHANTOM_STORE.address);
+  if(stored){try{setWalletAddress(stored);updateWalletUI();return true}catch(_){}}
+  const provider=window.phantom?.solana;
+  if(!provider?.isPhantom)return false;
+  try{const resp=await provider.connect({onlyIfTrusted:true});setWalletAddress(resp.publicKey.toString());updateWalletUI();return true}catch(_){return false}
+}
+async function verifyWalletOwnership(){
+  if(!walletPublicKey)return;
+  const message=`Verify Infinite Coin HQ wallet ownership\nWallet: ${walletAddress()}\nTime: ${new Date().toISOString()}`;
+  const provider=window.phantom?.solana;
+  if(provider?.signMessage){
+    try{
+      const result=await provider.signMessage(new TextEncoder().encode(message),'utf8');
+      const signature=result?.signature||result;
+      const sigBytes=signature instanceof Uint8Array?signature:new Uint8Array(signature||[]);
+      const valid=sigBytes.length===64&&nacl.sign.detached.verify(new TextEncoder().encode(message),sigBytes,base58Decode(walletAddress()));
+      if(!valid)throw new Error('Signature could not be verified');
+      walletSignature=sigBytes;
+      localStorage.setItem(PHANTOM_STORE.verified,walletAddress());
+      renderWalletModal();updateTradePreview();
+      showToast('Wallet Verified','Balances are now available.','success');
+    }catch(err){showToast('Signature Cancelled',err?.message||'Verification cancelled','warn')}
     return;
   }
   try{
-    const resp=await provider.connect(autoResume?{onlyIfTrusted:false}:undefined);
-    walletPublicKey=resp.publicKey;
-    localStorage.setItem('infinite_connected_wallet',walletAddress());
-    updateWalletUI();
-    closeWalletModal();
-    cleanWalletResumeUrl();
-    showToast('Wallet Connected','Tap your wallet to view balances.','success');
-    if(balanceInterval)clearInterval(balanceInterval);
-    balanceInterval=setInterval(()=>{if(walletIsVerified())refreshBalances()},30000);
-    provider.on('disconnect',disconnectWallet);
-  }catch(err){
-    if(!autoResume)showToast('Connection Failed',err?.message||'Connection cancelled','error');
-  }
-}
-async function restoreTrustedWallet(){
-  const provider=window.phantom?.solana;
-  if(!provider?.isPhantom)return false;
-  try{
-    const resp=await provider.connect({onlyIfTrusted:true});
-    walletPublicKey=resp.publicKey;
-    updateWalletUI();
-    if(walletIsVerified())refreshBalances();
-    return true;
-  }catch(_){return false}
-}
-async function verifyWalletOwnership(){
-  if(!walletPublicKey||!window.phantom?.solana?.signMessage)return;
-  try{
-    const message=`Verify Infinite Coin HQ wallet ownership\nWallet: ${walletAddress()}\nTime: ${new Date().toISOString()}`;
-    const encoded=new TextEncoder().encode(message);
-    const result=await window.phantom.solana.signMessage(encoded,'utf8');
-    if(!result?.signature)throw new Error('Signature was not returned');
-    walletSignature=result.signature;
-    localStorage.setItem('infinite_verified_wallet',walletAddress());
-    renderWalletModal();
-    updateTradePreview();
-    showToast('Wallet Verified','Balances are now available.','success');
-  }catch(err){
-    showToast('Signature Cancelled',err?.message||'Verification cancelled','warn');
-  }
+    const shared=loadBytes(PHANTOM_STORE.shared);
+    const session=localStorage.getItem(PHANTOM_STORE.session)||'';
+    const dappPublic=loadBytes(PHANTOM_STORE.dappPublic);
+    if(shared.length!==32||dappPublic.length!==32||!session)throw new Error('Reconnect your wallet first');
+    localStorage.setItem(PHANTOM_STORE.pendingMessage,message);
+    const nonce=nacl.randomBytes(24);
+    const payload=new TextEncoder().encode(JSON.stringify({message:base58Encode(new TextEncoder().encode(message)),session,display:'utf8'}));
+    const encrypted=nacl.box.after(payload,nonce,shared);
+    const params=new URLSearchParams({
+      dapp_encryption_public_key:base58Encode(dappPublic),
+      nonce:base58Encode(nonce),
+      redirect_link:walletReturnUrl('sign'),
+      payload:base58Encode(encrypted)
+    });
+    window.location.assign('https://phantom.app/ul/v1/signMessage?'+params.toString());
+  }catch(err){showToast('Wallet Error',err.message,'error')}
 }
 function disconnectWallet(){
   if(window.phantom?.solana?.disconnect)window.phantom.solana.disconnect().catch(()=>{});
-  const oldAddress=walletAddress();
+  Object.values(PHANTOM_STORE).forEach(key=>localStorage.removeItem(key));
   walletPublicKey=null;walletSignature=null;
-  localStorage.removeItem('infinite_connected_wallet');
-  if(localStorage.getItem('infinite_verified_wallet')===oldAddress)localStorage.removeItem('infinite_verified_wallet');
   if(balanceInterval){clearInterval(balanceInterval);balanceInterval=null}
   document.getElementById('walletBtnDesktop').style.display='inline-flex';
   document.getElementById('walletInfo').style.display='none';
-  closeWalletModal();
-  updateTradePreview();
+  closeWalletModal();updateTradePreview();
   showToast('Disconnected','Wallet disconnected.','success');
 }
 function updateWalletUI(){
@@ -1939,27 +2044,28 @@ function updateWalletUI(){
   document.getElementById('walletAddr').textContent=addr.slice(0,4)+'...'+addr.slice(-4);
   document.getElementById('walletBtnDesktop').style.display='none';
   document.getElementById('walletInfo').style.display='flex';
-  renderWalletModal();
-  updateTradePreview();
+  renderWalletModal();updateTradePreview();
+  if(walletIsVerified())refreshBalances();
 }
 async function refreshBalances(){
-  if(!walletPublicKey||!solanaConnection||!walletIsVerified())return;
+  if(!walletPublicKey||!walletIsVerified())return;
+  const solEl=document.getElementById('balSol'),infEl=document.getElementById('balInf');
+  solEl.textContent='...';infEl.textContent='...';
   try{
-    const solLamports=await solanaConnection.getBalance(walletPublicKey);
-    const solBal=(solLamports/1e9).toFixed(4);
-    let infBal='0';
-    try{
-      const tokenAccounts=await solanaConnection.getTokenAccountsByOwner(
-        walletPublicKey,{mint:new window.solanaWeb3.PublicKey(CA)},'jsonParsed'
-      );
-      if(tokenAccounts.value.length){
-        infBal=tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmountString||'0';
-      }
-    }catch(_){}
-    document.getElementById('balSol').textContent=solBal;
-    document.getElementById('balInf').textContent=infBal;
+    if(!solanaConnection)solanaConnection=new window.solanaWeb3.Connection(SOLANA_RPC,'confirmed');
+    const [solLamports,tokenAccounts]=await Promise.all([
+      solanaConnection.getBalance(walletPublicKey),
+      solanaConnection.getParsedTokenAccountsByOwner(walletPublicKey,{mint:new window.solanaWeb3.PublicKey(CA)})
+    ]);
+    solEl.textContent=(solLamports/1e9).toFixed(4);
+    let total=0;
+    tokenAccounts.value.forEach(item=>{total+=Number(item.account.data.parsed?.info?.tokenAmount?.uiAmount||0)});
+    infEl.textContent=total.toLocaleString(undefined,{maximumFractionDigits:4});
     updateTradePreview();
-  }catch(e){console.error('Balance fetch error:',e)}
+  }catch(err){
+    solEl.textContent='RETRY';infEl.textContent='RETRY';
+    showToast('Balance Unavailable','Tap refresh to try again.','warn');
+  }
 }
 function isWalletConnected(){return !!walletPublicKey}
 
@@ -2633,7 +2739,7 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   const resumeParams=new URLSearchParams(location.search);
-  const phantomResume=resumeParams.get('phantomResume')==='1';
+  const phantomResume=!!resumeParams.get('phantomCallback');
   const resumeScroll=parseInt(resumeParams.get('resumeScroll')||'0',10)||0;
   if(!phantomResume)document.body.classList.add('loading');
   const bgv=document.getElementById('bgVideo');
@@ -2661,8 +2767,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(phantomResume){
       requestAnimationFrame(()=>window.scrollTo(0,resumeScroll));
       setTimeout(async()=>{
-        const restored=await restoreTrustedWallet();
-        if(!restored)await connectPhantom(true);
+        await handlePhantomCallback();
         window.scrollTo(0,resumeScroll);
       },350);
     }else{
