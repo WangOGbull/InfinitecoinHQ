@@ -765,6 +765,98 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
   .wallet-connect-compact{padding:8px!important;gap:5px!important}.wallet-connect-compact svg{width:13px;height:13px}
   .game-modal-bg .gmb-content h3{font-size:15px}.game-modal-bg .gmb-content p{font-size:11px}
 }
+
+/* Wallet resume, balance panel, trade composer and artwork-first games */
+.wallet-account-button{appearance:none;color:inherit;font:inherit;cursor:pointer}
+.wallet-account-button .wallet-addr{font-family:'Space Mono';font-size:9px;color:#fff}
+.wallet-panel-box{width:min(92vw,390px)!important}
+.wallet-account-view[hidden],#walletConnectView[hidden]{display:none!important}
+.wallet-modal-heading{display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:20px}
+.wallet-modal-heading h2{margin:0 0 3px!important;font-size:15px!important}
+.wallet-modal-heading p{margin:0!important;font-family:'Space Mono';font-size:9px!important;color:#8ECAE6!important}
+.wallet-sign-state{display:grid;justify-items:center;gap:8px;padding:18px;border:1px solid rgba(236,199,102,.32);border-radius:10px;background:rgba(236,199,102,.04)}
+.wallet-sign-state svg{width:28px;height:28px;stroke:#e7c361;stroke-width:1.6}
+.wallet-sign-state strong{font:700 10px 'Orbitron';letter-spacing:.12em;color:#fff}
+.wallet-sign-state span{font:10px 'Space Mono';color:#8ECAE6}
+.wallet-sign-state button,.wallet-refresh,.wallet-disconnect-modal{border:1px solid rgba(0,240,255,.5);border-radius:6px;background:rgba(0,240,255,.08);color:#8ff4ff;font:700 9px 'Orbitron';letter-spacing:.12em;padding:10px 16px;cursor:pointer}
+.wallet-balances{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wallet-balance-card{padding:16px 10px;border-radius:9px;border:1px solid rgba(0,240,255,.28);background:rgba(0,240,255,.045);text-align:left}
+.wallet-balance-card.infinite{border-color:rgba(188,19,254,.3);background:rgba(188,19,254,.05)}
+.wallet-balance-card span{display:block;font:8px 'Space Mono';letter-spacing:.14em;color:#8ECAE6;margin-bottom:7px}
+.wallet-balance-card strong{display:block;font:700 14px 'Space Mono';color:#fff;overflow-wrap:anywhere}
+.wallet-refresh{grid-column:1/-1}
+.wallet-disconnect-modal{width:100%;margin-top:12px;border-color:rgba(255,68,102,.3);background:transparent;color:#ff708c}
+
+.trade-composer{width:min(100%,560px);margin:24px auto!important;padding:20px!important;border:1px solid rgba(0,240,255,.34)!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(3,12,28,.92),rgba(7,18,39,.78))!important;box-shadow:0 20px 50px rgba(0,0,0,.35),0 0 32px rgba(0,240,255,.06)}
+.trade-composer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;font:9px 'Orbitron';letter-spacing:.12em;color:#8ECAE6}
+.trade-composer-head>div{display:flex;align-items:center;gap:8px;color:#fff}
+.trade-mode-tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:8px;background:rgba(0,0,0,.3);margin-bottom:12px}
+.trade-mode-tabs button{height:34px;border:0;border-radius:6px;background:transparent;color:#6f8da3;font:700 9px 'Orbitron';letter-spacing:.12em}
+.trade-mode-tabs button.active{background:linear-gradient(90deg,rgba(0,240,255,.18),rgba(20,146,255,.18));color:#8ff4ff;box-shadow:inset 0 0 0 1px rgba(0,240,255,.3)}
+.trade-mode-tabs #tradeSellTab.active{background:rgba(255,68,102,.12);color:#ff708c;box-shadow:inset 0 0 0 1px rgba(255,68,102,.3)}
+.trade-asset-box{padding:14px;border:1px solid rgba(0,240,255,.18);border-radius:10px;background:rgba(0,0,0,.24)}
+.trade-asset-box.receive{border-color:rgba(188,19,254,.18)}
+.trade-asset-label{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;font:8px 'Space Mono';letter-spacing:.1em;color:#8ECAE6}
+.trade-asset-label small{font-size:7px;color:#607d91}
+.trade-amount-row{display:flex;align-items:center;gap:9px}
+.trade-amount-row input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#fff;font:700 25px 'Space Mono'}
+.trade-amount-row output{width:100%;color:#fff;font:700 15px 'Space Mono'}
+.trade-amount-row strong{color:#8ff4ff;font:700 11px 'Orbitron'}
+.trade-max{border:1px solid rgba(0,240,255,.3);border-radius:5px;background:rgba(0,240,255,.08);color:#8ff4ff;font:8px 'Orbitron';padding:6px}
+.trade-direction{display:grid;place-items:center;width:32px;height:32px;margin:-5px auto;border:1px solid rgba(236,199,102,.4);border-radius:50%;position:relative;z-index:2;background:#071326;color:#e7c361;font-size:19px}
+.trade-details{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
+.trade-details span{padding:8px 5px;border:1px solid rgba(142,202,230,.12);border-radius:6px;text-align:center;font:7px 'Space Mono';color:#66889c}
+.trade-details strong{display:block;margin-top:4px;color:#b8ddeb;font-size:8px}
+.trade-review{width:100%;height:45px;border:1px solid rgba(0,240,255,.6);border-radius:7px;background:linear-gradient(90deg,#00d9e9,#168fff);color:#00111c;font:700 10px 'Orbitron';letter-spacing:.14em;cursor:pointer;box-shadow:0 0 24px rgba(0,240,255,.18)}
+
+.games-art-section{min-height:720px;padding:0!important;position:relative;overflow:hidden}
+.games-art-bg{opacity:1!important;background-size:cover!important;background-position:center!important}
+.games-art-inner{min-height:720px;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
+.games-art-open{margin-top:245px;display:flex;align-items:center;gap:10px;padding:14px 24px;border:1px solid rgba(0,240,255,.76);border-radius:8px;background:rgba(2,9,23,.58);backdrop-filter:blur(4px);color:#fff;font:700 11px 'Orbitron';letter-spacing:.16em;box-shadow:0 0 28px rgba(0,240,255,.24);cursor:pointer}
+.games-art-open svg{width:16px;height:16px;stroke:#e7c361;stroke-width:2}
+.games-modal-box{width:min(94vw,850px)!important;max-width:850px!important}
+.games-modal-body{padding:30px!important}
+.games-modal-body>h2{font:700 18px 'Orbitron';letter-spacing:.08em;color:#fff;text-align:center;margin:0 42px 22px}
+.game-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.game-choice-card{overflow:hidden;border:1px solid rgba(0,240,255,.28);border-radius:12px;background:#061024}
+.game-choice-card.jumper{border-color:rgba(188,19,254,.3)}
+.game-preview{height:260px;overflow:hidden;position:relative;background:#080a20}
+.game-preview img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 30%}
+.game-preview iframe{position:absolute;width:480px;height:700px;left:50%;top:0;transform:translateX(-50%) scale(.55);transform-origin:top center;border:0;pointer-events:none}
+.game-choice-copy{padding:15px;text-align:center}
+.game-choice-copy h3{font:700 11px 'Press Start 2P';line-height:1.5;color:#00F0FF}
+.game-choice-card.jumper h3{color:#d65cff}
+.game-choice-copy p{margin:5px 0 12px;color:#8ECAE6;font-size:11px}
+.game-choice-copy a{display:flex;height:39px;align-items:center;justify-content:center;border-radius:6px;background:linear-gradient(90deg,#00d9e9,#168fff);color:#00111c;text-decoration:none;font:700 9px 'Orbitron';letter-spacing:.12em}
+
+@media(max-width:768px){
+  .wallet-info{display:none}
+  .wallet-info[style*="flex"]{display:flex!important}
+  .wallet-account-button{padding:8px 9px!important}
+  .wallet-account-button .wallet-addr{max-width:72px;overflow:hidden;text-overflow:ellipsis}
+  .trade-composer{width:calc(100% - 2px);padding:14px!important}
+  .trade-details{grid-template-columns:1fr 1fr 1fr}
+  .games-art-section,.games-art-inner{min-height:640px}
+  .games-art-bg{background-size:cover!important}
+  .games-art-open{margin-top:210px}
+  .games-modal-overlay{align-items:center!important;padding:14px!important}
+  .games-modal-box{width:100%!important;max-height:calc(100dvh - 28px)!important;overflow-y:auto!important;border-radius:15px!important}
+  .games-modal-body{padding:50px 14px 18px!important}
+  .games-modal-body>h2{font-size:15px;margin:0 30px 16px}
+  .game-choice-grid{grid-template-columns:1fr;gap:14px}
+  .game-preview{height:190px}
+  .game-choice-card{display:grid;grid-template-columns:42% 58%;min-height:190px}
+  .game-choice-copy{display:flex;flex-direction:column;justify-content:center;padding:13px 11px}
+  .game-choice-copy h3{font-size:8px}.game-choice-copy p{font-size:10px}
+}
+@media(max-width:420px){
+  .trade-amount-row input{font-size:21px}
+  .trade-details span{font-size:6px}
+  .games-art-section,.games-art-inner{min-height:600px}
+  .games-art-open{margin-top:190px;padding:12px 18px;font-size:9px}
+  .game-preview{height:170px}
+  .game-choice-card{min-height:170px}
+}
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -809,16 +901,10 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
       </button>
       <!-- WALLET INFO (shown when connected) -->
       <div class="wallet-info" id="walletInfo">
-        <div class="wallet-badge" onclick="refreshBalances()" title="Click to refresh balances">
+        <button type="button" class="wallet-badge wallet-account-button" onclick="openWalletModal()" aria-label="Open wallet details">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H18a2 2 0 0 0 0 4h4"/></svg>
-          <div>
-            <div class="wallet-addr" id="walletAddr">--</div>
-            <div class="wallet-bal">
-              <span id="balSol">--</span> SOL | <span class="inf-bal" id="balInf">--</span> INFINITE
-            </div>
-          </div>
-        </div>
-        <button type="button" class="wallet-disc" onclick="disconnectWallet()" title="Disconnect">&#10005;</button>
+          <span class="wallet-addr" id="walletAddr">--</span>
+        </button>
       </div>
       <button type="button" class="nmb" onclick="toggleUtilityDrawer()" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -878,22 +964,37 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <!-- WALLET MODAL — PHANTOM ONLY -->
 <div class="wm-overlay" id="wmOverlay" onclick="if(event.target===this)closeWalletModal()">
-  <div class="wm-box">
+  <div class="wm-box wallet-panel-box">
     <button type="button" class="wm-close" onclick="closeWalletModal()">&times;</button>
-    <div class="wm-body">
+    <div class="wm-body" id="walletConnectView">
       <h2>CONNECT WALLET</h2>
-      <p>Connect your Phantom wallet to buy, track balances & more.</p>
+      <p>Connect securely with Phantom.</p>
       <button class="wm-option" onclick="connectPhantom()">
         <span class="phantom-logo-wrap"><img src="./images/phantom-logo.svg?v=1" alt="Phantom wallet logo" width="40" height="40"></span>
         <div class="wm-info">
           <div class="wm-name">PHANTOM</div>
-          <div class="wm-desc">Most popular Solana wallet</div>
+          <div class="wm-desc">Connect wallet</div>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8ECAE6"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
-      <div style="text-align:center;margin-top:16px">
-        <a href="https://phantom.app/" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8ECAE6;text-decoration:none">Don't have Phantom? Get it here</a>
+    </div>
+    <div class="wm-body wallet-account-view" id="walletAccountView" hidden>
+      <div class="wallet-modal-heading">
+        <span class="phantom-logo-wrap"><img src="./images/phantom-logo.svg?v=1" alt="" width="40" height="40"></span>
+        <div><h2>YOUR WALLET</h2><p id="walletModalAddr">--</p></div>
       </div>
+      <div class="wallet-sign-state" id="walletSignState">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 5 6v5c0 4.6 2.8 7.7 7 9.5 4.2-1.8 7-4.9 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <strong>VERIFY OWNERSHIP</strong>
+        <span>Sign to view balances.</span>
+        <button type="button" onclick="verifyWalletOwnership()">SIGN WALLET</button>
+      </div>
+      <div class="wallet-balances" id="walletBalanceState" hidden>
+        <div class="wallet-balance-card"><span>SOL</span><strong id="balSol">--</strong></div>
+        <div class="wallet-balance-card infinite"><span>INFINITE</span><strong id="balInf">--</strong></div>
+        <button type="button" class="wallet-refresh" onclick="refreshBalances()">REFRESH</button>
+      </div>
+      <button type="button" class="wallet-disconnect-modal" onclick="disconnectWallet()">DISCONNECT</button>
     </div>
   </div>
 </div>
@@ -972,24 +1073,34 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
             </div>
           </div>
 
-          <div class="market-panel">
-            <h4><span class="dot-b"></span> QUICK TRADE</h4>
-            <div class="market-actions">
-              <button type="button" class="market-btn buy" onclick="buyInfinite()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                BUY $INFINITE
-              </button>
-              <button type="button" class="market-btn sell" onclick="sellInfinite()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                SELL $INFINITE
-              </button>
+          <div class="market-panel trade-composer">
+            <div class="trade-composer-head">
+              <div><span class="dot-b"></span><strong>INFINITE SWAP</strong></div>
+              <span>PHANTOM</span>
             </div>
-            <div class="market-swap">
-              <span>SOL</span>
-              <span class="swap-arrow">&#8644;</span>
-              <span>$INFINITE</span>
-              <span style="margin-left:auto;color:#00F0FF;font-family:Orbitron;font-size:9px">JUPITER V6</span>
+            <div class="trade-mode-tabs" role="tablist">
+              <button type="button" id="tradeBuyTab" class="active" onclick="setTradeMode('buy')">BUY</button>
+              <button type="button" id="tradeSellTab" onclick="setTradeMode('sell')">SELL</button>
             </div>
+            <div class="trade-asset-box">
+              <div class="trade-asset-label"><span id="tradeFromLabel">YOU PAY</span><small id="tradeAvailable">Balance after wallet verification</small></div>
+              <div class="trade-amount-row">
+                <input id="tradeAmount" type="number" inputmode="decimal" min="0" step="any" placeholder="0.00" oninput="updateTradePreview()">
+                <button type="button" class="trade-max" onclick="setTradeMax()">MAX</button>
+                <strong id="tradeInputAsset">SOL</strong>
+              </div>
+            </div>
+            <button type="button" class="trade-direction" onclick="toggleTradeMode()" aria-label="Switch trade direction">&#8645;</button>
+            <div class="trade-asset-box receive">
+              <div class="trade-asset-label"><span>YOU RECEIVE</span><small>Final quote in Phantom</small></div>
+              <div class="trade-amount-row"><output id="tradeEstimate">LIVE QUOTE</output><strong id="tradeOutputAsset">INFINITE</strong></div>
+            </div>
+            <div class="trade-details">
+              <span>Slippage <strong>1%</strong></span>
+              <span>Route <strong>Phantom Swap</strong></span>
+              <span>Network <strong>Solana</strong></span>
+            </div>
+            <button type="button" class="trade-review" id="tradeReviewBtn" onclick="reviewTrade()">CONNECT WALLET</button>
           </div>
 
           <div class="tx-box glass">
@@ -1015,56 +1126,42 @@ body.loaded .hero-post-splash{animation:slideUp 0.8s ease 0.5s forwards}
 
 <div class="divider"></div>
 
-<section class="sec sp" id="games">
-  <div class="bg-img" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/game-controller.png');opacity:.5"></div>
-  <div class="sec-inner">
-    <div class="cw">
-      <div class="sh">
-        <span class="badge">PLAY TO EARN</span>
-        <h2 class="neon-blue">INFINITE GAMES</h2>
-      </div>
-
-      <div class="game-entry-wrap" onclick="openGameModal()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openGameModal()}">
-        <div class="game-modal-bg">
-          <span class="game-corner game-corner-tl"></span>
-          <span class="game-corner game-corner-tr"></span>
-          <span class="game-corner game-corner-bl"></span>
-          <span class="game-corner game-corner-br"></span>
-          <div class="gmb-content">
-            <span class="game-kicker">THE INFINITE ARCADE</span>
-            <h3>INFINITE COIN GAMES</h3>
-            <div class="game-rule"><span></span><i></i><span></span></div>
-            <p>Enter the arena, challenge the climb, and earn $INFINITE across our playable worlds.</p>
-            <div class="game-titles">
-              <span><i class="dot-g"></i>INFINITE RUNNERS</span>
-              <span class="jumper"><i class="dot-p"></i>INFINITE JUMPER</span>
-            </div>
-            <span class="game-open-btn">OPEN GAMES <svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="sec sp games-art-section" id="games">
+  <div class="bg-img games-art-bg" style="background-image:url('https://cdn.jsdelivr.net/gh/infinitecoinHQ/infinitecoinHQ.github.io@main/images/game-controller.png')"></div>
+  <div class="sec-inner games-art-inner">
+    <button type="button" class="games-art-open" onclick="openGameModal()">
+      <span>OPEN GAMES</span>
+      <svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7"/></svg>
+    </button>
   </div>
 </section>
 
-<div class="modal-overlay" id="gameModal" onclick="if(event.target===this)closeGameModal()">
-  <div class="modal-box">
+<div class="modal-overlay games-modal-overlay" id="gameModal" onclick="if(event.target===this)closeGameModal()">
+  <div class="modal-box games-modal-box">
     <button type="button" class="modal-close" onclick="closeGameModal()">&times;</button>
-    <div class="modal-body">
-      <h2 style="font-family:'Orbitron';font-size:20px;color:#fff;text-align:center;margin-bottom:24px">CHOOSE YOUR GAME</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" style="margin-bottom:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#00F0FF;margin-bottom:10px;line-height:1.6">INFINITE RUNNER</h3>
-          <p style="font-size:12px;color:#8ECAE6;margin-bottom:16px;line-height:1.5">Dash through infinite worlds. Earn $INFINITE.</p>
-          <a href="https://infinite-runners.pages.dev/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
-        </div>
-        <div class="glass" style="text-align:center;padding:28px 20px;border-radius:12px">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#BC13FE" stroke-width="1.5" style="margin-bottom:14px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-          <h3 style="font-family:'Press Start 2P',cursive;font-size:10px;color:#BC13FE;margin-bottom:10px;line-height:1.6">INFINITE JUMPER</h3>
-          <p style="font-size:12px;color:#8ECAE6;margin-bottom:16px;line-height:1.5">Jump to the moon. Earn $INFINITE per level.</p>
-          <a href="https://infinitecoin-jumper.pages.dev/" target="_blank" rel="noopener noreferrer" class="btn-b" style="width:100%;justify-content:center;text-decoration:none" onclick="closeGameModal()">PLAY NOW</a>
-        </div>
+    <div class="modal-body games-modal-body">
+      <h2>CHOOSE YOUR GAME</h2>
+      <div class="game-choice-grid">
+        <article class="game-choice-card runner">
+          <div class="game-preview">
+            <img src="https://infinite-runners.pages.dev/assets/title-mobile-bg.png" alt="Infinite Runners Dragons Arena title screen" loading="lazy">
+          </div>
+          <div class="game-choice-copy">
+            <h3>INFINITE RUNNERS</h3>
+            <p>Dragons Arena</p>
+            <a href="https://infinite-runners.pages.dev/" target="_blank" rel="noopener noreferrer" onclick="closeGameModal()">PLAY NOW</a>
+          </div>
+        </article>
+        <article class="game-choice-card jumper">
+          <div class="game-preview live-preview" aria-label="Infinite Jumper front page preview">
+            <iframe src="https://infinitecoin-jumper.pages.dev/" title="Infinite Jumper front page" loading="lazy" tabindex="-1"></iframe>
+          </div>
+          <div class="game-choice-copy">
+            <h3>INFINITE JUMPER</h3>
+            <p>Jump to the Moon</p>
+            <a href="https://infinitecoin-jumper.pages.dev/" target="_blank" rel="noopener noreferrer" onclick="closeGameModal()">PLAY NOW</a>
+          </div>
+        </article>
       </div>
     </div>
   </div>
@@ -1730,6 +1827,7 @@ class Ticker {
 // WALLET FUNCTIONS
 // ═══════════════════════════════════════════
 function openWalletModal(){
+  renderWalletModal();
   document.getElementById('wmOverlay').classList.add('active');
   document.body.style.overflow='hidden';
 }
@@ -1737,12 +1835,42 @@ function closeWalletModal(){
   document.getElementById('wmOverlay').classList.remove('active');
   document.body.style.overflow='';
 }
-
-async function connectPhantom(){
-  if(!window.phantom?.solana?.isPhantom){
-    const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if(isMobile){
-      const browseUrl=encodeURIComponent(window.location.href);
+function walletAddress(){
+  return walletPublicKey ? walletPublicKey.toString() : '';
+}
+function walletIsVerified(){
+  const address=walletAddress();
+  return !!address && localStorage.getItem('infinite_verified_wallet')===address;
+}
+function renderWalletModal(){
+  const connected=!!walletPublicKey;
+  const connectView=document.getElementById('walletConnectView');
+  const accountView=document.getElementById('walletAccountView');
+  if(connectView)connectView.hidden=connected;
+  if(accountView)accountView.hidden=!connected;
+  if(!connected)return;
+  const address=walletAddress();
+  const shortAddr=address.slice(0,5)+'...'+address.slice(-5);
+  document.getElementById('walletModalAddr').textContent=shortAddr;
+  const verified=walletIsVerified();
+  document.getElementById('walletSignState').hidden=verified;
+  document.getElementById('walletBalanceState').hidden=!verified;
+  if(verified)refreshBalances();
+}
+function cleanWalletResumeUrl(){
+  const url=new URL(window.location.href);
+  url.searchParams.delete('phantomResume');
+  url.searchParams.delete('resumeScroll');
+  history.replaceState({},'',url.pathname+url.search+url.hash);
+}
+async function connectPhantom(autoResume=false){
+  const provider=window.phantom?.solana;
+  if(!provider?.isPhantom){
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      const resumeUrl=new URL(window.location.href);
+      resumeUrl.searchParams.set('phantomResume','1');
+      resumeUrl.searchParams.set('resumeScroll',String(Math.round(window.scrollY)));
+      const browseUrl=encodeURIComponent(resumeUrl.toString());
       const ref=encodeURIComponent(window.location.origin);
       window.location.assign(`https://phantom.app/ul/browse/${browseUrl}?ref=${ref}`);
     }else{
@@ -1751,120 +1879,147 @@ async function connectPhantom(){
     return;
   }
   try{
-    const resp=await window.phantom.solana.connect();
+    const resp=await provider.connect(autoResume?{onlyIfTrusted:false}:undefined);
     walletPublicKey=resp.publicKey;
-
-    // Request signature
-    const message=`Verify ownership for Infinite Coin HQ\nWallet: ${walletPublicKey.toString()}\nTimestamp: ${Date.now()}`;
-    const encodedMsg=new TextEncoder().encode(message);
-    showToast('Signature Required','Please sign the verification message in Phantom','warn');
-    const sigResp=await window.phantom.solana.signMessage(encodedMsg,'utf8');
-    walletSignature=sigResp.signature;
-
-    // Fetch balances
-    await refreshBalances();
-
-    // Update UI
+    localStorage.setItem('infinite_connected_wallet',walletAddress());
     updateWalletUI();
     closeWalletModal();
-    showToast('Wallet Connected','Signature verified. Balances loaded.','success');
-
-    // Auto-refresh balances every 30s
+    cleanWalletResumeUrl();
+    showToast('Wallet Connected','Tap your wallet to view balances.','success');
     if(balanceInterval)clearInterval(balanceInterval);
-    balanceInterval=setInterval(refreshBalances,30000);
-
-    // Listen for disconnect
-    window.phantom.solana.on('disconnect',()=>{
-      disconnectWallet();
-    });
+    balanceInterval=setInterval(()=>{if(walletIsVerified())refreshBalances()},30000);
+    provider.on('disconnect',disconnectWallet);
   }catch(err){
-    showToast('Connection Failed',err?.message||'User rejected','error');
-    walletPublicKey=null;
-    walletSignature=null;
+    if(!autoResume)showToast('Connection Failed',err?.message||'Connection cancelled','error');
   }
 }
-
-function disconnectWallet(){
-  if(window.phantom?.solana?.disconnect){
-    window.phantom.solana.disconnect().catch(()=>{});
+async function restoreTrustedWallet(){
+  const provider=window.phantom?.solana;
+  if(!provider?.isPhantom)return false;
+  try{
+    const resp=await provider.connect({onlyIfTrusted:true});
+    walletPublicKey=resp.publicKey;
+    updateWalletUI();
+    if(walletIsVerified())refreshBalances();
+    return true;
+  }catch(_){return false}
+}
+async function verifyWalletOwnership(){
+  if(!walletPublicKey||!window.phantom?.solana?.signMessage)return;
+  try{
+    const message=`Verify Infinite Coin HQ wallet ownership\nWallet: ${walletAddress()}\nTime: ${new Date().toISOString()}`;
+    const encoded=new TextEncoder().encode(message);
+    const result=await window.phantom.solana.signMessage(encoded,'utf8');
+    if(!result?.signature)throw new Error('Signature was not returned');
+    walletSignature=result.signature;
+    localStorage.setItem('infinite_verified_wallet',walletAddress());
+    renderWalletModal();
+    updateTradePreview();
+    showToast('Wallet Verified','Balances are now available.','success');
+  }catch(err){
+    showToast('Signature Cancelled',err?.message||'Verification cancelled','warn');
   }
-  walletPublicKey=null;
-  walletSignature=null;
-  if(balanceInterval){clearInterval(balanceInterval);balanceInterval=null;}
+}
+function disconnectWallet(){
+  if(window.phantom?.solana?.disconnect)window.phantom.solana.disconnect().catch(()=>{});
+  const oldAddress=walletAddress();
+  walletPublicKey=null;walletSignature=null;
+  localStorage.removeItem('infinite_connected_wallet');
+  if(localStorage.getItem('infinite_verified_wallet')===oldAddress)localStorage.removeItem('infinite_verified_wallet');
+  if(balanceInterval){clearInterval(balanceInterval);balanceInterval=null}
   document.getElementById('walletBtnDesktop').style.display='inline-flex';
   document.getElementById('walletInfo').style.display='none';
-  showToast('Disconnected','Wallet disconnected','success');
+  closeWalletModal();
+  updateTradePreview();
+  showToast('Disconnected','Wallet disconnected.','success');
 }
-
 function updateWalletUI(){
   if(!walletPublicKey)return;
-  const addr=walletPublicKey.toString();
-  const shortAddr=addr.slice(0,4)+'...'+addr.slice(-4);
-  document.getElementById('walletAddr').textContent=shortAddr;
+  const addr=walletAddress();
+  document.getElementById('walletAddr').textContent=addr.slice(0,4)+'...'+addr.slice(-4);
   document.getElementById('walletBtnDesktop').style.display='none';
   document.getElementById('walletInfo').style.display='flex';
+  renderWalletModal();
+  updateTradePreview();
 }
-
 async function refreshBalances(){
-  if(!walletPublicKey||!solanaConnection)return;
+  if(!walletPublicKey||!solanaConnection||!walletIsVerified())return;
   try{
-    // SOL balance
     const solLamports=await solanaConnection.getBalance(walletPublicKey);
     const solBal=(solLamports/1e9).toFixed(4);
-
-    // INFINITE token balance
     let infBal='0';
     try{
       const tokenAccounts=await solanaConnection.getTokenAccountsByOwner(
-        walletPublicKey,
-        {mint:new window.solanaWeb3.PublicKey(CA)},
-        'jsonParsed'
+        walletPublicKey,{mint:new window.solanaWeb3.PublicKey(CA)},'jsonParsed'
       );
-      if(tokenAccounts.value.length>0){
-        const parsed=tokenAccounts.value[0].account.data.parsed;
-        infBal=parsed.info.tokenAmount.uiAmountString||'0';
+      if(tokenAccounts.value.length){
+        infBal=tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmountString||'0';
       }
-    }catch(e){}
-
+    }catch(_){}
     document.getElementById('balSol').textContent=solBal;
     document.getElementById('balInf').textContent=infBal;
-  }catch(e){
-    console.error('Balance fetch error:',e);
+    updateTradePreview();
+  }catch(e){console.error('Balance fetch error:',e)}
+}
+function isWalletConnected(){return !!walletPublicKey}
+
+let tradeMode='buy';
+function setTradeMode(mode){
+  tradeMode=mode==='sell'?'sell':'buy';
+  document.getElementById('tradeBuyTab').classList.toggle('active',tradeMode==='buy');
+  document.getElementById('tradeSellTab').classList.toggle('active',tradeMode==='sell');
+  document.getElementById('tradeInputAsset').textContent=tradeMode==='buy'?'SOL':'INFINITE';
+  document.getElementById('tradeOutputAsset').textContent=tradeMode==='buy'?'INFINITE':'SOL';
+  updateTradePreview();
+}
+function toggleTradeMode(){setTradeMode(tradeMode==='buy'?'sell':'buy')}
+function setTradeMax(){
+  if(!walletIsVerified()){openWalletModal();return}
+  const raw=document.getElementById(tradeMode==='buy'?'balSol':'balInf').textContent;
+  const value=parseFloat(String(raw).replace(/,/g,''));
+  if(Number.isFinite(value)){
+    document.getElementById('tradeAmount').value=tradeMode==='buy'?Math.max(0,value-.002).toFixed(4):value;
+    updateTradePreview();
   }
 }
-
-function isWalletConnected(){
-  return !!walletPublicKey;
+function updateTradePreview(){
+  const connected=isWalletConnected(),verified=walletIsVerified();
+  const btn=document.getElementById('tradeReviewBtn');
+  if(btn)btn.textContent=!connected?'CONNECT WALLET':!verified?'SIGN TO CONTINUE':tradeMode==='buy'?'REVIEW BUY':'REVIEW SELL';
+  const available=document.getElementById('tradeAvailable');
+  if(available){
+    if(!verified)available.textContent='Balance after wallet verification';
+    else{
+      const raw=document.getElementById(tradeMode==='buy'?'balSol':'balInf').textContent;
+      available.textContent='Available: '+raw+' '+(tradeMode==='buy'?'SOL':'INFINITE');
+    }
+  }
+  const amount=parseFloat(document.getElementById('tradeAmount')?.value||'0');
+  document.getElementById('tradeEstimate').textContent=amount>0?'CALCULATED IN PHANTOM':'LIVE QUOTE';
+}
+function reviewTrade(){
+  if(!isWalletConnected()){openWalletModal();return}
+  if(!walletIsVerified()){openWalletModal();return}
+  const amount=parseFloat(document.getElementById('tradeAmount').value||'0');
+  if(!(amount>0)){showToast('Enter Amount','Add an amount before continuing.','warn');return}
+  if(tradeMode==='buy')buyInfinite(amount);else sellInfinite(amount);
+}
+function openPhantomSwap(inputMint,outputMint,amount){
+  const params=new URLSearchParams({inputMint,outputMint,slippageBps:'100'});
+  if(Number.isFinite(amount)&&amount>0)params.set('amount',String(amount));
+  window.location.assign('https://phantom.app/ul/v1/swap?'+params.toString());
+}
+function buyInfinite(amount){
+  if(!isWalletConnected()){openWalletModal();return}
+  openPhantomSwap('So11111111111111111111111111111111111111112',CA,Number(amount));
+}
+function sellInfinite(amount){
+  if(!isWalletConnected()){openWalletModal();return}
+  openPhantomSwap(CA,'So11111111111111111111111111111111111111112',Number(amount));
 }
 
 // ═══════════════════════════════════════════
-// BUY / SELL — PHANTOM SWAP DEEP LINK
-// ═══════════════════════════════════════════
-function buyInfinite(){
-  if(!isWalletConnected()){
-    openWalletModal();
-    return;
-  }
-  const inputMint='So11111111111111111111111111111111111111112';
-  const outputMint=CA;
-  const slippage=100;
-  const phantomUrl=`https://phantom.app/ul/v1/swap?inputMint=${inputMint}&outputMint=${outputMint}&slippageBps=${slippage}`;
-  window.open(phantomUrl,'_blank');
-}
-
-function sellInfinite(){
-  if(!isWalletConnected()){
-    openWalletModal();
-    return;
-  }
-  const inputMint=CA;
-  const outputMint='So11111111111111111111111111111111111111112';
-  const slippage=100;
-  const phantomUrl=`https://phantom.app/ul/v1/swap?inputMint=${inputMint}&outputMint=${outputMint}&slippageBps=${slippage}`;
-  window.open(phantomUrl,'_blank');
-}
-
-// ═══════════════════════════════════════════
+// IMAGE LOADING & FALLBACKS// ═══════════════════════════════════════════
 // IMAGE LOADING & FALLBACKS
 // ═══════════════════════════════════════════
 function handleImgError(img,title){
@@ -2477,7 +2632,10 @@ document.addEventListener('keydown',e=>{
 // INIT
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
-  document.body.classList.add('loading');
+  const resumeParams=new URLSearchParams(location.search);
+  const phantomResume=resumeParams.get('phantomResume')==='1';
+  const resumeScroll=parseInt(resumeParams.get('resumeScroll')||'0',10)||0;
+  if(!phantomResume)document.body.classList.add('loading');
   const bgv=document.getElementById('bgVideo');
   if(bgv){bgv.play().catch(()=>{});}
 
@@ -2492,15 +2650,26 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(img.complete)img.classList.add('loaded');
   });
 
-  setTimeout(()=>{
+  const finishEntry=()=>{
     const splash=document.getElementById('splashScreen');
     if(splash){
-      splash.classList.add('done');
-      setTimeout(()=>splash.style.display='none',1500);
+      if(phantomResume)splash.style.display='none';
+      else{splash.classList.add('done');setTimeout(()=>splash.style.display='none',1500)}
     }
     document.body.classList.remove('loading');
     document.body.classList.add('loaded');
-  },12000);
+    if(phantomResume){
+      requestAnimationFrame(()=>window.scrollTo(0,resumeScroll));
+      setTimeout(async()=>{
+        const restored=await restoreTrustedWallet();
+        if(!restored)await connectPhantom(true);
+        window.scrollTo(0,resumeScroll);
+      },350);
+    }else{
+      setTimeout(()=>restoreTrustedWallet(),250);
+    }
+  };
+  if(phantomResume)finishEntry();else setTimeout(finishEntry,12000);
 });
 
 // ═══════════════════════════════════════════
